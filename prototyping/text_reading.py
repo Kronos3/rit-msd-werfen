@@ -13,18 +13,34 @@ def morph_shape(val):
 def erode(img):
     return cv2.erode(img, np.ones((5, 5), np.uint8))
 
-def laplacian(img):
-    dst = cv2.Laplacian(img, cv2.CV_16S, ksize=3)
-    # [laplacian]
-    # [convert]
-    # converting back to uint8
-    return cv2.convertScaleAbs(dst)
+def blur(img):
+    return cv2.GaussianBlur(img,(5,5),2)
+
+def threshold(img):
+    ret, thresh1 = cv2.threshold(img,146,255,cv2.THRESH_BINARY_INV)
+    print("Thresholding @%s" % ret)
+    return thresh1
 
 img = cv2.imread('werfen_text.png', cv2.IMREAD_GRAYSCALE)
 img = cv2.resize(img, (600, 360))
 
-img = erode(img)
-# img = laplacian(img)
-print(pytesseract.image_to_boxes(img))
+# img = erode(img)
+img = blur(img)
+img = threshold(img)
+
+boxes = pytesseract.image_to_boxes(img, lang='eng', config='--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789')
+boxes = boxes.strip().split('\n')
+h, w = img.shape
+
+for b in boxes:
+    b = b.split(' ')
+    print(b[0], end="")
+    img = cv2.rectangle(img,
+                        (int(b[1]), h - int(b[2])),
+                        (int(b[3]), h - int(b[4])),
+                        (0, 255, 0), 2)
+
+print()
 cv2.imshow('Result', img)
 cv2.waitKey(0)
+cv2.destroyAllWindows()
