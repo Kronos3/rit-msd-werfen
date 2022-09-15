@@ -10,10 +10,10 @@ from pathlib import Path
 
 def permute(characters: Set[str], length: int, count: int, seed=0):
     """
-    @param characters set of characters to generate permutations for
-    @param length length of each permutation instance
-    @param count number of permutations to generate (randomly selected from set)
-    @param seed seed for randomly selected permutations
+    :param characters: set of characters to generate permutations for
+    :param length: length of each permutation instance
+    :param count: number of permutations to generate (randomly selected from set)
+    :param seed: seed for randomly selected permutations
     """
 
     characters_np = np.array(list(characters))
