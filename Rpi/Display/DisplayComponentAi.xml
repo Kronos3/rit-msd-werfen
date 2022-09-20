@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="Display" kind="passive" namespace="Rpi">
+
+    <import_port_type>Drv/I2cDriverPorts/I2cPortAi.xml</import_port_type>
+
+    <ports>
+        <port name="i2c" data_type="Drv::I2c" kind="output"/>
+    </ports>
+
+    <commands>
+        <command kind="sync" opcode="0" mnemonic="WRITE">
+            <comment>
+                Write some text on a certain line
+            </comment>
+            <args>
+                <arg name="line_number" type="U32"/>
+                <arg name="text" type="string" size="16"/>
+            </args>
+        </command>
+    </commands>
+
+</component>

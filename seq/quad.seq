@@ -1,0 +1,25 @@
+R00:00:00 cam.STOP
+
+; Set up the frame pathing
+R00:00:00 cam.STREAM VIS    ; Raw camera stream goes to vision
+R00:00:00 vis.STREAM VIDEO_STREAMER
+
+; Set up the vision pipeline
+R00:00:00 vis.CLEAR
+
+R00:00:00 vis.INTERPOLATION_PRM_SET NEAREST
+R00:00:00 vis.DOWNSCALE_PRM_SET 8
+R00:00:00 vis.PIPE DOWNSCALE
+
+R00:00:00 vis.PIPE GRADIENT
+
+R00:00:00 vis.MASK_QUAD 0  0.3 0.64    0.2 1.0    0.8 1.0    0.7 0.64  ; car
+R00:00:00 vis.MASK_QUAD 0  0.0 0.0     0.0 1.0    0.1 1.0    0.1 0.0   ; left edge
+R00:00:00 vis.MASK_QUAD 0  0.8 0.0     0.8 1.0    1.0 1.0    1.0 0.0   ; right edge
+R00:00:00 vis.MASK_QUAD 0  0.0 0.0     0.0 0.1    1.0 0.1    1.0 0.0   ; top edge
+
+R00:00:00 vis.OTSU_FRAMES_PRM_SET 30
+R00:00:00 vis.PIPE OTSU_THRESHOLD
+
+; Start the stream, this starts all the other components
+R00:00:00 cam.START

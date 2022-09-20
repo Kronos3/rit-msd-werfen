@@ -1,0 +1,10 @@
+R00:00:00 cam.STOP
+
+; Set up the frame pathing
+R00:00:00 cam.STREAM VIDEO_STREAMER
+R00:00:00 videoStreamer.DISPLAY UDP
+R00:00:00 videoStreamer.HOSTNAME_PRM_SET "192.168.1.220"
+R00:00:00 videoStreamer.OPEN
+
+; Start the stream
+R00:00:00 cam.START

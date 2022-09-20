@@ -1,0 +1,63 @@
+; report.seq
+; The purpose of this sequence is to capture some images
+; for the purpose of the paper.
+; This sequence will attempt to hit all parts of the vision
+; and navigation pipeline
+
+; Set up the frame pipeline
+R00:00:00 cam.STOP
+R00:00:00 cam.STREAM VIS
+R00:00:00 vis.STREAM VIDEO_STREAMER
+; R00:00:00 vis.STREAM NAV    ; NAV always does a passthrough to VideoStreamer
+
+; Clear the pipeline and build it up incrementally
+R00:00:00 vis.CLEAR
+
+; Start the camera stream
+R00:00:00 cam.START
+
+; Run through every vision configuration and capture the image
+
+; Raw
+R00:00:00 display.WRITE 3 "RAW"
+; R00:00:05 videoStreamer.CAPTURE "/fsw/report/raw.jpg"
+
+; Downscale
+R00:00:00 display.WRITE 3 "DOWNSCALE"
+R00:00:00 vis.INTERPOLATION_PRM_SET NEAREST
+R00:00:00 vis.DOWNSCALE_PRM_SET 8
+R00:00:00 vis.PIPE DOWNSCALE
+; R00:00:01 videoStreamer.CAPTURE "/fsw/report/downscale.jpg"
+
+; Gaussian
+R00:00:00 display.WRITE 3 "GAUSSIAN"
+R00:00:00 vis.GAUSSIAN_SIGMA_PRM_SET 2.0
+R00:00:00 vis.PIPE GAUSSIAN
+; R00:00:01 videoStreamer.CAPTURE "/fsw/report/gaussian.jpg"
+
+; Gradient
+R00:00:00 display.WRITE 3 "GRADIENT"
+R00:00:00 vis.PIPE GRADIENT
+; R00:00:01 videoStreamer.CAPTURE "/fsw/report/gradient.jpg"
+
+; Erode
+R00:00:00 display.WRITE 3 "ERODE"
+R00:00:00 vis.PIPE ERODE
+; R00:00:01 videoStreamer.CAPTURE "/fsw/report/erode.jpg"
+
+; Otsu (thresholding)
+R00:00:00 display.WRITE 3 "OTSU"
+R00:00:00 vis.OTSU_FRAMES_PRM_SET 30
+R00:00:00 vis.PIPE OTSU_THRESHOLD
+; R00:00:04 videoStreamer.CAPTURE "/fsw/report/otsu.jpg"
+
+; NavR00:00:00 cam.START
+; R00:00:00 nav.RUN SIMPLE_PID
+; R00:00:02 videoStreamer.CAPTURE "/fsw/report/otsu.jpg"
+
+; Stop Nav & Cam
+R00:00:30 nav.STOP
+R00:00:00 cam.STOP
+R00:00:00 vis.CLEAR
+
+R00:00:00 display.WRITE 3 "DONE"
