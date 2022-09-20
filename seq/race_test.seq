@@ -1,0 +1,46 @@
+R00:00:00 cam.STOP
+
+; Set up the frame pathing
+R00:00:00 cam.STREAM VIS    ; Raw camera stream goes to vision
+R00:00:00 vis.STREAM NAV    ; Vision process stream goes to Nav to control the car
+
+; Set up the vision pipeline
+R00:00:00 vis.CLEAR
+
+; Gradient will detect edges in the image by doing the following
+;   1. Gaussian blur
+;   2. Laplacian filter to find derivative
+;   3. Absolute value of derivative with some scaling factor
+;   4. Erosion to get rid of small dots
+;   5. Ostu thresholding (dynamic) for 30 frames, then binary threshold
+R00:00:00 vis.INTERPOLATION_PRM_SET NEAREST
+R00:00:00 vis.DOWNSCALE_PRM_SET 8
+R00:00:00 vis.PIPE DOWNSCALE
+
+R00:00:00 vis.WARP_SCALE_X_PRM_SET 0.9
+R00:00:00 vis.WARP_SCALE_Y_PRM_SET 0.9
+R00:00:00 vis.WARP_TRANSLATE_X_PRM_SET 0.0
+R00:00:00 vis.WARP_TRANSLATE_Y_PRM_SET -200.0
+R00:00:00 vis.PIPE WARP
+
+; Perform the actual edge detection on the image
+; Performs dx and dy and adds these together
+; Absolute value of gradient is used
+R00:00:00 vis.PIPE GRADIENT
+
+;R00:00:00 vis.MASK_QUAD 0  0.3 0.64    0.2 1.0    0.9 1.0    0.8 0.64  ; car
+; R00:00:00 vis.MASK_QUAD 0  0.0 0.0     0.0 1.0    0.1 1.0    0.1 0.0   ; left edge
+; R00:00:00 vis.MASK_QUAD 0  0.8 0.0     0.8 1.0    1.0 1.0    1.0 0.0   ; right edge
+;R00:00:00 vis.MASK_QUAD 0  0.0 0.0     0.0 0.1    1.0 0.1    1.0 0.0   ; top edge
+
+; Calculate Otsu threshold value for the first 30 frames
+; and then use the average of these values to perform simple
+; binary thresholding.
+R00:00:00 vis.OTSU_FRAMES_PRM_SET 30
+R00:00:00 vis.PIPE OTSU_THRESHOLD
+
+; The actual Nav algorithm to control the car
+R00:00:00 nav.RUN SIMPLE_PID
+
+; Start the stream, this starts all the other components
+R00:00:00 cam.START
