@@ -2,43 +2,43 @@
 #define RPI_COMPONENTS_H
 
 // FPrime Core
-#include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
-#include <Svc/RateGroupDriver/RateGroupDriver.hpp>
+#include "fprime/Svc/ActiveRateGroup/ActiveRateGroup.hpp"
+#include "fprime/Svc/RateGroupDriver/RateGroupDriver.hpp"
 
-#include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
-#include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
-#include <Svc/Deframer/Deframer.hpp>
-#include <Svc/Framer/FramerComponentImpl.hpp>
+#include "fprime/Svc/CmdDispatcher/CommandDispatcherImpl.hpp"
+#include "fprime/Svc/CmdSequencer/CmdSequencerImpl.hpp"
+//#include <Svc/Deframer/Deframer.hpp>
+#include "fprime/Svc/Framer/FramerComponentImpl.hpp"
 
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
-#include <Svc/TlmChan/TlmChanImpl.hpp>
-#include <Svc/PrmDb/PrmDbImpl.hpp>
+#include "fprime/Svc/ActiveLogger/ActiveLoggerImpl.hpp"
+#include "fprime/Svc/TlmChan/TlmChanImpl.hpp"
+#include "fprime/Svc/PrmDb/PrmDbImpl.hpp"
 
-#include <Svc/FileManager/FileManager.hpp>
-#include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
+#include "fprime/Svc/FileManager/FileManager.hpp"
+#include "fprime/Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
 //#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <Svc/FileUplink/FileUplink.hpp>
-#include <Svc/FileDownlink/FileDownlink.hpp>
+#include "fprime/Svc/FileUplink/FileUplink.hpp"
+#include "fprime/Svc/FileDownlink/FileDownlink.hpp"
 
-#include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
-#include <Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp>
+#include "fprime/Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp"
+#include "fprime/Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp"
 //#include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
-#include <Drv/TcpClient/TcpClientComponentImpl.hpp>
-#include <Svc/LinuxTime/LinuxTimeImpl.hpp>
-#include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
+#include "fprime/Drv/TcpClient/TcpClientComponentImpl.hpp"
+#include "fprime/Svc/LinuxTime/LinuxTimeImpl.hpp"
+#include "fprime/Svc/LinuxTimer/LinuxTimerComponentImpl.hpp"
 
-#include <Rpi/Cam/Cam.hpp>
-#include <Rpi/VideoStreamer/VideoStreamer.hpp>
+#include "Rpi/Cam/Cam.hpp"
+#include "Rpi/VideoStreamer/VideoStreamer.hpp"
 #include <Rpi/Mot/MotImpl.h>
 #include <Rpi/Vis/VisImpl.h>
 #include <Rpi/Nav/NavImpl.h>
-#include <Rpi/FramePipe/FramePipeImpl.h>
-#include <Rpi/Display/DisplayImpl.h>
+#include "Rpi/FramePipe/FramePipeImpl.h"
+#include "Rpi/Display/Display.hpp"
 
-#include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
-#include <FprimeProtocol.hpp>
-#include <MallocAllocator.hpp>
-#include <Log.hpp>
+#include "fprime/Svc/BufferManager/BufferManagerComponentImpl.hpp"
+#include "fprime/Svc/FramingProtocol/FprimeProtocol.hpp"
+#include "fprime/Fw/Types/MallocAllocator.hpp"
+#include "fprime/Os/Log.hpp"
 
 class Kernel
 {

@@ -37,28 +37,25 @@ namespace Rpi
 
         /**
          * Clear the canvas of all enabled pixels
-         * @param canvas canvas to clear
          */
         void clear();
 
         /**
          * Convert a camera array canvas into an OLED canvas
          * Draw camera data on the OLED display
-         * @param canvas OLED canvas to write to
          * @param camera_in_array camera data canvas
+         * @param max scale of the maximum pix in the array
          */
         void draw_integer(const U16* camera_in_array, U16 max = 0x3FFF);
         void draw_floating(const F64* array, U32 n, F64 max = 1.0, F64 offset = 0.0);
 
         /**
          * Draw an OLED canvas to the device via I2C
-         * @param data canvas to draw
          */
         void draw();
 
         /**
          * Place an ASCII character into an OLED canvas at a certain coordinate
-         * @param canvas canvas to place character in
          * @param row row in text display lattice
          * @param col column in text display lattice
          * @param ascii character to place
@@ -68,7 +65,6 @@ namespace Rpi
         /**
          * Draw an entire line to the screen at a certain coordinate
          * supports a 4 line display
-         * @param canvas canvas to place line on
          * @param row row to write line on
          * @param col column to start line on
          * @param ascii_str line to display

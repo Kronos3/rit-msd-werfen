@@ -7,7 +7,7 @@ module Rpi {
         width: U32 @< Width in pixels
         height: U32 @< Height in pixels
         stride: U32 @< Row stride
-        timestamp: I64 @< Timestamp in microseconds
+        timestamp: U64 @< Timestamp in microseconds
         plane: I32 @< DMA file descriptor for DRM preview
     }
 
@@ -103,6 +103,18 @@ module Rpi {
         event CameraConfiguring() \
             severity activity low \
             format "Sending configuration to camera"
+
+        event CameraInvalidGet(bufId: U32) \
+            severity warning low \
+            format "Attempting to get frame buffer with ID not in use {}"
+
+        event CameraInvalidIncref(bufId: U32) \
+            severity warning low \
+            format "Attempting to incref on buffer with ID not in use {}"
+
+        event CameraInvalidDecref(bufId: U32) \
+            severity warning low \
+            format "Attempting to decref on buffer with ID not in use {}"
 
         @ Camera frame rate
         param FRAME_RATE: U32 default 30

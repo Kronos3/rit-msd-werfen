@@ -38,18 +38,15 @@ module Rpi {
         @ Telemetry port
         telemetry port Tlm
 
-        @ A port for getting parameter values
-        param get port ParamGet
-
-        @ A port for setting parameter values
-        param set port ParamSet
-
         # -----------------------------
         # Commands
         # -----------------------------
 
         @ Stream video over UDP connection
-        async command OPEN()
+        async command OPEN(
+            address: string size 32 @< Address to UDP listener
+            portN: U16 @< Port number
+            )
 
         enum DisplayLocation {
             NONE @< Dump the frames immediately
@@ -74,12 +71,6 @@ module Rpi {
         event InvalidFrameBuffer(frameId: U32) \
             severity warning low \
             format "Received an invalid frame id {}"
-
-        @ Hostname to stream UDP packets to
-        param HOSTNAME: string size 32
-
-        @ Port to stream UDP packets to
-        param PORT: U16 default 8000
 
         @ Frame output rate
         telemetry FramesPerSecond: U32 format "{} fps"

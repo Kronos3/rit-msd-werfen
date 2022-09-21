@@ -6,21 +6,26 @@
 
 namespace Rpi
 {
-    class CamFrame : public CamFrameBase
+    class CamFrame : private CamFrameBase
     {
     public:
-        CamFrame(): CamFrameBase() {} //!< Default constructor
-        CamFrame(const CamFrameBase& src): CamFrameBase(src){} //!< reference copy constructor
+        enum {
+            SERIALIZED_SIZE = CamFrameBase::SERIALIZED_SIZE
+        };
+
+        CamFrame();
+        CamFrame(U32 bufId, U8* data,
+                 U32 bufSize,
+                 U32 width, U32 height,
+                 U32 stride, U64 timestamp, I32 plane);
+        CamFrame(const CamFrameBase& src);
 
         U8* getData() const;
-        void getData(const U8* data);
-
+        U32 getBufSize() const;
+        U32 getBufId() const;
         StreamInfo getInfo() const;
-        void setInfo(const StreamInfo& info);
-
-    private:
-        U64 getdata() const; //!< get member data
-        void setdata(U64 val); //!< set member data
+        U64 getTimestamp() const;
+        I32 getPlane() const;
     };
 }
 

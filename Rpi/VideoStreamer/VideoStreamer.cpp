@@ -6,8 +6,6 @@
 #include <preview/preview.hpp>
 #include <functional>
 
-#include <opencv2/imgcodecs.hpp>
-
 namespace Rpi
 {
     VideoStreamer::VideoStreamer(const char* compName)
@@ -95,25 +93,25 @@ namespace Rpi
 
             // Once the encoder is finished it will send the data to the network
             // This will get written out as a UDP stream
-            incref_out(0, frame.getbufId());
-            encoding_buffers.push(frame.getbufId());
-            m_encoder->EncodeBuffer(frame.getplane(),
-                                    frame.getbufSize(),
+            incref_out(0, frame.getBufId());
+            encoding_buffers.push(frame.getBufId());
+            m_encoder->EncodeBuffer(frame.getPlane(),
+                                    frame.getBufSize(),
                                     frame.getData(),
                                     frame.getInfo(),
-                                    frame.gettimestamp());
+                                    (I64)frame.getTimestamp());
 //                                    (I64)frame->buffer->metadata().timestamp / 1000);
         }
 
         if ((m_displaying == VideoStreamer_DisplayLocation::BOTH ||
             m_displaying == VideoStreamer_DisplayLocation::HDMI) && m_preview)
         {
-            incref_out(0, frame.getbufId());
+            incref_out(0, frame.getBufId());
             m_preview->Show(frame);
 
             if (is_showing)
             {
-                decref_out(0, m_showing.getbufId());
+                decref_out(0, m_showing.getBufId());
             }
 
             is_showing = true;
@@ -161,21 +159,15 @@ namespace Rpi
         }
 #endif
 
-        decref_out(0, frame.getbufId());
+        decref_out(0, frame.getBufId());
     }
 
-    void VideoStreamer::OPEN_cmdHandler(U32 opCode, U32 cmdSeq)
+    void VideoStreamer::OPEN_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg& address, U16 portN)
     {
         // Don't delete this until nobody needs it anymore
         Output* old = m_net;
 
-        Fw::ParamValid valid;
-        Fw::ParamString hostname = paramGet_HOSTNAME(valid);
-        FW_ASSERT(valid == Fw::ParamValid::VALID || valid == Fw::ParamValid::DEFAULT, valid.e);
-
-        U16 port = paramGet_PORT(valid);
-        FW_ASSERT(valid == Fw::ParamValid::VALID || valid == Fw::ParamValid::DEFAULT, valid.e);
-        m_net = new NetOutput(hostname.toChar(), port);
+        m_net = new NetOutput(address.toChar(), portN);
         if (m_encoder)
         {
             // Set up an existing encoder to write to a different net
@@ -218,7 +210,7 @@ namespace Rpi
     {
         if (is_showing)
         {
-            decref_out(0, m_showing.getbufId());
+            decref_out(0, m_showing.getBufId());
             m_showing = {};
             is_showing = false;
         }

@@ -78,8 +78,8 @@ H264Encoder::H264Encoder(StreamInfo const &info)
 
     fmt = {};
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    fmt.fmt.pix_mp.width = CAMERA_RAW_WIDTH;
-    fmt.fmt.pix_mp.height = CAMERA_RAW_HEIGHT;
+    fmt.fmt.pix_mp.width = info.width;
+    fmt.fmt.pix_mp.height = info.height;
     fmt.fmt.pix_mp.pixelformat = V4L2_PIX_FMT_H264;
     fmt.fmt.pix_mp.field = V4L2_FIELD_ANY;
     fmt.fmt.pix_mp.colorspace = V4L2_COLORSPACE_DEFAULT;
