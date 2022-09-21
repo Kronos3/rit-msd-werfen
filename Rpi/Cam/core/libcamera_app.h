@@ -33,7 +33,7 @@
 #include <core/completed_request.hpp>
 //#include <core/post_processor.hpp>
 #include <core/stream_info.hpp>
-#include <CameraConfig.h>
+#include <CameraConfig.hpp>
 
 namespace controls = libcamera::controls;
 namespace properties = libcamera::properties;

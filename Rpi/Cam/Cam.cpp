@@ -9,18 +9,17 @@ namespace Rpi
             : CamComponentBase(compName),
               m_camera(new LibcameraApp()),
               tlm_dropped(0),
-              tlm_captured(0),
-              m_buffers{{0}, {1}, {2}, {3}}
+              tlm_captured(0)
     {
     }
 
-    void Cam::init(NATIVE_INT_TYPE instance,
-                       I32 width, I32 height,
-                       I32 rotation,
-                       bool vflip, bool hflip)
+    void Cam::init(NATIVE_INT_TYPE instance)
     {
         CamComponentBase::init(instance);
+    }
 
+    void Cam::configure(I32 width, I32 height, I32 rotation, bool vflip, bool hflip)
+    {
         for (auto& buffer : m_buffers)
         {
             buffer.register_callback([this](CompletedRequest* cr) { m_camera->queueRequest(cr); });
@@ -30,6 +29,8 @@ namespace Rpi
         m_camera->ConfigureCameraStream(width, height, rotation,
                                         hflip, vflip);
     }
+
+
 
     Cam::~Cam()
     {
@@ -83,13 +84,13 @@ namespace Rpi
     CamBuffer* Cam::get_buffer()
     {
         m_buffer_mutex.lock();
-        for (auto &m_buffer : m_buffers)
+        for (auto &buf : m_buffers)
         {
-            if (!m_buffer.in_use())
+            if (!buf.in_use())
             {
-                m_buffer.incref();
+                buf.incref();
                 m_buffer_mutex.unlock();
-                return &m_buffer;
+                return &buf;
             }
         }
 
@@ -189,5 +190,56 @@ namespace Rpi
         log_ACTIVITY_LO_CameraConfiguring();
         m_camera->ConfigureCamera(config);
 
+    }
+
+    bool Cam::frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, CamFrame &frame)
+    {
+        FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
+        const auto& buf = m_buffers[frameId];
+
+        if (!buf.in_use())
+        {
+            log_WARNING_LO_CameraInvalidGet(frameId);
+            return false;
+        }
+
+        frame = CamFrame(
+                buf.id, buf.span.data(),
+                buf.span.size(),
+                buf.info.width, buf.info.height,
+                buf.info.stride,
+                buf.buffer->metadata().timestamp / 1000,
+                buf.buffer->planes()[0].fd.get()
+                );
+
+        return true;
+    }
+
+    void Cam::incref_handler(NATIVE_INT_TYPE portNum, U32 frameId)
+    {
+        FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
+
+        auto& buf = m_buffers[frameId];
+        if (!buf.in_use())
+        {
+            log_WARNING_LO_CameraInvalidIncref(frameId);
+            return;
+        }
+
+        buf.incref();
+    }
+
+    void Cam::decref_handler(NATIVE_INT_TYPE portNum, U32 frameId)
+    {
+        FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
+
+        auto& buf = m_buffers[frameId];
+        if (!buf.in_use())
+        {
+            log_WARNING_LO_CameraInvalidDecref(frameId);
+            return;
+        }
+
+        buf.decref();
     }
 }

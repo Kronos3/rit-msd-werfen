@@ -27,18 +27,18 @@ class DrmPreview : public Preview
 public:
     DrmPreview();
 
-    ~DrmPreview();
+    ~DrmPreview() override;
 
     // Display the buffer. You get given the fd back in the BufferDoneCallback
     // once its available for re-use.
-    virtual void Show(const Rpi::CamFrame &frame) override;
+    void Show(const Rpi::CamFrame &frame) override;
 
     // Reset the preview window, clearing the current buffers and being ready to
     // show new ones.
-    virtual void Reset() override;
+    void Reset() override;
 
     // Return the maximum image size allowed.
-    virtual void MaxImageSize(unsigned int &w, unsigned int &h) const override
+    void MaxImageSize(unsigned int &w, unsigned int &h) const override
     {
         w = max_image_width_;
         h = max_image_height_;
@@ -383,9 +383,9 @@ void DrmPreview::makeBuffer(int fd, size_t size, StreamInfo const &info, Buffer 
 
 void DrmPreview::Show(const Rpi::CamFrame &frame)
 {
-    I32 fd = frame.getplane();
+    I32 fd = frame.getPlane();
     auto info = frame.getInfo();
-    auto span_size = frame.getbufSize();
+    auto span_size = frame.getBufSize();
 
     Buffer &buffer = buffers_[fd];
     if (buffer.fd == -1)

@@ -6,7 +6,6 @@ module Rpi {
 
     topology Rpi {
         # Core components
-        instance blockDrv
         instance systemTime
         instance eventLogger
         instance cmdDisp

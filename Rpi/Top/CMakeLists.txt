@@ -9,6 +9,7 @@
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/RpiTopologyDefs.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/main.cc"
         )
 # Note: supply non-explicit dependencies here
@@ -34,8 +35,8 @@ target_link_libraries(rpi PUBLIC
         pthread
 
         # Work through dependencies
-        ${OPENCV_LIBRARIES}
-        ${OPENCV_LIBRARIES}
+#        ${OPENCV_LIBRARIES}
+#        ${OPENCV_LIBRARIES}
 #        opencv_imgcodecs
 #        opencv_imgproc
 #        opencv_calib3d

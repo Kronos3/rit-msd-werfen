@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(VO-CMPE460)
+project(werfen)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -23,9 +23,6 @@ elseif(TSAN_BUILD)
     add_compile_options(-fsanitize=thread -fno-omit-frame-pointer -O1)
     add_link_options(-fsanitize=thread)
 endif()
-
-#find_package(OpenCV REQUIRED)
-#include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(STAGING_DIR ${CMAKE_CURRENT_LIST_DIR}/staging)
 link_directories(${STAGING_DIR}/lib/)
@@ -59,12 +56,7 @@ set(FPRIME_INSTALL_DEST ${PROJECT_SOURCE_DIR})
 set(FPRIME_LIBRARY_LOCATIONS
         ${FPRIME_FRAMEWORK_PATH}
         ${PROJECT_SOURCE_DIR}
-#        ${PROJECT_SOURCE_DIR}/Kernel/${RPI_PLATFORM}
         )
-
-#include_directories(
-#        ${CMAKE_BINARY_DIR}/Kernel/${RPI_PLATFORM}
-#)
 
 ##
 # FPrime instantiation
@@ -74,9 +66,7 @@ include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake)
 
 # Set the framework libraries provided by FPrime
 include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake)
+
+# libcamera requires C++17
 set(CMAKE_CXX_STANDARD 17)
-
-#add_subdirectory(Kernel)    # Deployment specific drivers
 add_subdirectory(Rpi)   # FSW
-
-cmake_policy(SET CMP0079 NEW)

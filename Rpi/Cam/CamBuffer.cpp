@@ -6,11 +6,9 @@
 namespace Rpi
 {
     Rpi::CamBuffer::CamBuffer(U32 id_)
-    : id(id_), request(nullptr),
-    buffer(nullptr),
-    return_buffer(nullptr),
-    ref_count(0)
+    : CamBuffer()
     {
+        this->id = id_;
     }
 
     void CamBuffer::incref()
@@ -54,5 +52,10 @@ namespace Rpi
     void CamBuffer::register_callback(std::function<void(CompletedRequest*)> return_cb)
     {
         return_buffer = std::move(return_cb);
+    }
+
+    CamBuffer::CamBuffer()
+    : id(0), request(nullptr), buffer(nullptr), ref_count(0)
+    {
     }
 }

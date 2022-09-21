@@ -1,6 +1,5 @@
-#include <string.h>
-
-#include "oled.h"
+#include <cstring>
+#include <Rpi/Display/oled.hpp>
 
 namespace Rpi
 {
