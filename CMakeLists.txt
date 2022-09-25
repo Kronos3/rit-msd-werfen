@@ -33,12 +33,6 @@ include_directories(
         ${STAGING_DIR}/include/opencv4
 )
 
-#add_compile_options(-isystem /usr/include)
-
-if (RPI_PLATFORM EQUAL "bare_metal")
-    add_subdirectory(circle)
-endif()
-
 add_compile_options(-pipe)
 
 # Override default FPrime configuration

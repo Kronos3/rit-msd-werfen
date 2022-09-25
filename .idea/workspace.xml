@@ -3,240 +3,32 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="CMakePresetLoader">{
-  &quot;useNewFormat&quot;: true
-}</component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="VO-CMPE460" targetName="Fw_Tlm_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_ActiveTextLogger" />
-      <config projectName="VO-CMPE460" targetName="Svc_PolyIf" />
-      <config projectName="VO-CMPE460" targetName="Svc_CmdDispatcher" />
-      <config projectName="VO-CMPE460" targetName="Fw_Tlm" />
-      <config projectName="VO-CMPE460" targetName="Svc_BufferManager" />
-      <config projectName="VO-CMPE460" targetName="Svc_Seq_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Obj" />
-      <config projectName="VO-CMPE460" targetName="Svc_FatalHandler_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_RateGroupDriver" />
-      <config projectName="VO-CMPE460" targetName="Svc_WatchDog_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_GroundInterface_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_GenericHub_impl" />
-      <config projectName="VO-CMPE460" targetName="rpi_impl" />
-      <config projectName="VO-CMPE460" targetName="Rpi_Display" />
-      <config projectName="VO-CMPE460" targetName="Svc_StaticMemory" />
-      <config projectName="VO-CMPE460" targetName="Fw_Buffer" />
-      <config projectName="VO-CMPE460" targetName="Svc_ActiveRateGroup_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_AssertFatalAdapter" />
-      <config projectName="VO-CMPE460" targetName="Rpi_FramePipe" />
-      <config projectName="VO-CMPE460" targetName="Svc_SystemResources" />
-      <config projectName="VO-CMPE460" targetName="Utils_Hash_impl" />
-      <config projectName="VO-CMPE460" targetName="Utils_Types_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_GpioDriverPorts_impl" />
-      <config projectName="VO-CMPE460" targetName="Rpi_Display_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_ActiveRateGroup" />
-      <config projectName="VO-CMPE460" targetName="Svc_SystemResources_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_ByteStreamDriverModel_impl" />
-      <config projectName="VO-CMPE460" targetName="Utils_Types" />
-      <config projectName="VO-CMPE460" targetName="Svc_Ping_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_GenericRepeater_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Seq" />
-      <config projectName="VO-CMPE460" targetName="Drv_Udp_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_PassiveConsoleTextLogger_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_PassiveConsoleTextLogger" />
-      <config projectName="VO-CMPE460" targetName="Svc_StaticMemory_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_ComLogger_impl" />
-      <config projectName="VO-CMPE460" targetName="Rpi_Cam_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Fatal_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_TlmChan_impl" />
-      <config projectName="VO-CMPE460" targetName="codegen" />
-      <config projectName="VO-CMPE460" targetName="Svc_Framer_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Prm" />
-      <config projectName="VO-CMPE460" targetName="Drv_SerialDriverPorts" />
-      <config projectName="VO-CMPE460" targetName="Fw_Cmd_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_PrmDb_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_GenericRepeater" />
-      <config projectName="VO-CMPE460" targetName="Svc_Sched_impl" />
-      <config projectName="VO-CMPE460" targetName="Rpi_VideoStreamer_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxGpioDriver_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_I2cDriverPorts_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_BufferLogger" />
-      <config projectName="VO-CMPE460" targetName="Utils" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxGpioDriver" />
-      <config projectName="VO-CMPE460" targetName="Drv_Udp" />
-      <config projectName="VO-CMPE460" targetName="Drv_BlockDriver_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxI2cDriver" />
-      <config projectName="VO-CMPE460" targetName="Svc_Sched" />
-      <config projectName="VO-CMPE460" targetName="Svc_ComSplitter" />
-      <config projectName="VO-CMPE460" targetName="Fw_Logger" />
-      <config projectName="VO-CMPE460" targetName="Svc_ComSplitter_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_LinuxTime" />
-      <config projectName="VO-CMPE460" targetName="Drv_TcpServer" />
-      <config projectName="VO-CMPE460" targetName="Drv_BlockDriver" />
-      <config projectName="VO-CMPE460" targetName="Drv_SpiDriverPorts_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_SerializableFile" />
-      <config projectName="VO-CMPE460" targetName="Svc_CmdSequencer_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_ComLogger" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileUplink_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_PolyIf_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Time_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_SpiDriverPorts" />
-      <config projectName="VO-CMPE460" targetName="Fw_FilePacket" />
-      <config projectName="VO-CMPE460" targetName="Svc_BufferManager_impl" />
-      <config projectName="VO-CMPE460" targetName="Utils_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxSpiDriver" />
-      <config projectName="VO-CMPE460" targetName="Fw_Port" />
-      <config projectName="VO-CMPE460" targetName="noop" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileDownlinkPorts_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_FramingProtocol" />
-      <config projectName="VO-CMPE460" targetName="Svc_Deframer" />
-      <config projectName="VO-CMPE460" targetName="Utils_Hash" />
-      <config projectName="VO-CMPE460" targetName="Fw_Comp_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Ping" />
-      <config projectName="VO-CMPE460" targetName="Svc_BufferLogger_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_GroundInterface" />
-      <config projectName="VO-CMPE460" targetName="Drv_DataTypes" />
-      <config projectName="VO-CMPE460" targetName="Drv_Ip" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileDownlink" />
-      <config projectName="VO-CMPE460" targetName="Svc_PolyDb_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Test" />
-      <config projectName="VO-CMPE460" targetName="Svc_LinuxTime_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxSpiDriver_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Cfg_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_ActiveLogger_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Framer" />
-      <config projectName="VO-CMPE460" targetName="version" />
-      <config projectName="VO-CMPE460" targetName="Svc_GenericHub" />
-      <config projectName="VO-CMPE460" targetName="Fw_Com" />
-      <config projectName="VO-CMPE460" targetName="Fw_SerializableFile_impl" />
-      <config projectName="VO-CMPE460" targetName="Os_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileDownlinkPorts" />
-      <config projectName="VO-CMPE460" targetName="Svc_TlmChan" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxSerialDriver_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Cycle_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_LinuxTimer" />
-      <config projectName="VO-CMPE460" targetName="Svc_LinuxTimer_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxSerialDriver" />
-      <config projectName="VO-CMPE460" targetName="Fw_Log_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileDownlink_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_CmdDispatcher_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_LinuxI2cDriver_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileUplink" />
-      <config projectName="VO-CMPE460" targetName="Svc_Fatal" />
-      <config projectName="VO-CMPE460" targetName="rpi" />
-      <config projectName="VO-CMPE460" targetName="Svc_ActiveTextLogger_impl" />
-      <config projectName="VO-CMPE460" targetName="CFDP_Checksum" />
-      <config projectName="VO-CMPE460" targetName="Drv_I2cDriverPorts" />
-      <config projectName="VO-CMPE460" targetName="Rpi_FramePipe_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_TcpClient_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_WatchDog" />
-      <config projectName="VO-CMPE460" targetName="Drv_SerialDriverPorts_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_CmdSequencer" />
-      <config projectName="VO-CMPE460" targetName="Svc_Health" />
-      <config projectName="VO-CMPE460" targetName="Svc_PrmDb" />
-      <config projectName="VO-CMPE460" targetName="Svc_AssertFatalAdapter_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_TlmPacketizer_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileManager_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_DataTypes_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Obj_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Time" />
-      <config projectName="VO-CMPE460" targetName="Svc_FileManager" />
-      <config projectName="VO-CMPE460" targetName="Svc_ActiveLogger" />
-      <config projectName="VO-CMPE460" targetName="Svc_FatalHandler" />
-      <config projectName="VO-CMPE460" targetName="Svc_Health_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Com_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_FilePacket_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Types_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_TcpClient" />
-      <config projectName="VO-CMPE460" targetName="Fw_Test_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Log" />
-      <config projectName="VO-CMPE460" targetName="Os" />
-      <config projectName="VO-CMPE460" targetName="Fw_Cmd" />
-      <config projectName="VO-CMPE460" targetName="Fw_CompQueued_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Prm_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_GpioDriverPorts" />
-      <config projectName="VO-CMPE460" targetName="Fw_Port_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Deframer_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_RateGroupDriver_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Time" />
-      <config projectName="VO-CMPE460" targetName="Drv_ByteStreamDriverModel" />
-      <config projectName="VO-CMPE460" targetName="Svc_PolyDb" />
-      <config projectName="VO-CMPE460" targetName="Svc_TlmPacketizer" />
-      <config projectName="VO-CMPE460" targetName="Rpi_VideoStreamer" />
-      <config projectName="VO-CMPE460" targetName="CFDP_Checksum_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_UartFramer_impl" />
-      <config projectName="VO-CMPE460" targetName="Svc_Cycle" />
-      <config projectName="VO-CMPE460" targetName="Rpi_Cam" />
-      <config projectName="VO-CMPE460" targetName="Fw_CompQueued" />
-      <config projectName="VO-CMPE460" targetName="Svc_FramingProtocol_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Cfg" />
-      <config projectName="VO-CMPE460" targetName="Fw_Buffer_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Time_impl" />
-      <config projectName="VO-CMPE460" targetName="Drv_TcpServer_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Logger_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Types" />
-      <config projectName="VO-CMPE460" targetName="Drv_Ip_impl" />
-      <config projectName="VO-CMPE460" targetName="Fw_Comp" />
-      <config projectName="VO-CMPE460" targetName="Drv_UartFramer" />
-    </generated>
+    <generated />
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Linaro-10.2-glibc-2.31 aarch64" GENERATION_OPTIONS="-G Ninja" />
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="aarch64-linaro" GENERATION_OPTIONS="-G Ninja">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="PATH" value="/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/tumbar/.local/share/JetBrains/Toolbox/scripts:/home/tumbar/.local/bin" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfd62b93-bd3c-4d5e-aef1-bdf3b76d4335" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Rpi/Cam/CamFrame.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Rpi/Display/Display.fpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Rpi/Top/RpiTopologyDefs.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Rpi/Top/RpiTopologyDefs.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fprime" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
+    <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/msd-gem-5000.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/msd-gem-5000.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/VoCarCfg.h" beforeDir="false" afterPath="$PROJECT_DIR$/Cfg/VoCarCfg.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/Cam.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/Cam.fpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/Cam.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamBuffer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CamBuffer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamBuffer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CamBuffer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamFrame.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CamFrame.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CameraConfig.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CameraConfig.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Display/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/DisplayComponentAi.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/DisplayImpl.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Display/Display.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/DisplayImpl.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Display/Display.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/oled.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Display/oled.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/oled.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Display/oled.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/Components.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/dep/Components.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/RpiRTLinuxTopologyAppAi.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/dep/RpiRTLinuxTopologyAppAi.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/Topology.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/dep/Topology.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/instances.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/instances.fpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/main.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/topology.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/topology.fpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.fpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/preview/drm_preview.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/preview/drm_preview.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/cmake/opencv4/OpenCVConfig-version.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/cmake/opencv4/OpenCVConfig.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/cmake/opencv4/OpenCVModules-release.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/cmake/opencv4/OpenCVModules.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/libopencv_calib3d.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/libopencv_core.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/libopencv_features2d.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/libopencv_flann.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/libopencv_imgcodecs.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/libopencv_imgproc.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv/opencv4/3rdparty/libzlib.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,12 +38,11 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MacroExpansionManager">
-    <option name="directoryName" value="l2l9zcwm" />
+    <option name="directoryName" value="vczll6hz" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -259,32 +50,23 @@
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2022" />
-    <option name="minorVersion" value="2.3" />
+    <option name="minorVersion" value="2.2" />
   </component>
-  <component name="ProjectId" id="2EmZgEyL1jMaYzSfE9NVU1tlbsp" />
+  <component name="ProjectId" id="2FGM8FPyYFv6qp7wBaIbMsI7CGb" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/tumbar/git/msd-gem-5000",
-    "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "CMakeSettings"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Rpi/Top/dep" />
-    </key>
-  </component>
   <component name="RunManager" selected="CMake Application.rpi">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
@@ -1136,27 +918,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="text_reading" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="msd-gem-5000" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/prototyping" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/prototyping/text_reading.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="CMake Application.noop" />
       <item itemvalue="CMake Application.version" />
@@ -1327,28 +1088,18 @@
       <item itemvalue="CMake Application.rpi_impl" />
       <item itemvalue="CMake Application.Rpi_VideoStreamer" />
       <item itemvalue="CMake Application.Rpi_VideoStreamer_impl" />
-      <item itemvalue="Python.text_reading" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.text_reading" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bfd62b93-bd3c-4d5e-aef1-bdf3b76d4335" name="Changes" comment="" />
-      <created>1663202829318</created>
+      <changelist id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="" />
+      <created>1664113805660</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1663202829318</updated>
-      <workItem from="1663202833273" duration="3201000" />
-      <workItem from="1663784574519" duration="5900000" />
+      <updated>1664113805660</updated>
+      <workItem from="1664113807667" duration="982000" />
     </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
 </project>
