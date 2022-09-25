@@ -10,7 +10,177 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated />
+    <generated>
+      <config projectName="werfen" targetName="codegen" />
+      <config projectName="werfen" targetName="Svc_Seq" />
+      <config projectName="werfen" targetName="Fw_Comp_impl" />
+      <config projectName="werfen" targetName="Svc_Health_impl" />
+      <config projectName="werfen" targetName="Svc_SystemResources_impl" />
+      <config projectName="werfen" targetName="Fw_Port_impl" />
+      <config projectName="werfen" targetName="Drv_I2cDriverPorts_impl" />
+      <config projectName="werfen" targetName="Svc_Time" />
+      <config projectName="werfen" targetName="Fw_Time" />
+      <config projectName="werfen" targetName="Svc_GroundInterface" />
+      <config projectName="werfen" targetName="Drv_DataTypes" />
+      <config projectName="werfen" targetName="Drv_ByteStreamDriverModel_impl" />
+      <config projectName="werfen" targetName="Fw_FilePacket" />
+      <config projectName="werfen" targetName="Svc_AssertFatalAdapter_impl" />
+      <config projectName="werfen" targetName="Svc_Fatal_impl" />
+      <config projectName="werfen" targetName="Svc_BufferManager_impl" />
+      <config projectName="werfen" targetName="Svc_WatchDog" />
+      <config projectName="werfen" targetName="noop" />
+      <config projectName="werfen" targetName="Svc_ActiveRateGroup_impl" />
+      <config projectName="werfen" targetName="Fw_Obj_impl" />
+      <config projectName="werfen" targetName="Fw_Types" />
+      <config projectName="werfen" targetName="Svc_PolyIf_impl" />
+      <config projectName="werfen" targetName="Svc_ComSplitter_impl" />
+      <config projectName="werfen" targetName="Svc_Fatal" />
+      <config projectName="werfen" targetName="Svc_Time_impl" />
+      <config projectName="werfen" targetName="Svc_CmdDispatcher_impl" />
+      <config projectName="werfen" targetName="Drv_Udp" />
+      <config projectName="werfen" targetName="Drv_TcpServer" />
+      <config projectName="werfen" targetName="Svc_Framer_impl" />
+      <config projectName="werfen" targetName="Svc_GenericHub_impl" />
+      <config projectName="werfen" targetName="Svc_GenericRepeater" />
+      <config projectName="werfen" targetName="Drv_GpioDriverPorts" />
+      <config projectName="werfen" targetName="Fw_CompQueued" />
+      <config projectName="werfen" targetName="Svc_FileUplink_impl" />
+      <config projectName="werfen" targetName="Svc_Sched" />
+      <config projectName="werfen" targetName="Svc_PolyIf" />
+      <config projectName="werfen" targetName="Rpi_VideoStreamer" />
+      <config projectName="werfen" targetName="Drv_LinuxGpioDriver_impl" />
+      <config projectName="werfen" targetName="Fw_Tlm" />
+      <config projectName="werfen" targetName="Fw_Obj" />
+      <config projectName="werfen" targetName="Svc_LinuxTimer_impl" />
+      <config projectName="werfen" targetName="Svc_TlmPacketizer_impl" />
+      <config projectName="werfen" targetName="Fw_Logger_impl" />
+      <config projectName="werfen" targetName="version" />
+      <config projectName="werfen" targetName="Fw_Comp" />
+      <config projectName="werfen" targetName="Fw_SerializableFile_impl" />
+      <config projectName="werfen" targetName="Svc_CmdDispatcher" />
+      <config projectName="werfen" targetName="Svc_Cycle_impl" />
+      <config projectName="werfen" targetName="Svc_Seq_impl" />
+      <config projectName="werfen" targetName="Drv_Ip" />
+      <config projectName="werfen" targetName="Svc_GroundInterface_impl" />
+      <config projectName="werfen" targetName="Svc_FileDownlink" />
+      <config projectName="werfen" targetName="Rpi_Display" />
+      <config projectName="werfen" targetName="Drv_UartFramer" />
+      <config projectName="werfen" targetName="Rpi_Cam" />
+      <config projectName="werfen" targetName="Svc_FileDownlink_impl" />
+      <config projectName="werfen" targetName="Drv_TcpServer_impl" />
+      <config projectName="werfen" targetName="Fw_Log_impl" />
+      <config projectName="werfen" targetName="Svc_FatalHandler_impl" />
+      <config projectName="werfen" targetName="Svc_Health" />
+      <config projectName="werfen" targetName="Rpi_FramePipe" />
+      <config projectName="werfen" targetName="Svc_GenericRepeater_impl" />
+      <config projectName="werfen" targetName="Svc_FileDownlinkPorts" />
+      <config projectName="werfen" targetName="Svc_Cycle" />
+      <config projectName="werfen" targetName="Drv_ByteStreamDriverModel" />
+      <config projectName="werfen" targetName="Svc_FileManager_impl" />
+      <config projectName="werfen" targetName="Utils_Types_impl" />
+      <config projectName="werfen" targetName="CFDP_Checksum" />
+      <config projectName="werfen" targetName="Svc_PassiveConsoleTextLogger" />
+      <config projectName="werfen" targetName="Svc_TlmPacketizer" />
+      <config projectName="werfen" targetName="Os" />
+      <config projectName="werfen" targetName="Svc_CmdSequencer" />
+      <config projectName="werfen" targetName="Svc_AssertFatalAdapter" />
+      <config projectName="werfen" targetName="Drv_LinuxSerialDriver_impl" />
+      <config projectName="werfen" targetName="Svc_RateGroupDriver_impl" />
+      <config projectName="werfen" targetName="Rpi_Display_impl" />
+      <config projectName="werfen" targetName="rpi" />
+      <config projectName="werfen" targetName="Svc_SystemResources" />
+      <config projectName="werfen" targetName="Fw_Test_impl" />
+      <config projectName="werfen" targetName="Fw_Cmd" />
+      <config projectName="werfen" targetName="Svc_FatalHandler" />
+      <config projectName="werfen" targetName="Utils_Hash" />
+      <config projectName="werfen" targetName="Fw_CompQueued_impl" />
+      <config projectName="werfen" targetName="Drv_Ip_impl" />
+      <config projectName="werfen" targetName="Svc_ActiveLogger" />
+      <config projectName="werfen" targetName="Fw_Cmd_impl" />
+      <config projectName="werfen" targetName="Svc_PrmDb_impl" />
+      <config projectName="werfen" targetName="Fw_Types_impl" />
+      <config projectName="werfen" targetName="Svc_Sched_impl" />
+      <config projectName="werfen" targetName="Drv_I2cDriverPorts" />
+      <config projectName="werfen" targetName="Svc_ComLogger_impl" />
+      <config projectName="werfen" targetName="Fw_Log" />
+      <config projectName="werfen" targetName="Fw_Time_impl" />
+      <config projectName="werfen" targetName="Svc_FileManager" />
+      <config projectName="werfen" targetName="Drv_LinuxGpioDriver" />
+      <config projectName="werfen" targetName="Drv_TcpClient" />
+      <config projectName="werfen" targetName="Fw_Com_impl" />
+      <config projectName="werfen" targetName="Svc_ActiveTextLogger_impl" />
+      <config projectName="werfen" targetName="Svc_Deframer" />
+      <config projectName="werfen" targetName="Svc_FramingProtocol_impl" />
+      <config projectName="werfen" targetName="Svc_PolyDb" />
+      <config projectName="werfen" targetName="Fw_FilePacket_impl" />
+      <config projectName="werfen" targetName="Svc_Ping_impl" />
+      <config projectName="werfen" targetName="Fw_Buffer_impl" />
+      <config projectName="werfen" targetName="Utils_Types" />
+      <config projectName="werfen" targetName="Drv_SerialDriverPorts_impl" />
+      <config projectName="werfen" targetName="Svc_TlmChan_impl" />
+      <config projectName="werfen" targetName="Fw_Prm_impl" />
+      <config projectName="werfen" targetName="Svc_Ping" />
+      <config projectName="werfen" targetName="Utils_impl" />
+      <config projectName="werfen" targetName="Utils_Hash_impl" />
+      <config projectName="werfen" targetName="Drv_UartFramer_impl" />
+      <config projectName="werfen" targetName="Svc_BufferLogger_impl" />
+      <config projectName="werfen" targetName="Fw_Cfg" />
+      <config projectName="werfen" targetName="Drv_SpiDriverPorts" />
+      <config projectName="werfen" targetName="Drv_LinuxSpiDriver" />
+      <config projectName="werfen" targetName="Svc_TlmChan" />
+      <config projectName="werfen" targetName="CFDP_Checksum_impl" />
+      <config projectName="werfen" targetName="Svc_ComLogger" />
+      <config projectName="werfen" targetName="Svc_Deframer_impl" />
+      <config projectName="werfen" targetName="Drv_SerialDriverPorts" />
+      <config projectName="werfen" targetName="Os_impl" />
+      <config projectName="werfen" targetName="Fw_Cfg_impl" />
+      <config projectName="werfen" targetName="Svc_BufferLogger" />
+      <config projectName="werfen" targetName="Rpi_Cam_impl" />
+      <config projectName="werfen" targetName="Drv_LinuxSpiDriver_impl" />
+      <config projectName="werfen" targetName="Svc_FramingProtocol" />
+      <config projectName="werfen" targetName="Svc_RateGroupDriver" />
+      <config projectName="werfen" targetName="Svc_StaticMemory" />
+      <config projectName="werfen" targetName="Svc_ActiveLogger_impl" />
+      <config projectName="werfen" targetName="Svc_LinuxTimer" />
+      <config projectName="werfen" targetName="Svc_Framer" />
+      <config projectName="werfen" targetName="Svc_WatchDog_impl" />
+      <config projectName="werfen" targetName="rpi_impl" />
+      <config projectName="werfen" targetName="Drv_TcpClient_impl" />
+      <config projectName="werfen" targetName="Fw_Com" />
+      <config projectName="werfen" targetName="Fw_Test" />
+      <config projectName="werfen" targetName="Svc_ActiveTextLogger" />
+      <config projectName="werfen" targetName="Fw_Buffer" />
+      <config projectName="werfen" targetName="Svc_BufferManager" />
+      <config projectName="werfen" targetName="Svc_PrmDb" />
+      <config projectName="werfen" targetName="Svc_FileDownlinkPorts_impl" />
+      <config projectName="werfen" targetName="Svc_LinuxTime_impl" />
+      <config projectName="werfen" targetName="Drv_DataTypes_impl" />
+      <config projectName="werfen" targetName="Drv_Udp_impl" />
+      <config projectName="werfen" targetName="Drv_BlockDriver" />
+      <config projectName="werfen" targetName="Svc_PassiveConsoleTextLogger_impl" />
+      <config projectName="werfen" targetName="Drv_GpioDriverPorts_impl" />
+      <config projectName="werfen" targetName="Fw_Logger" />
+      <config projectName="werfen" targetName="Svc_ComSplitter" />
+      <config projectName="werfen" targetName="Fw_Tlm_impl" />
+      <config projectName="werfen" targetName="Svc_PolyDb_impl" />
+      <config projectName="werfen" targetName="Fw_Port" />
+      <config projectName="werfen" targetName="Svc_LinuxTime" />
+      <config projectName="werfen" targetName="Drv_LinuxI2cDriver_impl" />
+      <config projectName="werfen" targetName="Drv_BlockDriver_impl" />
+      <config projectName="werfen" targetName="Drv_SpiDriverPorts_impl" />
+      <config projectName="werfen" targetName="Fw_SerializableFile" />
+      <config projectName="werfen" targetName="Svc_CmdSequencer_impl" />
+      <config projectName="werfen" targetName="Svc_StaticMemory_impl" />
+      <config projectName="werfen" targetName="Svc_ActiveRateGroup" />
+      <config projectName="werfen" targetName="Rpi_FramePipe_impl" />
+      <config projectName="werfen" targetName="Svc_FileUplink" />
+      <config projectName="werfen" targetName="Drv_LinuxI2cDriver" />
+      <config projectName="werfen" targetName="Fw_Prm" />
+      <config projectName="werfen" targetName="Svc_GenericHub" />
+      <config projectName="werfen" targetName="Rpi_VideoStreamer_impl" />
+      <config projectName="werfen" targetName="Drv_LinuxSerialDriver" />
+      <config projectName="werfen" targetName="Utils" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -25,10 +195,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/msd-gem-5000.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/msd-gem-5000.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cfg/VoCarCfg.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamCfg.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CamCfg.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/FramePipe/FramePipeComponentAi.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Top/instances.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/instances.fpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Top/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/main.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Top/topology.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/topology.fpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +213,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -1098,7 +1274,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1664113805660</updated>
-      <workItem from="1664113807667" duration="982000" />
+      <workItem from="1664113807667" duration="2535000" />
     </task>
     <servers />
   </component>

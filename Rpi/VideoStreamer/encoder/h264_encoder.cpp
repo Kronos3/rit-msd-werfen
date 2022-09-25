@@ -18,7 +18,6 @@
 #include <cstring>
 
 #include "h264_encoder.hpp"
-#include "VoCarCfg.h"
 
 static int xioctl(int fd, unsigned long ctl, void* arg)
 {
