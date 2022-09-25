@@ -8,6 +8,11 @@ SEQ_DIR := $(TOP)/seq
 BIN_DIR := $(BUILD)/seq
 SEQUENCES := $(wildcard $(SEQ_DIR)/*.seq)
 
+# Default SSH address for the pi
+ifndef RPI
+	RPI := rpi
+endif
+
 # Compiled sequences should sit in build/seq/*.bin
 COMPILED_SEQUENCES := $(addprefix $(BIN_DIR)/,$(notdir $(SEQUENCES:.seq=.bin)))
 
@@ -19,9 +24,12 @@ seqs: $(COMPILED_SEQUENCES)
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-sync: seqs
+fsw: $(FSW_BINARY)
+	scp $(FSW_BINARY) $(RPI):/fsw/fsw
+
+sync: fsw seqs
 	for seqbin in $(COMPILED_SEQUENCES) ; do \
-		scp $$seqbin rpi:/seq/$(basename $$seqbin) ; \
+		scp $$seqbin $(RPI):/seq/$(basename $$seqbin) ; \
 	done
 
 clean:
