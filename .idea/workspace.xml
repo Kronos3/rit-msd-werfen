@@ -204,6 +204,16 @@
       <change beforePath="$PROJECT_DIR$/Rpi/Top/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/main.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/Top/topology.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/topology.fpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/chess.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/contour.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/pose_calibration.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/quad.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/race.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/race_test.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/report.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/undistort.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/warp.seq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq/warp_calibration.seq" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1274,7 +1284,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1664113805660</updated>
-      <workItem from="1664113807667" duration="2535000" />
+      <workItem from="1664113807667" duration="2904000" />
     </task>
     <servers />
   </component>
