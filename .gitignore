@@ -52,6 +52,7 @@ Mkfile.old
 dkms.conf
 
 build/*
+build
 cmake-build-*/*
 mnt
 dict/
