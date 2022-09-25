@@ -42,32 +42,6 @@ module Rpi {
         stack size Default.stackSize \
         priority 101
 
-    instance cmdSeq: Svc.CmdSequencer base id 400 \
-        queue size Default.queueSize \
-        stack size Default.stackSize \
-        priority 100 \
-    {
-
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-          BUFFER_SIZE = 5*1024
-        };
-        """
-
-        phase Fpp.ToCpp.Phases.configComponents """
-            cmdSeq.allocateBuffer(
-                0,
-                Allocation::mallocator,
-                ConfigConstants::cmdSeq::BUFFER_SIZE
-            );
-        """
-
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-            cmdSeq.deallocateBuffer(Allocation::mallocator);
-        """
-
-    }
-
     instance fileManager: Svc.FileManager base id 500 \
         queue size 30 \
         stack size Default.stackSize \
@@ -187,6 +161,110 @@ module Rpi {
                       /* vflip */ false,
                       /* hflip */ false);
         """
+    }
+
+    instance cmdSeq: Svc.CmdSequencer base id 2000 \
+            queue size Default.queueSize \
+            stack size Default.stackSize \
+            priority 100 \
+    {
+
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+          BUFFER_SIZE = 5 * 1024
+        };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+            cmdSeq.allocateBuffer(
+                0,
+                Allocation::mallocator,
+                ConfigConstants::cmdSeq::BUFFER_SIZE
+            );
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+            cmdSeq.deallocateBuffer(Allocation::mallocator);
+        """
+
+    }
+
+    instance cmdSeq2: Svc.CmdSequencer base id 2100 \
+            queue size Default.queueSize \
+            stack size Default.stackSize \
+            priority 100 \
+    {
+
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+          BUFFER_SIZE = 5 * 1024
+        };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+            cmdSeq2.allocateBuffer(
+                0,
+                Allocation::mallocator,
+                ConfigConstants::cmdSeq2::BUFFER_SIZE
+            );
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+            cmdSeq2.deallocateBuffer(Allocation::mallocator);
+        """
+
+    }
+
+    instance cmdSeq3: Svc.CmdSequencer base id 2200 \
+            queue size Default.queueSize \
+            stack size Default.stackSize \
+            priority 100 \
+    {
+
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+          BUFFER_SIZE = 5 * 1024
+        };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+            cmdSeq3.allocateBuffer(
+                0,
+                Allocation::mallocator,
+                ConfigConstants::cmdSeq3::BUFFER_SIZE
+            );
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+            cmdSeq3.deallocateBuffer(Allocation::mallocator);
+        """
+
+    }
+
+    instance cmdSeq4: Svc.CmdSequencer base id 2300 \
+            queue size Default.queueSize \
+            stack size Default.stackSize \
+            priority 100 \
+    {
+
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+          BUFFER_SIZE = 5 * 1024
+        };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+            cmdSeq4.allocateBuffer(
+                0,
+                Allocation::mallocator,
+                ConfigConstants::cmdSeq4::BUFFER_SIZE
+            );
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+            cmdSeq4.deallocateBuffer(Allocation::mallocator);
+        """
+
     }
 
     instance framePipe: VideoStreamer base id 6100 \

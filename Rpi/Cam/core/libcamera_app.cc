@@ -7,11 +7,10 @@
 
 //#include "preview/preview.hpp"
 
-#include "core/frame_info.hpp"
-#include "libcamera_app.h"
-#include "Rpi/VideoStreamer/preview/preview.hpp"
-#include "VoCarCfg.h"
-//#include "core/options.hpp"
+#include <Rpi/Cam/core/frame_info.hpp>
+#include <Rpi/Cam/core/libcamera_app.h>
+#include <Rpi/VideoStreamer/preview/preview.hpp>
+#include <Rpi/Cam/CamCfg.h>
 
 #include <fcntl.h>
 
@@ -131,7 +130,7 @@ namespace Rpi
         if (vflip)
             configuration_->transform = libcamera::Transform::VFlip * configuration_->transform;
 
-        configuration_->at(0).bufferCount = CAMERA_LIBCAMERA_BUFFER_N;
+        configuration_->at(0).bufferCount = CAMERA_BUFFER_N;
 
         setupCapture();
 
