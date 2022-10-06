@@ -1,5 +1,5 @@
-import os
 from pathlib import Path
+import sys
 
 import pytesseract
 import cv2
@@ -20,27 +20,36 @@ def erode(img):
 
 
 def blur(img):
-    kernel = np.ones((5, 5), np.float32) / 25
-    img = cv2.filter2D(img, -1, kernel)
-    img = cv2.filter2D(img, -1, kernel)
-    return cv2.GaussianBlur(img, (5, 5), 2)
+    sharpening_kernel = np.array([[0, -1, 0],
+                                  [-1, 5, -1],
+                                  [0, -1, 0]])
+    blur_kernel = np.ones((5, 5)) / 25
+    img = cv2.filter2D(img, -1, blur_kernel)
+    # img = cv2.filter2D(img, -1, sharpening_kernel)
+    # img = cv2.filter2D(img, -1, sharpening_kernel)
+    # img = cv2.filter2D(img, -1, kernel)
+    # img = cv2.filter2D(img, -1, kernel)
+    # return cv2.GaussianBlur(img, (5, 5), 2)
+    return img
 
 
 def threshold(img):
     # return cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 99, 4)
-    ret, thresh1 = cv2.threshold(img, 146, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    ret, thresh1 = cv2.threshold(
+        img, 146, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     print("Thresholding @%s" % ret)
     return thresh1
 
 
 def main():
-    img = cv2.imread('werfen_text.png', cv2.IMREAD_GRAYSCALE)
-    img = cv2.resize(img, (600, 360))
+    img = cv2.imread(sys.argv[1], cv2.IMREAD_GRAYSCALE)
+    img_path = Path(sys.argv[1])
+    # img = cv2.resize(img, (600, 360))
 
     cv2.imshow('Input', img)
 
-    img = erode(img)
-    img = blur(img)
+    # img = erode(img)
+    # img = blur(img)
 
     img = threshold(img)
 
@@ -63,7 +72,12 @@ def main():
                             (0, 255, 0), 2)
 
     print(output)
+
+    img = cv2.putText(img, output, (0, 25), cv2.FONT_HERSHEY_SIMPLEX,
+                      1, (0, 0, 0), 2, cv2.LINE_AA)
+
     cv2.imshow('Result', img)
+    cv2.imwrite((img_path.parent / (img_path.stem + "_processed" + img_path.suffix)).as_posix(), img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
