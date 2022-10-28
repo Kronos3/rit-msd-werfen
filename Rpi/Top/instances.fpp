@@ -152,17 +152,6 @@ module Rpi {
 
     instance systemResources: Svc.SystemResources base id 1600
 
-    instance cam: Cam base id 6000 \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        cam.configure(/* width */ 1920,
-                      /* height */ 1080,
-                      /* rotation */ 0,
-                      /* vflip */ false,
-                      /* hflip */ false);
-        """
-    }
-
     instance cmdSeq: Svc.CmdSequencer base id 2000 \
             queue size Default.queueSize \
             stack size Default.stackSize \
@@ -265,6 +254,21 @@ module Rpi {
             cmdSeq4.deallocateBuffer(Allocation::mallocator);
         """
 
+    }
+
+    instance cam: Cam base id 6000 \
+        queue size Default.queueSize \
+        stack size Default.stackSize \
+        priority 140 \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        cam.configure(/* width */ 1920,
+                      /* height */ 1080,
+                      /* rotation */ 0,
+                      /* vflip */ false,
+                      /* hflip */ false,
+                      /* cameria id */ 0);
+        """
     }
 
     instance framePipe: VideoStreamer base id 6100 \

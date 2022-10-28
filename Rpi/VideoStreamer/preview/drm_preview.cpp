@@ -383,9 +383,9 @@ void DrmPreview::makeBuffer(int fd, size_t size, StreamInfo const &info, Buffer 
 
 void DrmPreview::Show(const Rpi::CamFrame &frame)
 {
-    I32 fd = frame.getPlane();
-    auto info = frame.getInfo();
-    auto span_size = frame.getBufSize();
+//    I32 fd = frame.getPlane();
+//    auto info = frame.getInfo();
+//    auto span_size = frame.getBufSize();
 
     Buffer &buffer = buffers_[fd];
     if (buffer.fd == -1)
@@ -398,7 +398,8 @@ void DrmPreview::Show(const Rpi::CamFrame &frame)
     else
         w = height_ * info.width / info.height, x_off = (width_ - w) / 2;
 
-    if (drmModeSetPlane(drmfd_, planeId_, crtcId_, buffer.fb_handle, 0, x_off + x_, y_off + y_, w, h, 0, 0,
+    if (drmModeSetPlane(drmfd_, planeId_, crtcId_, buffer.fb_handle, 0,
+                        x_off + x_, y_off + y_, w, h, 0, 0,
                         buffer.info.width << 16, buffer.info.height << 16))
         throw std::runtime_error("drmModeSetPlane failed: " + std::string(ERRSTR));
     last_fd_ = fd;

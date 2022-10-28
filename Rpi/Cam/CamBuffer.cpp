@@ -1,6 +1,4 @@
 #include "CamBuffer.hpp"
-
-#include <utility>
 #include "Assert.hpp"
 
 namespace Rpi
@@ -18,30 +16,8 @@ namespace Rpi
 
     void CamBuffer::decref()
     {
-        if (ref_count == 1)
-        {
-            // Free the frame buffer
-            clear();
-        }
-        else
-        {
-            ref_count--;
-        }
-    }
-
-    void CamBuffer::clear()
-    {
-        FW_ASSERT(ref_count == 1, ref_count);
-        FW_ASSERT(request);
-
-        // Returns the buffer back to the camera
-        return_buffer(request);
-
-        request = nullptr;
-        buffer = nullptr;
-        size_t s = 0;
-        span = libcamera::Span<U8>(nullptr, s);
-        ref_count = 0;
+        FW_ASSERT(ref_count >= 1, ref_count);
+        ref_count--;
     }
 
     bool CamBuffer::in_use() const
@@ -49,13 +25,8 @@ namespace Rpi
         return ref_count > 0;
     }
 
-    void CamBuffer::register_callback(std::function<void(CompletedRequest*)> return_cb)
-    {
-        return_buffer = std::move(return_cb);
-    }
-
     CamBuffer::CamBuffer()
-    : id(0), request(nullptr), buffer(nullptr), ref_count(0)
+    : id(0), ref_count(0)
     {
     }
 }

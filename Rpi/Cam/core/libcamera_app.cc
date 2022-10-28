@@ -5,11 +5,8 @@
  * libcamera_app.cpp - base class for libcamera apps.
  */
 
-//#include "preview/preview.hpp"
-
 #include <Rpi/Cam/core/frame_info.hpp>
 #include <Rpi/Cam/core/libcamera_app.h>
-#include <Rpi/VideoStreamer/preview/preview.hpp>
 #include <Rpi/Cam/CamCfg.h>
 
 #include <fcntl.h>
@@ -18,7 +15,6 @@
 #include <sys/ioctl.h>
 
 #include <linux/videodev2.h>
-//#include <preview/preview.hpp>
 #include <cstring>
 #include <Assert.hpp>
 
@@ -134,7 +130,7 @@ namespace Rpi
 
         setupCapture();
 
-        streams_["raw"] = configuration_->at(0).stream();
+        stream_ = std::make_unique<LibcameraApp::Stream>(configuration_->at(0).stream());
     }
 
     void LibcameraApp::Teardown()
@@ -153,9 +149,8 @@ namespace Rpi
 
         configuration_.reset();
 
-        frame_buffers_.clear();
-
-        streams_.clear();
+        frame_buffers_.pop();
+        stream_ = nullptr;
     }
 
     void LibcameraApp::ConfigureCamera(const CameraConfig& options)
@@ -230,7 +225,9 @@ namespace Rpi
         }
 
         if (camera_)
+        {
             camera_->requestCompleted.disconnect(this, &LibcameraApp::requestComplete);
+        }
 
         // An application might be holding a CompletedRequest, so queueRequest will get
         // called to delete it later, but we need to know not to try and re-queue it.
@@ -321,7 +318,7 @@ namespace Rpi
         controls_ = std::move(controls);
     }
 
-    StreamInfo LibcameraApp::GetStreamInfo(Stream const* stream) const
+    StreamInfo LibcameraApp::GetStreamInfo(Stream const* stream)
     {
         StreamConfiguration const &cfg = stream->configuration();
         StreamInfo info;

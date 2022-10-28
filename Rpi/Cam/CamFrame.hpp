@@ -1,31 +1,27 @@
 #ifndef WERFEN_CAMFRAME_HPP
 #define WERFEN_CAMFRAME_HPP
 
-#include <Rpi/Cam/CamFrameBaseSerializableAc.hpp>
-#include "core/stream_info.hpp"
+#include <Fw/Types/Serializable.hpp>
+#include <opencv2/core.hpp>
 
 namespace Rpi
 {
-    class CamFrame : private CamFrameBase
+    class CamFrame : private Fw::Serializable
     {
     public:
         enum {
-            SERIALIZED_SIZE = CamFrameBase::SERIALIZED_SIZE
+            SERIALIZED_SIZE = sizeof(cv::Mat*)
         };
 
         CamFrame();
-        CamFrame(U32 bufId, U8* data,
-                 U32 bufSize,
-                 U32 width, U32 height,
-                 U32 stride, U64 timestamp, I32 plane);
-        CamFrame(const CamFrameBase& src);
+        explicit CamFrame(cv::Mat* m);
+        Fw::SerializeStatus serialize(Fw::SerializeBufferBase &buffer) const override;
+        Fw::SerializeStatus deserialize(Fw::SerializeBufferBase &buffer) override;
 
-        U8* getData() const;
-        U32 getBufSize() const;
-        U32 getBufId() const;
-        StreamInfo getInfo() const;
-        U64 getTimestamp() const;
-        I32 getPlane() const;
+        cv::Mat* get() const;
+
+    private:
+        cv::Mat* m_mat;
     };
 }
 

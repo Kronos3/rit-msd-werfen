@@ -1,36 +1,40 @@
 
 #include "Cam.hpp"
-#include <core/libcamera_app.h>
+
+#include <opencv2/core.hpp>
+#include <opencv2/videoio.hpp>
 
 namespace Rpi
 {
+    struct CamImpl
+    {
+        cv::VideoCapture cam;
+    };
 
     Cam::Cam(const char* compName)
             : CamComponentBase(compName),
-              m_camera(new LibcameraApp()),
+              m_cam_id(0),
+              m_camera(new CamImpl),
+              m_streaming(false),
+              m_listener(-1),
               tlm_dropped(0),
-              tlm_captured(0)
+              tlm_captured(0),
+              tlm_failed(0)
     {
-    }
-
-    void Cam::init(NATIVE_INT_TYPE instance)
-    {
-        CamComponentBase::init(instance);
-    }
-
-    void Cam::configure(I32 width, I32 height, I32 rotation, bool vflip, bool hflip)
-    {
-        for (auto& buffer : m_buffers)
+        U32 id = 0;
+        for (auto& iter : m_buffers)
         {
-            buffer.register_callback([this](CompletedRequest* cr) { m_camera->queueRequest(cr); });
+            iter.id = id++;
         }
-
-        m_camera->OpenCamera(0);
-        m_camera->ConfigureCameraStream(width, height, rotation,
-                                        hflip, vflip);
     }
 
+    void Cam::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
+    {
+        CamComponentBase::init(queueDepth, instance);
 
+        Os::QueueString s("CAM-Q");
+        m_queue.create(s, 10, sizeof(CamState));
+    }
 
     Cam::~Cam()
     {
@@ -39,52 +43,69 @@ namespace Rpi
 
     void Cam::streaming_thread()
     {
+        CamState state = IDLE;
+        Os::Queue::QueueBlocking blocking = Os::Queue::QUEUE_BLOCKING;
+
+        U8 buf_prv[sizeof(CamState)];
+        Fw::ExternalSerializeBuffer buf(buf_prv, sizeof(CamState));
+
+        NATIVE_INT_TYPE priority;
+
         while (true)
         {
-            LibcameraApp::Msg msg = m_camera->Wait();
-            if (msg.type == LibcameraApp::MsgType::Quit)
+            // Wait for a change of state message
+            buf.resetSer();
+            Os::Queue::QueueStatus status = m_queue.receive(
+                    buf, priority, blocking);
+
+            if (Os::Queue::QUEUE_BLOCKING == blocking)
             {
-                break;
+                // Make sure we actually got a message from the queue
+                FW_ASSERT(Os::Queue::QUEUE_OK == status, status);
+            }
+            else
+            {
+                FW_ASSERT(Os::Queue::QUEUE_OK == status ||
+                          Os::Queue::QUEUE_NO_MORE_MSGS == status, status);
             }
 
-            FW_ASSERT(msg.type == LibcameraApp::MsgType::RequestComplete, (I32)msg.type);
-
-            tlm_captured++;
-            tlmWrite_FramesCapture(tlm_captured);
-
-            // Get an internal frame buffer
-            CamBuffer* buffer = get_buffer();
-            if (!buffer)
+            if (Os::Queue::QUEUE_OK == status)
             {
-                // Ran out of frame buffers
-                tlm_dropped++;
-                tlmWrite_FramesDropped(tlm_dropped);
-                m_camera->queueRequest(msg.payload);
-                continue;
+                // Read the message and set the state based on this state
+                U32 c_state;
+                buf.deserialize(c_state);
+                state = static_cast<CamState>(c_state);
             }
 
-            buffer->request = msg.payload;
-
-            // Get the DMA buffer
-            buffer->buffer = msg.payload->buffers[m_camera->RawStream()];
-            FW_ASSERT(buffer->buffer);
-
-            // Get the userland pointer
-            buffer->span = m_camera->Mmap(buffer->buffer)[0];
-            buffer->info = m_camera->GetStreamInfo(m_camera->RawStream());
-
-            // Send the frame to the requester on the same port
-            frame_out(0, buffer->id);
+            switch(state)
+            {
+                case IDLE:
+                    // Empty cycle, wait for another message
+                    blocking = Os::Queue::QUEUE_BLOCKING;
+                    break;
+                case STREAM:
+                    // Continuously stream the frames
+                    blocking = Os::Queue::QUEUE_NONBLOCKING;
+                    capture_frame();
+                    break;
+                case CAPTURE:
+                    // Capture a single image, then wait for more msgs
+                    blocking = Os::Queue::QUEUE_BLOCKING;
+                    capture_frame();
+                    state = IDLE;
+                    break;
+                case QUIT:
+                    return;
+                default:
+                    FW_ASSERT(0, state);
+            }
         }
-
-        log_ACTIVITY_LO_CameraStopping();
-        m_camera->StopCamera();
     }
 
     CamBuffer* Cam::get_buffer()
     {
         m_buffer_mutex.lock();
-        for (auto &buf : m_buffers)
+        for (auto &buf: m_buffers)
         {
             if (!buf.in_use())
             {
@@ -96,12 +117,6 @@ namespace Rpi
 
         m_buffer_mutex.unlock();
         return nullptr;
-    }
-
-    void Cam::CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &destination)
-    {
-        // Capture an image and save it to a file
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void Cam::get_config(CameraConfig &config)
@@ -116,22 +131,10 @@ namespace Rpi
                 config.vname = temp; \
             } \
         } while(0)
-#define GET_PARAM_ENUM(type, pname, vname) \
-        do { \
-            auto temp = paramGet_##pname(valid); \
-            if (valid == Fw::ParamValid::VALID) \
-            { \
-                config.vname = static_cast<type>(temp.e); \
-            } \
-        } while(0)
 
         GET_PARAM(U32, FRAME_RATE, frame_rate);
         GET_PARAM(U32, EXPOSURE_TIME, exposure_time);
         GET_PARAM(F32, GAIN, gain);
-        GET_PARAM_ENUM(CameraConfig::AeMeteringModeEnum, METERING_MODE, metering_mode);
-        GET_PARAM_ENUM(CameraConfig::AeExposureModeEnum, EXPOSURE_MODE, exposure_mode);
-        GET_PARAM_ENUM(CameraConfig::AwbModeEnum, AWB, awb);
-        GET_PARAM(F32, EV, ev);
         GET_PARAM(F32, AWB_GAIN_R, awb_gain_r);
         GET_PARAM(F32, AWB_GAIN_B, awb_gain_b);
         GET_PARAM(F32, BRIGHTNESS, brightness);
@@ -140,45 +143,22 @@ namespace Rpi
         GET_PARAM(F32, SHARPNESS, sharpness);
     }
 
-    void
-    Cam::startStreamThread(const Fw::StringBase &name)
-    {
-        m_task.start(name, streaming_thread_entry, this);
-    }
-
     void Cam::streaming_thread_entry(void* this_)
     {
         reinterpret_cast<Cam*>(this_)->streaming_thread();
     }
 
-    void Cam::quitStreamThread()
+    void Cam::configure(const CameraConfig &config)
     {
-        // Wait for the camera to exit
-        m_camera->Quit();
-        m_task.join(nullptr);
-
-        m_camera->StopCamera();
-    }
-
-    void Cam::STOP_cmdHandler(U32 opCode, U32 cmdSeq)
-    {
-        log_ACTIVITY_LO_CameraStopping();
-        m_camera->StopCamera();
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq)
-    {
-        m_camera->StopCamera();
-
-        CameraConfig config;
-        get_config(config);
-        log_ACTIVITY_LO_CameraConfiguring();
-        m_camera->ConfigureCamera(config);
-
-        log_ACTIVITY_LO_CameraStarting();
-        m_camera->StartCamera();
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_FPS, config.frame_rate);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_EXPOSURE, config.exposure_time);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_GAIN, config.gain);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_WHITE_BALANCE_RED_V, config.awb_gain_r);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_WHITE_BALANCE_BLUE_U, config.awb_gain_b);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_BRIGHTNESS, config.brightness);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_CONTRAST, config.contrast);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_SATURATION, config.saturation);
+        m_camera->cam.set(cv::VideoCaptureProperties::CAP_PROP_SHARPNESS, config.sharpness);
     }
 
     void Cam::parametersLoaded()
@@ -188,14 +168,14 @@ namespace Rpi
         CameraConfig config;
         get_config(config);
         log_ACTIVITY_LO_CameraConfiguring();
-        m_camera->ConfigureCamera(config);
 
+        configure(config);
     }
 
     bool Cam::frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, CamFrame &frame)
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
-        const auto& buf = m_buffers[frameId];
+        auto &buf = m_buffers[frameId];
 
         if (!buf.in_use())
         {
@@ -203,14 +183,7 @@ namespace Rpi
             return false;
         }
 
-        frame = CamFrame(
-                buf.id, buf.span.data(),
-                buf.span.size(),
-                buf.info.width, buf.info.height,
-                buf.info.stride,
-                buf.buffer->metadata().timestamp / 1000,
-                buf.buffer->planes()[0].fd.get()
-                );
+        frame = CamFrame(&buf.mat);
 
         return true;
     }
@@ -219,7 +192,7 @@ namespace Rpi
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
 
-        auto& buf = m_buffers[frameId];
+        auto &buf = m_buffers[frameId];
         if (!buf.in_use())
         {
             log_WARNING_LO_CameraInvalidIncref(frameId);
@@ -233,7 +206,7 @@ namespace Rpi
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
 
-        auto& buf = m_buffers[frameId];
+        auto &buf = m_buffers[frameId];
         if (!buf.in_use())
         {
             log_WARNING_LO_CameraInvalidDecref(frameId);
@@ -241,5 +214,115 @@ namespace Rpi
         }
 
         buf.decref();
+    }
+
+    void Cam::preamble()
+    {
+        ActiveComponentBase::preamble();
+
+        m_camera->cam.open(m_cam_id);
+
+        Fw::String task_name = "CAM_STREAM";
+        m_task.start(task_name, streaming_thread_entry, this);
+    }
+
+    void Cam::finalizer()
+    {
+        ActiveComponentBase::finalizer();
+
+        send_message(QUIT);
+
+        // Wait for the camera to exit
+        m_task.join(nullptr);
+        m_camera->cam.release();
+    }
+
+    void Cam::start_handler(NATIVE_INT_TYPE portNum)
+    {
+        if (m_streaming)
+        {
+            log_WARNING_LO_CameraBusy();
+            return;
+        }
+
+        CameraConfig config;
+        get_config(config);
+        log_ACTIVITY_LO_CameraConfiguring();
+        configure(config);
+
+        // Frame will be coming from the continuous stream
+        m_listener = portNum;
+        m_streaming = true;
+
+        log_ACTIVITY_LO_CameraStarting();
+        send_message(STREAM);
+    }
+
+    void Cam::stop_handler(NATIVE_INT_TYPE portNum)
+    {
+        log_ACTIVITY_LO_CameraStopping();
+
+        // Single frame requests can come in now
+        m_listener = -1;
+        m_streaming = false;
+        send_message(IDLE);
+    }
+
+    void Cam::capture_handler(NATIVE_INT_TYPE portNum)
+    {
+        if (m_streaming)
+        {
+            log_WARNING_LO_CameraBusy();
+            return;
+        }
+
+        m_streaming = false;
+        m_listener = portNum;
+        send_message(CAPTURE);
+    }
+
+    void Cam::capture_frame()
+    {
+        CamBuffer* buffer = get_buffer();
+        if (!buffer)
+        {
+            // Ran out of frame buffers
+            tlm_dropped++;
+            tlmWrite_FramesDropped(tlm_dropped);
+            return;
+        }
+
+        // Read an image from the camera
+        if (m_camera->cam.read(buffer->mat))
+        {
+            tlm_captured++;
+            tlmWrite_FramesCapture(tlm_captured);
+
+            if (m_listener < 0)
+            {
+                log_WARNING_LO_CameraNoListener(buffer->id);
+                return;
+            }
+
+            frame_out(m_listener, buffer->id);
+        }
+        else
+        {
+            tlm_failed++;
+            tlmWrite_FramesFailed(tlm_failed);
+
+            // Put us in idle since we might get an overflow here
+            // TODO(tumbar) Do we want this?
+            send_message(IDLE);
+        }
+    }
+
+    void Cam::send_message(Cam::CamState msg)
+    {
+        U8 buf_prv[sizeof(CamState)];
+        Fw::ExternalSerializeBuffer buf(buf_prv, sizeof(CamState));
+
+        buf.serialize(msg);
+        m_queue.send(buf, 0, Os::Queue::QUEUE_BLOCKING);
     }
 }

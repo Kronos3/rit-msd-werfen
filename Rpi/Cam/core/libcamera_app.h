@@ -131,7 +131,7 @@ namespace Rpi
 
         void SetControls(ControlList &controls);
 
-        StreamInfo GetStreamInfo(Stream const* stream) const;
+        static StreamInfo GetStreamInfo(Stream const* stream) ;
 
     protected:
 //        std::unique_ptr<Options> options_;
@@ -207,33 +207,24 @@ namespace Rpi
         bool camera_acquired_ = false;
         std::unique_ptr<CameraConfiguration> configuration_;
         std::map<FrameBuffer*, std::vector<libcamera::Span<uint8_t>>> mapped_buffers_;
-        std::map<std::string, Stream*> streams_;
+        std::unique_ptr<Stream> stream_;
         FrameBufferAllocator* allocator_ = nullptr;
-        std::map<Stream*, std::queue<FrameBuffer*>> frame_buffers_;
+        std::queue<FrameBuffer*> frame_buffers_;
         std::vector<std::unique_ptr<Request>> requests_;
         std::mutex completed_requests_mutex_;
         std::set<CompletedRequest*> completed_requests_;
+
         bool camera_started_ = false;
         std::mutex camera_stop_mutex_;
         MessageQueue<Msg> msg_queue_;
-        // Related to the preview window.
-//        std::unique_ptr<Preview> preview_;
-        std::map<int, CompletedRequestPtr> preview_completed_requests_;
-        std::mutex preview_mutex_;
-        std::mutex preview_item_mutex_;
-        PreviewItem preview_item_;
-        std::condition_variable preview_cond_var_;
-        bool preview_abort_ = false;
-        uint32_t preview_frames_displayed_ = 0;
-        uint32_t preview_frames_dropped_ = 0;
-        std::thread preview_thread_;
+
         // For setting camera controls.
         std::mutex control_mutex_;
         ControlList controls_;
+
         // Other:
         uint64_t last_timestamp_;
         uint64_t sequence_ = 0;
-//        PostProcessor post_processor_;
     };
 }
 

@@ -6,51 +6,33 @@
 
 namespace Rpi
 {
-
-    CamFrame::CamFrame() = default;
-
-    CamFrame::CamFrame(const CamFrameBase &src) : CamFrameBase(src)
+    CamFrame::CamFrame()
+    : m_mat(nullptr)
     {
     }
 
-    CamFrame::CamFrame(U32 bufId, U8* data, U32 bufSize, U32 width, U32 height, U32 stride, U64 timestamp, I32 plane)
-    : CamFrameBase(bufId, reinterpret_cast<POINTER_CAST>(data),
-                   bufSize, width, height,
-                   stride, timestamp, plane)
+    CamFrame::CamFrame(cv::Mat* m)
+    : m_mat(m)
     {
     }
 
-    U8* CamFrame::getData() const
+    cv::Mat* CamFrame::get() const
     {
-        return reinterpret_cast<U8*>(getdata());
+        return m_mat;
     }
 
-    StreamInfo CamFrame::getInfo() const
+    Fw::SerializeStatus CamFrame::deserialize(Fw::SerializeBufferBase &buffer)
     {
-        StreamInfo info;
-        info.width = m_width;
-        info.height = m_height;
-        info.stride = m_stride;
-        return info;
+        POINTER_CAST m;
+        auto stat = buffer.deserialize(m);
+
+        m_mat = reinterpret_cast<cv::Mat*>(m);
+        return stat;
     }
 
-    U64 CamFrame::getTimestamp() const
+    Fw::SerializeStatus CamFrame::serialize(Fw::SerializeBufferBase &buffer) const
     {
-        return m_timestamp;
-    }
-
-    I32 CamFrame::getPlane() const
-    {
-        return m_plane;
-    }
-
-    U32 CamFrame::getBufSize() const
-    {
-        return m_bufSize;
-    }
-
-    U32 CamFrame::getBufId() const
-    {
-        return m_bufId;
+        auto m = reinterpret_cast<POINTER_CAST>(m_mat);
+        return buffer.serialize(m);
     }
 }

@@ -4,5 +4,15 @@ R00:00:00 cam.STOP
 R00:00:00 videoStreamer.DISPLAY UDP
 R00:00:00 videoStreamer.OPEN "129.21.91.80" 5152
 
+R00:00:00 stage.MOVE 0.1
+
+R00:00:00 cam.ACQUIRE /vide/asdada
+
+R00:00:00 stage.MOVE 0.2
+
+R00:00:00 cam.ACQUIRE /vide/asdada
+
+R00:00:00 stage.MOVE 0.3
+
 ; Start the stream
 R00:00:00 cam.START

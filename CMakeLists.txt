@@ -25,7 +25,7 @@ elseif(TSAN_BUILD)
 endif()
 
 set(STAGING_DIR ${CMAKE_CURRENT_LIST_DIR}/staging)
-link_directories(${STAGING_DIR}/lib/)
+link_directories(${STAGING_DIR}/lib_full/)
 include_directories(
         ${STAGING_DIR}/include/
         ${STAGING_DIR}/include/libcamera/
@@ -64,3 +64,4 @@ include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake)
 # libcamera requires C++17
 set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(Rpi)   # FSW
+add_subdirectory(prototyping)
