@@ -37,6 +37,25 @@ module Rpi {
 
     }
 
+    instance rg5Hz: Svc.ActiveRateGroup base id 250 \
+        queue size Default.queueSize \
+        stack size Default.stackSize \
+        priority 120 \
+    {
+
+        phase Fpp.ToCpp.Phases.configObjects """
+        NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        rg1Hz.configure(
+            ConfigObjects::rg5Hz::context,
+            FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg5Hz::context)
+        );
+    """
+
+    }
+
     instance cmdDisp: Svc.CommandDispatcher base id 300 \
         queue size 20 \
         stack size Default.stackSize \
@@ -138,7 +157,7 @@ module Rpi {
     {
 
         phase Fpp.ToCpp.Phases.configObjects """
-        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
+        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 5, 1 };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
@@ -155,11 +174,18 @@ module Rpi {
     instance cam: Cam base id 6000 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        cam.configure(/* width */ 1920,
-                      /* height */ 1080,
+        cam.configure(/* video capture width */ 2028,
+                      /* video capture height */ 1080,
+                      /* still capture width */ 4056,
+                      /* still capture height */ 3040,
                       /* rotation */ 0,
                       /* vflip */ false,
                       /* hflip */ false);
+        """
+
+        phase Fpp.ToCpp.Phases.startTasks """
+        Fw::String camTaskName = "CAM";
+        cam.startStreamThread(camTaskName);
         """
     }
 

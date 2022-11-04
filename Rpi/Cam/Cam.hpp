@@ -23,7 +23,8 @@ namespace Rpi
 
         void init(NATIVE_INT_TYPE instance);
 
-        void configure(I32 width, I32 height,
+        void configure(I32 videoWidth, I32 videoHeight,
+                       I32 stillWidth, I32 stillHeight,
                        I32 rotation,
                        bool vflip, bool hflip);
 
@@ -32,6 +33,7 @@ namespace Rpi
 
     PRIVATE:
         void parametersLoaded() override;
+        void parameterUpdated();
 
         void get_config(CameraConfig& config);
         bool frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, Rpi::CamFrame &frame) override;
@@ -48,6 +50,11 @@ namespace Rpi
         void streaming_thread();
 
     PRIVATE:
+        void start();
+        void stop();
+        void capture(U32 opcode, U32 cmdSeq);
+        void finishCapture();
+
         std::mutex m_buffer_mutex;
         CamBuffer m_buffers[CAMERA_BUFFER_N];
 
@@ -56,6 +63,12 @@ namespace Rpi
 
         U32 tlm_dropped;
         U32 tlm_captured;
+
+        U32 m_cmdSeq;
+        U32 m_opcode;
+
+        bool m_capturing;
+        bool m_streaming;
     };
 }
 

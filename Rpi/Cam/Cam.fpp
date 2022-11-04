@@ -92,6 +92,10 @@ module Rpi {
             severity activity low \
             format "Saving image to file {}"
 
+        event CameraBusy() \
+            severity warning low \
+            format "Camera already streaming or capturing"
+
         event CameraStarting() \
             severity activity low \
             format "Camera is starting"

@@ -17,7 +17,7 @@ void run_cycle()
 {
     // call interrupt to emulate a clock
     Rpi::blockDrv.callIsr();
-    Os::Task::delay(1000); //10Hz
+    Os::Task::delay(200); // 5Hz
 }
 
 I32 main()

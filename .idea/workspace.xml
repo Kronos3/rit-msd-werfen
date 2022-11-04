@@ -3,9 +3,9 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
@@ -184,7 +184,7 @@
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="aarch64-linaro" GENERATION_OPTIONS="-G Ninja">
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Raspberry Pi" GENERATION_OPTIONS="-G Ninja">
         <ADDITIONAL_GENERATION_ENVIRONMENT>
           <envs>
             <env name="PATH" value="/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/tumbar/.local/share/JetBrains/Toolbox/scripts:/home/tumbar/.local/bin" />
@@ -195,25 +195,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/VoCarCfg.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/Cam.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/Cam.fpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/Cam.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamCfg.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/CamCfg.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/FramePipe/FramePipeComponentAi.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.h" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/Top/instances.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/instances.fpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/Top/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/main.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rpi/Top/topology.fpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/Top/topology.fpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/chess.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/contour.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/pose_calibration.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/quad.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/race.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/race_test.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/report.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/undistort.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/warp.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/warp_calibration.seq" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -239,6 +231,7 @@
     <option name="minorVersion" value="2.2" />
   </component>
   <component name="ProjectId" id="2FGM8FPyYFv6qp7wBaIbMsI7CGb" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -248,17 +241,13 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "settings.editor.selected.configurable": "CMakeSettings"
   }
 }]]></component>
   <component name="RunManager" selected="CMake Application.rpi">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="CFDP_Checksum" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="werfen" TARGET_NAME="CFDP_Checksum" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1079,6 +1068,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="codegen" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="werfen" TARGET_NAME="codegen" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1285,7 +1279,22 @@
       <option name="presentableId" value="Default" />
       <updated>1664113805660</updated>
       <workItem from="1664113807667" duration="2904000" />
+      <workItem from="1667533864288" duration="9640000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
