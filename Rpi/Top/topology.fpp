@@ -2,6 +2,7 @@ module Rpi {
 
     enum Port_RateGroups {
         rg1Hz
+        rg5Hz
     }
 
     topology Rpi {
@@ -21,6 +22,7 @@ module Rpi {
         instance blockDrv
         instance rgDriver
         instance rg1Hz
+        instance rg5Hz
 
         # Rpi components
         instance cam
@@ -48,6 +50,7 @@ module Rpi {
 
             # Rate group 1Hz
             rgDriver.CycleOut[Port_RateGroups.rg1Hz] -> rg1Hz.CycleIn
+            rgDriver.CycleOut[Port_RateGroups.rg5Hz] -> rg5Hz.CycleIn
             rg1Hz.RateGroupMemberOut[0] -> chanTlm.Run
             rg1Hz.RateGroupMemberOut[1] -> cmdSeq.schedIn
             rg1Hz.RateGroupMemberOut[2] -> cmdSeq2.schedIn

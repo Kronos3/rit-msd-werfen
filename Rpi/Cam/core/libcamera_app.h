@@ -43,6 +43,13 @@ namespace Rpi
     class LibcameraApp
     {
     public:
+        enum StreamId
+        {
+            VIDEO_STREAM,
+            STILL_STREAM,
+            STREAM_N
+        };
+
         using Stream = libcamera::Stream;
         using FrameBuffer = libcamera::FrameBuffer;
         using ControlList = libcamera::ControlList;
@@ -63,34 +70,22 @@ namespace Rpi
             RequestComplete,
             Quit
         };
-        typedef CompletedRequest* MsgPayload;
+        typedef CompletedRequest *MsgPayload;
 
         struct Msg
         {
-            Msg(MsgType const &t) : type(t)
+            explicit Msg(MsgType const &t) : id(STREAM_N), type(t)
             {}
 
             template<typename T>
-            Msg(MsgType const &t, T p) : type(t), payload(std::forward<T>(p))
+            Msg(StreamId id_, MsgType const &t, T p) : id(id_), type(t), payload(std::forward<T>(p))
             {
             }
 
+            StreamId id;
             MsgType type;
-            MsgPayload payload;
+            MsgPayload payload = nullptr;
         };
-
-        // Some flags that can be used to give hints to the camera configuration.
-        static constexpr unsigned int FLAG_STILL_NONE = 0;
-        static constexpr unsigned int FLAG_STILL_BGR = 1; // supply BGR images, not YUV
-        static constexpr unsigned int FLAG_STILL_RGB = 2; // supply RGB images, not YUV
-        static constexpr unsigned int FLAG_STILL_RAW = 4; // request raw image stream
-        static constexpr unsigned int FLAG_STILL_DOUBLE_BUFFER = 8; // double-buffer stream
-        static constexpr unsigned int FLAG_STILL_TRIPLE_BUFFER = 16; // triple-buffer stream
-        static constexpr unsigned int FLAG_STILL_BUFFER_MASK = 24; // mask for buffer flags
-
-        static constexpr unsigned int FLAG_VIDEO_NONE = 0;
-        static constexpr unsigned int FLAG_VIDEO_RAW = 1; // request raw image stream
-        static constexpr unsigned int FLAG_VIDEO_JPEG_COLOURSPACE = 2; // force JPEG colour space
 
         LibcameraApp();
 
@@ -102,36 +97,31 @@ namespace Rpi
 
         void CloseCamera();
 
-        void ConfigureCameraStream(int width, int height,
+        void ConfigureCameraStream(Size videoSize,
+                                   Size stillSize,
                                    int rotation = 0,
                                    bool hflip = false,
                                    bool vflip = false);
 
-#if 0
-        void ConfigureStill(unsigned int flags = FLAG_STILL_NONE);
-        void ConfigureVideo(unsigned int flags = FLAG_VIDEO_NONE);
-#endif
-
         void Teardown();
 
-        void ConfigureCamera(const CameraConfig& options);
+        void ConfigureCamera(const CameraConfig &options);
 
         void StartCamera();
 
         void StopCamera();
 
         Msg Wait();
+
         void Quit();
 
-        Stream* GetStream(std::string const &name, StreamInfo* info = nullptr) const;
+        Stream* GetStream(StreamId id, StreamInfo *info = nullptr) const;
 
-        Stream* RawStream(StreamInfo* info = nullptr) const;
-
-        std::vector<libcamera::Span<uint8_t>> Mmap(FrameBuffer* buffer) const;
+        std::vector<libcamera::Span<uint8_t>> Mmap(FrameBuffer *buffer) const;
 
         void SetControls(ControlList &controls);
 
-        StreamInfo GetStreamInfo(Stream const* stream) const;
+        static StreamInfo GetStreamInfo(Stream const *stream);
 
     protected:
 //        std::unique_ptr<Options> options_;
@@ -176,7 +166,7 @@ namespace Rpi
             PreviewItem() : stream(nullptr)
             {}
 
-            PreviewItem(CompletedRequestPtr &b, Stream* s) : completed_request(b), stream(s)
+            PreviewItem(CompletedRequestPtr &b, Stream *s) : completed_request(b), stream(s)
             {}
 
             PreviewItem &operator=(PreviewItem &&other) noexcept
@@ -188,7 +178,7 @@ namespace Rpi
             }
 
             CompletedRequestPtr completed_request;
-            Stream* stream;
+            Stream *stream;
         };
 
         void setupCapture();
@@ -196,23 +186,23 @@ namespace Rpi
         void makeRequests();
 
     public:
-        void queueRequest(CompletedRequest* completed_request);
+        void queueRequest(CompletedRequest *completed_request);
 
     private:
 
-        void requestComplete(Request* request);
+        void requestComplete(Request *request);
 
         std::unique_ptr<CameraManager> camera_manager_;
         std::shared_ptr<Camera> camera_;
         bool camera_acquired_ = false;
         std::unique_ptr<CameraConfiguration> configuration_;
-        std::map<FrameBuffer*, std::vector<libcamera::Span<uint8_t>>> mapped_buffers_;
-        std::map<std::string, Stream*> streams_;
-        FrameBufferAllocator* allocator_ = nullptr;
-        std::map<Stream*, std::queue<FrameBuffer*>> frame_buffers_;
+        std::map<FrameBuffer *, std::vector<libcamera::Span<uint8_t>>> mapped_buffers_;
+        Stream* streams[STREAM_N];
+        FrameBufferAllocator *allocator_ = nullptr;
+        std::map<Stream *, std::queue<FrameBuffer *>> frame_buffers_;
         std::vector<std::unique_ptr<Request>> requests_;
         std::mutex completed_requests_mutex_;
-        std::set<CompletedRequest*> completed_requests_;
+        std::set<CompletedRequest *> completed_requests_;
         bool camera_started_ = false;
         std::mutex camera_stop_mutex_;
         MessageQueue<Msg> msg_queue_;

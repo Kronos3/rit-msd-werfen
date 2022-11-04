@@ -4,7 +4,7 @@
 
 enum
 {
-    CAMERA_BUFFER_N = 8,           //!< Internal libcamera buffers
+    CAMERA_BUFFER_N = 4,           //!< Internal libcamera buffers
 };
 
 #endif //WERFEN_CAMCFG_H

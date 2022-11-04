@@ -9,7 +9,11 @@ namespace Rpi
             : CamComponentBase(compName),
               m_camera(new LibcameraApp()),
               tlm_dropped(0),
-              tlm_captured(0)
+              tlm_captured(0),
+              m_cmdSeq(0),
+              m_opcode(0),
+              m_capturing(false),
+              m_streaming(false)
     {
     }
 
@@ -18,7 +22,9 @@ namespace Rpi
         CamComponentBase::init(instance);
     }
 
-    void Cam::configure(I32 width, I32 height, I32 rotation, bool vflip, bool hflip)
+    void Cam::configure(I32 videoWidth, I32 videoHeight,
+                        I32 stillWidth, I32 stillHeight,
+                        I32 rotation, bool vflip, bool hflip)
     {
         for (auto& buffer : m_buffers)
         {
@@ -26,11 +32,10 @@ namespace Rpi
         }
 
         m_camera->OpenCamera(0);
-        m_camera->ConfigureCameraStream(width, height, rotation,
-                                        hflip, vflip);
+        m_camera->ConfigureCameraStream(libcamera::Size(videoWidth, videoHeight),
+                                        libcamera::Size(stillWidth, stillHeight),
+                                        rotation, hflip, vflip);
     }
-
-
 
     Cam::~Cam()
     {
@@ -65,16 +70,32 @@ namespace Rpi
 
             buffer->request = msg.payload;
 
+            libcamera::Stream* stream;
+            if (m_streaming)
+            {
+                stream = m_camera->GetStream(LibcameraApp::VIDEO_STREAM);
+            }
+            else
+            {
+                FW_ASSERT(m_capturing);
+                stream = m_camera->GetStream(LibcameraApp::STILL_STREAM);
+            }
+
             // Get the DMA buffer
-            buffer->buffer = msg.payload->buffers[m_camera->RawStream()];
+            buffer->buffer = msg.payload->buffers[stream];
             FW_ASSERT(buffer->buffer);
 
             // Get the userland pointer
             buffer->span = m_camera->Mmap(buffer->buffer)[0];
-            buffer->info = m_camera->GetStreamInfo(m_camera->RawStream());
+            buffer->info = Rpi::LibcameraApp::GetStreamInfo(stream);
 
             // Send the frame to the requester on the same port
             frame_out(0, buffer->id);
+
+            if (m_capturing)
+            {
+                finishCapture();
+            }
         }
 
         log_ACTIVITY_LO_CameraStopping();
@@ -100,8 +121,52 @@ namespace Rpi
 
     void Cam::CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &destination)
     {
-        // Capture an image and save it to a file
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        capture(opCode, cmdSeq);
+    }
+
+    void Cam::capture(U32 opcode, U32 cmdSeq)
+    {
+        if (m_capturing || m_streaming)
+        {
+            log_WARNING_LO_CameraBusy();
+            cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::BUSY);
+            return;
+        }
+
+        m_opcode = opcode;
+        m_cmdSeq = cmdSeq;
+        m_capturing = true;
+    }
+
+    void Cam::finishCapture()
+    {
+        FW_ASSERT(m_capturing);
+        cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::OK);
+        m_opcode = 0;
+        m_cmdSeq = 0;
+        m_capturing = false;
+        m_camera->StopCamera();
+    }
+
+    void Cam::start()
+    {
+        if (m_streaming)
+        {
+            log_WARNING_LO_CameraBusy();
+        }
+
+        m_camera->StopCamera();
+
+        log_ACTIVITY_LO_CameraStarting();
+        m_streaming = true;
+        m_camera->StartCamera();
+    }
+
+    void Cam::stop()
+    {
+        log_ACTIVITY_LO_CameraStopping();
+        m_camera->StopCamera();
+        m_streaming = false;
     }
 
     void Cam::get_config(CameraConfig &config)
@@ -140,8 +205,7 @@ namespace Rpi
         GET_PARAM(F32, SHARPNESS, sharpness);
     }
 
-    void
-    Cam::startStreamThread(const Fw::StringBase &name)
+    void Cam::startStreamThread(const Fw::StringBase &name)
     {
         m_task.start(name, streaming_thread_entry, this);
     }
@@ -153,31 +217,23 @@ namespace Rpi
 
     void Cam::quitStreamThread()
     {
+        // Stop the stream
+        m_camera->StopCamera();
+
         // Wait for the camera to exit
         m_camera->Quit();
         m_task.join(nullptr);
-
-        m_camera->StopCamera();
     }
 
     void Cam::STOP_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        log_ACTIVITY_LO_CameraStopping();
-        m_camera->StopCamera();
+        stop();
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        m_camera->StopCamera();
-
-        CameraConfig config;
-        get_config(config);
-        log_ACTIVITY_LO_CameraConfiguring();
-        m_camera->ConfigureCamera(config);
-
-        log_ACTIVITY_LO_CameraStarting();
-        m_camera->StartCamera();
+        start();
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
@@ -189,7 +245,14 @@ namespace Rpi
         get_config(config);
         log_ACTIVITY_LO_CameraConfiguring();
         m_camera->ConfigureCamera(config);
+    }
 
+    void Cam::parameterUpdated()
+    {
+        CameraConfig config;
+        get_config(config);
+        log_ACTIVITY_LO_CameraConfiguring();
+        m_camera->ConfigureCamera(config);
     }
 
     bool Cam::frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, CamFrame &frame)

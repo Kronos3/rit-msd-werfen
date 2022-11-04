@@ -44,7 +44,8 @@ namespace Rpi
     }
 
     LibcameraApp::LibcameraApp()
-    : controls_(controls::controls), last_timestamp_(0)
+    : controls_(controls::controls), last_timestamp_(0),
+      streams{nullptr}
     {
         check_camera_stack();
     }
@@ -94,47 +95,44 @@ namespace Rpi
         camera_manager_.reset();
     }
 
-    void LibcameraApp::ConfigureCameraStream(int width, int height, int rotation,
+    void LibcameraApp::ConfigureCameraStream(Size videoSize,
+                                             Size stillSize,
+                                             int rotation,
                                              bool hflip, bool vflip)
     {
 //        StreamRoles stream_roles = {StreamRole::Raw};
-        StreamRoles stream_roles = {StreamRole::VideoRecording};
+        StreamRoles stream_roles = {StreamRole::Raw, StreamRole::StillCapture};
 
         configuration_ = camera_->generateConfiguration(stream_roles);
         if (!configuration_)
             throw std::runtime_error("failed to generate viewfinder configuration");
 
-//        else if (camera_->properties().contains(properties::PixelArrayActiveAreas))
-//        {
-//            // The idea here is that most sensors will have a 2x2 binned mode that
-//            // we can pick up. If it doesn't, well, you can always specify the size
-//            // you want exactly with the viewfinder_width/height options.
-//            size = camera_->properties().get(properties::PixelArrayActiveAreas)[0].size() / 2;
-//            size.alignDownTo(2, 2); // YUV420 will want to be even
-//            if (options.verbose)
-//                std::cerr << "Viewfinder size chosen is " << size.toString() << std::endl;
-//        }
-
-        // Finally trim the image size to the largest that the preview can handle.
-        Size size(width, height);
-
         // Now we get to override any of the default settings from the options.
         configuration_->at(0).pixelFormat = libcamera::formats::YUV420;
-        configuration_->at(0).size = size;
+        configuration_->at(0).size = videoSize;
+
+        configuration_->at(1).pixelFormat = libcamera::formats::YUV420;
+        configuration_->at(1).size = stillSize;
 
         configuration_->transform = libcamera::Transform::Identity;
         if (rotation == 180)
             configuration_->transform = libcamera::Transform::Rot180 * configuration_->transform;
+        else if (rotation == 90)
+            configuration_->transform = libcamera::Transform::Rot90 * configuration_->transform;
+        else if (rotation == 270)
+            configuration_->transform = libcamera::Transform::Rot270 * configuration_->transform;
         if (hflip)
             configuration_->transform = libcamera::Transform::HFlip * configuration_->transform;
         if (vflip)
             configuration_->transform = libcamera::Transform::VFlip * configuration_->transform;
 
         configuration_->at(0).bufferCount = CAMERA_BUFFER_N;
+        configuration_->at(1).bufferCount = 1;
 
         setupCapture();
 
-        streams_["raw"] = configuration_->at(0).stream();
+        streams[0] = configuration_->at(0).stream();
+        streams[1] = configuration_->at(1).stream();
     }
 
     void LibcameraApp::Teardown()
@@ -155,7 +153,8 @@ namespace Rpi
 
         frame_buffers_.clear();
 
-        streams_.clear();
+        streams[0] = nullptr;
+        streams[1] = nullptr;
     }
 
     void LibcameraApp::ConfigureCamera(const CameraConfig& options)
@@ -290,19 +289,10 @@ namespace Rpi
             throw std::runtime_error("failed to queue request");
     }
 
-    libcamera::Stream* LibcameraApp::GetStream(std::string const &name, StreamInfo* info) const
+    libcamera::Stream* LibcameraApp::GetStream(StreamId id, StreamInfo* info) const
     {
-        auto it = streams_.find(name);
-        if (it == streams_.end())
-            return nullptr;
-        if (info)
-            *info = GetStreamInfo(it->second);
-        return it->second;
-    }
-
-    libcamera::Stream* LibcameraApp::RawStream(StreamInfo* info) const
-    {
-        return GetStream("raw", info);
+        *info = GetStreamInfo(streams[id]);
+        return streams[id];
     }
 
     std::vector<libcamera::Span<uint8_t>> LibcameraApp::Mmap(FrameBuffer* buffer) const
@@ -321,7 +311,7 @@ namespace Rpi
         controls_ = std::move(controls);
     }
 
-    StreamInfo LibcameraApp::GetStreamInfo(Stream const* stream) const
+    StreamInfo LibcameraApp::GetStreamInfo(Stream const* stream)
     {
         StreamConfiguration const &cfg = stream->configuration();
         StreamInfo info;
@@ -429,7 +419,7 @@ namespace Rpi
         last_timestamp_ = timestamp;
 
         // Send out the frame to the users
-        msg_queue_.Post(Msg(MsgType::RequestComplete, payload));
+        msg_queue_.Post(Msg(VIDEO_STREAM, MsgType::RequestComplete, payload));
     }
 
 }
