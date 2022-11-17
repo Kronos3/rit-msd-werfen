@@ -32,245 +32,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/data/test.pos" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cam.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fw/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fw/component.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fw/log.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fw/registry.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mainwindow.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/msd-gem-5000.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/msd-gem-5000.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/AcConstants.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/AcConstants.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/ActiveLoggerImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/ActiveRateGroupCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/BufferManagerComponentImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/CommandDispatcherImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/DeframerCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/FileDownlinkCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/FpConfig.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/FpConfig.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/IpCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/LinuxSerialDriverComponentImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/PolyDbImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/PrmDbImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/PrmDbImplTesterCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/SocketIpDriverCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/StaticMemoryConfig.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/TlmChanImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/UdpReceiverComponentImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/UdpSenderComponentImplCfg.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cfg/locs.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/Cam.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamBuffer.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamBuffer.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamCfg.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamFrame.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CamFrame.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/CameraConfig.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/completed_request.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/frame_info.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/libcamera_app.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Cam/core/stream_info.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/Display.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/Display.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/Display.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/oled.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Display/oled.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/FramePipe/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/FramePipe/FramePipe.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/FramePipe/FramePipeImpl.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/FramePipe/FramePipeImpl.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/RpiTopologyDefs.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/RpiTopologyDefs.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/dep/Components.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/dep/RpiRTLinuxTopologyAppAi.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/dep/Topology.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/instances.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/main.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/Top/topology.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.fpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/VideoStreamer.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/encoder.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/encoder/h264_encoder.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/output/net_output.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/output/net_output.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/output/output.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/output/output.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/preview/drm_preview.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rpi/VideoStreamer/preview/preview.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fprime" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencv.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/cam_configure.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/cam_home.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq/cam_rit.seq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/.dockerignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/backtrace.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/bound_method.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/class.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/compiler.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/event_dispatcher.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/event_dispatcher_poll.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/event_notifier.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/file.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/flags.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/log.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/message.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/mutex.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/object.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/private.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/semaphore.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/shared_fd.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/signal.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/span.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/thread.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/thread_annotations.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/timer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/unique_fd.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/base/utils.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/camera.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/camera_manager.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/color_space.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/control_ids.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/controls.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/fence.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/formats.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/framebuffer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/framebuffer_allocator.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/geometry.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/ipa/core_ipa_interface.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/ipa/ipa_controls.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/ipa/ipa_interface.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/ipa/ipa_module_info.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/ipa/raspberrypi_ipa_interface.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/ipa/vimc_ipa_interface.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/libcamera.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/logging.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/pixel_format.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/property_ids.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/request.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/stream.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/transform.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libcamera/libcamera/version.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/amdgpu.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/amdgpu_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/drm_fourcc.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/drm_mode.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/drm_sarea.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/etnaviv_drmif.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/i915_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/mach64_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/mga_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/msm_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nouveau.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/cl0080.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/cl9097.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/class.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/if0002.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/if0003.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/ioctl.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau/nvif/unpack.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/nouveau_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/qxl_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/r128_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/r600_pci_ids.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_bo.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_bo_gem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_bo_int.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_cs.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_cs_gem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_cs_int.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/radeon_surface.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/savage_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/sis_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/tegra.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/tegra_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/vc4_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/vc4_packet.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/vc4_qpu_defines.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/via_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/virtgpu_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/libdrm/vmwgfx_drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/xf86drm.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/include/xf86drmMode.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libbz2.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libbz2.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libbz2.so.1.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libbz2.so.1.0.4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera-base.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera-base.so.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera-base.so.0.0.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera.so.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera.so.0.0.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera/ipa_rpi.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera/ipa_rpi.so.sign" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera/ipa_vimc.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera/ipa_vimc.so.sign" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera/raspberrypi_ipa_proxy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libcamera/vimc_ipa_proxy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm.so.2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm.so.2.4.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm_amdgpu.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm_amdgpu.so.1.0.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm_nouveau.so.2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm_nouveau.so.2.0.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm_radeon.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdrm_radeon.so.1.0.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdw.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libdw.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libelf.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libelf.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libffi.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libffi.so.7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libffi.so.7.1.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libgmp.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libgmp.so.10" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libgmp.so.10.4.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libgnutls.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libgnutls.so.30" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libgnutls.so.30.29.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libhogweed.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libhogweed.so.6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libhogweed.so.6.4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libidn2.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libidn2.so.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libidn2.so.0.3.7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/liblzma.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/liblzma.so.5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/liblzma.so.5.2.5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libnettle.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libnettle.so.8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libnettle.so.8.4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libp11-kit.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libp11-kit.so.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libp11-kit.so.0.3.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libtasn1.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libtasn1.so.6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libtasn1.so.6.6.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libudev.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libudev.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libudev.so.1.7.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunistring.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunistring.so.2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunistring.so.2.1.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind-aarch64.a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind-aarch64.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind-aarch64.so.8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind-aarch64.so.8.0.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind.so.8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libunwind.so.8.0.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libz.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libz.so.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/staging/lib/libz.so.1.2.11" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -281,6 +56,13 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:ASAN" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -301,24 +83,56 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/venv/lib/python3.10/site-packages" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="msd-gem-5000" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -331,7 +145,8 @@
       <workItem from="1664113807667" duration="2904000" />
       <workItem from="1667533864288" duration="9640000" />
       <workItem from="1668020617498" duration="4547000" />
-      <workItem from="1668453597043" duration="1179000" />
+      <workItem from="1668453597043" duration="1858000" />
+      <workItem from="1668455434803" duration="24111000" />
     </task>
     <servers />
   </component>
@@ -348,5 +163,14 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/fprime" />
+    </ignored-roots>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

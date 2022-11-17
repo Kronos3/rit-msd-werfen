@@ -4,3 +4,6 @@ packaging==21.3
 Pillow==9.2.0
 pyparsing==3.0.9
 pytesseract==0.3.10
+picamera2==0.3.6
+PyQt5==5.15.7
+coloredlogs~=15.0.1
