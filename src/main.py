@@ -26,11 +26,11 @@ class App(QtWidgets.QMainWindow):
 
         self.logger = Logger()
 
-        self.camera = Cam(self.cameraFrame)
+        # self.camera = Cam(self.cameraFrame)
 
         self.components = [
             self.logger,
-            self.camera
+            # self.camera
         ]
 
     def on_go_clicked(self):
