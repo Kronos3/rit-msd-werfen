@@ -78,7 +78,7 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/Users/tumbar/git/msd-gem-5000",
+    "last_opened_file_path": "/home/tumbar/git/msd-gem-5000/mc",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -95,6 +95,11 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="msd-gem-5000" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -134,6 +139,7 @@
       <workItem from="1667533864288" duration="9640000" />
       <workItem from="1668020617498" duration="4547000" />
       <workItem from="1668453597043" duration="1858000" />
+      <workItem from="1674106488417" duration="37000" />
     </task>
     <servers />
   </component>
