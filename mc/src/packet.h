@@ -11,9 +11,9 @@
 typedef enum
 {
     OPCODE_IDLE,           //!< Idle packet for pinging Mc
-    OPCODE_STEP,           //!< Single step of motor
+    OPCODE_RELATIVE,       //!< Relative motion
+    OPCODE_ABSOLUTE,       //!< Absolute motion
     OPCODE_SET,            //!< Set the current position of the stage
-    OPCODE_GO_TO,          //!< Go to position
     OPCODE_HOME,           //!< Step until limit switch
 } opcode_t;
 

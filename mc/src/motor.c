@@ -10,18 +10,15 @@
 
 extern TIM_HandleTypeDef htim1;
 
-
 static I32 motor_position = 0;
 static struct
 {
-    Bool is_busy;
     Bool direction_reversed;
     motor_step_t step;
     I32 n;
     motor_state_t state;
     void (*reply_cb)(Status status);
 } motor_request = {
-        .is_busy = FALSE,
         .direction_reversed = FALSE,
         .step = MOTOR_STEP_FULL,
         .n = 0,
@@ -32,7 +29,6 @@ static struct
 static void motor_run_request(motor_step_t step, I32 n,
                               MotorReply reply_cb)
 {
-    motor_request.is_busy = TRUE;
     motor_request.step = step;
     motor_request.n = n;
     motor_request.state = MOTOR_STATE_SETUP;
@@ -50,7 +46,6 @@ static void motor_run_request(motor_step_t step, I32 n,
 
 static void motor_stop(Status status)
 {
-    motor_request.is_busy = FALSE;
     motor_request.step = 0;
     motor_request.n = 0;
     motor_request.state = MOTOR_STATE_IDLE;
@@ -152,7 +147,7 @@ void motor_tick(void)
     }
 }
 
-Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb)
+static Status motor_is_ready(motor_step_t step)
 {
     switch(step)
     {
@@ -165,9 +160,19 @@ Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb)
             return STATUS_FAILURE;
     }
 
-    if (motor_request.is_busy)
+    if (motor_request.state != MOTOR_STATE_IDLE)
     {
-        log_printf("Motor is busy with another request");
+        log_printf("Motor is busy with another request, state %d", motor_request.state);
+        return STATUS_FAILURE;
+    }
+
+    return STATUS_SUCCESS;
+}
+
+Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb)
+{
+    if (motor_is_ready(step) != STATUS_SUCCESS)
+    {
         return STATUS_FAILURE;
     }
 
@@ -178,11 +183,6 @@ Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb)
 I32 motor_get_position(void)
 {
     return motor_position;
-}
-
-Bool motor_is_busy(void)
-{
-    return motor_request.is_busy;
 }
 
 void motor_set_position(I32 position)

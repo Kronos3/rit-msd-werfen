@@ -4,6 +4,9 @@
 
 #include "packet.h"
 
+#include <stm32f1xx_hal.h>
+
 void packet_task(void)
 {
+    HAL_I2C_Slave_Receive_DMA()
 }
