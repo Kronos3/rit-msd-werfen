@@ -93,12 +93,6 @@ Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb);
 I32 motor_get_position(void);
 
 /**
- * Check if there is a currently active motor request
- * @return TRUE if active motor request
- */
-Bool motor_is_busy(void);
-
-/**
  * Get the current motor state
  * @return motor state
  */
