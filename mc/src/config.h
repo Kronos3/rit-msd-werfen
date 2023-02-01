@@ -16,11 +16,11 @@
 #define MS3_PORT GPIOB
 #define MS3_PIN GPIO_PIN_14
 
-#define DIR_PORT GPIOA
-#define DIR_PIN GPIO_PIN_1
+#define DIR_PORT GPIOB
+#define DIR_PIN GPIO_PIN_0
 
 #define STEP_PORT GPIOA
-#define STEP_PIN GPIO_PIN_2
+#define STEP_PIN GPIO_PIN_7
 
 #define ENABLE_PORT GPIOA
 #define ENABLE_PIN GPIO_PIN_3

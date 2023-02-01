@@ -8,5 +8,5 @@
 
 void packet_task(void)
 {
-    HAL_I2C_Slave_Receive_DMA()
+//    HAL_I2C_Slave_Receive_DMA()
 }

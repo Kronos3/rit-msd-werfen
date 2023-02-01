@@ -8,9 +8,9 @@
 #include "config.h"
 #include "switch.h"
 
-extern TIM_HandleTypeDef htim1;
-
 static I32 motor_position = 0;
+static TIM_HandleTypeDef* timer = NULL;
+
 static struct
 {
     Bool direction_reversed;
@@ -25,6 +25,11 @@ static struct
         .state = MOTOR_STATE_IDLE,
         .reply_cb = NULL,
 };
+
+void motor_init(void* timer_)
+{
+    timer = timer_;
+}
 
 static void motor_run_request(motor_step_t step, I32 n,
                               MotorReply reply_cb)
@@ -41,7 +46,7 @@ static void motor_run_request(motor_step_t step, I32 n,
         motor_request.n = -motor_request.n;
     }
 
-    HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_Base_Start_IT(timer);
 }
 
 static void motor_stop(Status status)
@@ -51,14 +56,16 @@ static void motor_stop(Status status)
     motor_request.state = MOTOR_STATE_IDLE;
     motor_request.direction_reversed = FALSE;
 
-    if (motor_request.reply_cb)
-    {
-        motor_request.reply_cb(status);
-    }
+    HAL_TIM_Base_Stop_IT(timer);
 
+    MotorReply cb = motor_request.reply_cb;
     motor_request.reply_cb = NULL;
 
-    HAL_TIM_Base_Stop_IT(&htim1);
+    if (cb)
+    {
+        cb(status);
+    }
+
 }
 
 static I32 motor_get_step_size(motor_step_t step)
@@ -156,6 +163,8 @@ static Status motor_is_ready(motor_step_t step)
         case MOTOR_STEP_QUARTER:
         case MOTOR_STEP_EIGHTH:
         case MOTOR_STEP_SIXTEENTH:
+            break;
+        default:
             log_printf("Invalid step size %d", step);
             return STATUS_FAILURE;
     }

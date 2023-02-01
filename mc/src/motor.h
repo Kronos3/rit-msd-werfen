@@ -78,6 +78,8 @@ typedef enum
 
 typedef void (*MotorReply)(Status status);
 
+void motor_init(void* timer_);
+
 /**
  * Apply n steps to the motor
  * @param step Step size
