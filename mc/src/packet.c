@@ -16,7 +16,7 @@ static inline void packet_receive(UART_HandleTypeDef* huart)
     HAL_UART_Receive_DMA(huart, uart_rx_buffer, sizeof(Packet));
 }
 
-void packet_task(UART_HandleTypeDef* huart)
+void packet_task(void* huart)
 {
     packet_receive(huart);
 }
@@ -57,6 +57,11 @@ static void packet_handler(UART_HandleTypeDef* huart)
         case OPCODE_SET:
             break;
         case OPCODE_HOME:
+            break;
+        case OPCODE_GET_POSITION: {
+            MotorPosition position = motor_get_position();
+            reply(huart, position.integer, position.sixteenth);
+        }
             break;
     }
 }

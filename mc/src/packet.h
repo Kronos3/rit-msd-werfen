@@ -7,7 +7,6 @@
 
 #include "gbl.h"
 #include "motor.h"
-#include "stm32f1xx_hal_uart.h"
 
 typedef enum
 {
@@ -39,6 +38,6 @@ typedef struct
 
 STATIC_ASSERT(sizeof(Packet) == 16, packet_size);
 
-void packet_task(UART_HandleTypeDef* huart);
+void packet_task(void* huart);
 
 #endif //MC_PACKET_H

@@ -89,10 +89,4 @@ MotorPosition motor_get_position(void);
  */
 void motor_set_position(MotorPosition position);
 
-/**
- * Run a single 0.5us clock cycle for our driver
- * Used only during an executing motor request
- */
-void motor_tick(void);
-
 #endif //MC_MOTOR_H
