@@ -17,10 +17,10 @@
 #define MS3_PIN GPIO_PIN_14
 
 #define DIR_PORT GPIOA
-#define DIR_PIN GPIO_PIN_1
+#define DIR_PIN GPIO_PIN_4
 
 #define STEP_TIMER &htim2
-#define STEP_CHANNEL TIM_CHANNEL_1
+#define STEP_CHANNEL TIM_CHANNEL_4
 #define JOB_TIMER &htim3
 
 #define ENABLE_PORT GPIOA
