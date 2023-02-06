@@ -21,7 +21,6 @@
 
 #define STEP_TIMER &htim2
 #define STEP_CHANNEL TIM_CHANNEL_4
-#define JOB_TIMER &htim3
 
 #define ENABLE_PORT GPIOA
 #define ENABLE_PIN GPIO_PIN_3

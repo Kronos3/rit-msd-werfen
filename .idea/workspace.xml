@@ -32,23 +32,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app_full.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/calibrate.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/stage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tabs.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tumbar_app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Inc/stm32f1xx_it.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Inc/stm32f1xx_it.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mc/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Src/stm32f1xx_hal_msp.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Src/stm32f1xx_hal_msp.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Src/stm32f1xx_it.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Src/stm32f1xx_it.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mc/mc.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/mc/mc.ioc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/crc.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/crc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/src/config.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/config.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/src/motor.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/motor.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mc/src/motor.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/motor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/packet.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/packet.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/packet.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/packet.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cam.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cam.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/src/mainwindow.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,9 +103,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -157,7 +149,8 @@
       <workItem from="1668453597043" duration="1858000" />
       <workItem from="1674106488417" duration="37000" />
       <workItem from="1675032674819" duration="6707000" />
-      <workItem from="1675279904370" duration="379000" />
+      <workItem from="1675279904370" duration="624000" />
+      <workItem from="1675709417959" duration="599000" />
     </task>
     <servers />
   </component>

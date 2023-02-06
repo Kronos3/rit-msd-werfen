@@ -42,11 +42,14 @@ typedef void (*MotorReply)(void);
  * operate the motor
  * @param step_timer Timer used for PWM output generation
  * @param step_channel Channel on step timer for step pin
- * @param job_timer Slave of step timer used for step counting
  */
 void motor_init(void* step_timer,
-                I32 step_channel,
-                void* job_timer);
+                I32 step_channel);
+
+/**
+ *
+ */
+void motor_tick(void);
 
 /**
  * Apply n steps to the motor
@@ -60,20 +63,6 @@ Status motor_step(motor_step_t step, U16 n,
                   MotorReply reply_cb);
 
 void motor_stop(void);
-
-/**
- * Apply arithmetic addition operation
- * A + (R ? -1 : 1) * N * B
- * @param add_a A
- * @param add_b B
- * @param mul N
- * @param reverse R
- * @return
- */
-MotorPosition motor_position_add(
-        MotorPosition add_a,
-        MotorPosition add_b,
-        U16 mul, Bool reverse);
 
 /**
  * Get the position of the motor on the stage
