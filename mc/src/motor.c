@@ -9,7 +9,6 @@
 
 static TIM_HandleTypeDef* step_timer = NULL;
 static I32 step_channel = -1;
-static TIM_HandleTypeDef* job_timer = NULL;
 
 static MotorPosition motor_position = {0, 0};
 
@@ -18,6 +17,8 @@ static struct
     Bool direction_reversed;
     Bool is_running;
     motor_step_t step;
+    I32 step_scalar;
+    U16 i;
     U16 n;
     Bool direction;
     MotorReply reply_cb;
@@ -28,23 +29,6 @@ static struct
         .n = 0,
         .reply_cb = NULL,
 };
-
-MotorPosition motor_position_add(
-        MotorPosition add_a,
-        MotorPosition add_b,
-        U16 mul, Bool reverse)
-{
-    MotorPosition out = add_a;
-    add_b.integer *= mul;
-    add_b.sixteenth *= mul;
-
-    out.integer += (reverse ? -1 : 1) * add_b.integer;
-    out.sixteenth += (reverse ? -1 : 1) * add_b.sixteenth / 16;
-
-    out.integer += out.sixteenth / 16;
-    out.sixteenth %= 16;
-    return out;
-}
 
 static I32 motor_get_step_size(motor_step_t step)
 {
@@ -59,32 +43,36 @@ static I32 motor_get_step_size(motor_step_t step)
 }
 
 void motor_init(void* step_timer_,
-                I32 step_channel_,
-                void* job_timer_)
+                I32 step_channel_)
 {
     step_timer = step_timer_;
     step_channel = step_channel_;
-    job_timer = job_timer_;
+}
+
+void motor_tick(void)
+{
+    // Increment the position
+    motor_position.sixteenth += motor_request.step_scalar;
+    motor_position.integer = motor_position.sixteenth / 16;
+    motor_position.sixteenth = motor_position.sixteenth % 16;
+
+    motor_request.i++;
+
+    if (motor_request.i >= motor_request.n)
+    {
+        motor_stop();
+    }
 }
 
 void motor_stop(void)
 {
     HAL_TIM_PWM_Stop(step_timer, step_channel);
-    HAL_TIM_Base_Stop_IT(job_timer);
-
-    MotorPosition step = {
-            0, motor_get_step_size(motor_request.step)
-    };
-
-    motor_position = motor_position_add(
-            motor_position,
-            step,
-            motor_request.n,
-            motor_request.direction_reversed);
 
     MotorReply reply_cb = motor_request.reply_cb;
 
     motor_request.step = 0;
+    motor_request.step_scalar = 0;
+    motor_request.i = 0;
     motor_request.n = 0;
     motor_request.is_running = FALSE;
     motor_request.direction_reversed = FALSE;
@@ -130,6 +118,8 @@ Status motor_step(
     }
 
     motor_request.step = step;
+    motor_request.step_scalar = motor_get_step_size(step);
+    motor_request.i = 0;
     motor_request.n = n;
     motor_request.is_running = TRUE;
     motor_request.direction_reversed = direction_reversed;
@@ -149,33 +139,14 @@ Status motor_step(
     // Wait for the MS pins to become stable
     HAL_Delay(1);
 
-    job_timer->Instance->ARR = n;
-
-    // Start the timers, they will be on a common clock
+    // The PWM timer. @500Hz, timer each timer tick is a single motor step
     HAL_TIM_PWM_Start(step_timer, step_channel);
-    HAL_TIM_Base_Start_IT(job_timer);
 
     return STATUS_SUCCESS;
 }
 
 MotorPosition motor_get_position(void)
 {
-    if (motor_request.is_running)
-    {
-        // Add the current position according to the job
-        // timer to the current position when the request
-        // start
-        MotorPosition step = {
-                0, motor_get_step_size(motor_request.step)
-        };
-
-        return motor_position_add(
-                motor_position,
-                step,
-                job_timer->Instance->CNT,
-                motor_request.direction_reversed);
-    }
-
     return motor_position;
 }
 
