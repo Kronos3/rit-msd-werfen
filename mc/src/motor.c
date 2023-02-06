@@ -18,6 +18,7 @@ static struct
     Bool direction_reversed;
     Bool is_running;
     motor_step_t step;
+    U16 original_n;
     U16 n;
     Bool direction;
     MotorReply reply_cb;
@@ -67,8 +68,16 @@ void motor_init(void* step_timer_,
     job_timer = job_timer_;
 }
 
+int ignore = 0;
+
 void motor_stop(void)
 {
+//    if (motor_request.n)
+//    {
+//        motor_request.n--;
+//        return;
+//    }
+
     HAL_TIM_PWM_Stop(step_timer, step_channel);
     HAL_TIM_Base_Stop_IT(job_timer);
 
@@ -79,7 +88,7 @@ void motor_stop(void)
     motor_position = motor_position_add(
             motor_position,
             step,
-            motor_request.n,
+            motor_request.original_n,
             motor_request.direction_reversed);
 
     MotorReply reply_cb = motor_request.reply_cb;
@@ -131,6 +140,7 @@ Status motor_step(
 
     motor_request.step = step;
     motor_request.n = n;
+    motor_request.original_n = n;
     motor_request.is_running = TRUE;
     motor_request.direction_reversed = direction_reversed;
     motor_request.reply_cb = reply_cb;
@@ -149,11 +159,16 @@ Status motor_step(
     // Wait for the MS pins to become stable
     HAL_Delay(1);
 
-    job_timer->Instance->ARR = n;
+//    job_timer->Instance->ARR = n;
+    __HAL_TIM_SET_AUTORELOAD(job_timer, n);
+    __HAL_TIM_SET_COUNTER(job_timer, 0);
+
+    ignore = 1;
 
     // Start the timers, they will be on a common clock
     HAL_TIM_PWM_Start(step_timer, step_channel);
     HAL_TIM_Base_Start_IT(job_timer);
+//    HAL_TIM_PWM_Start(job_timer, TIM_CHANNEL_1);
 
     return STATUS_SUCCESS;
 }
