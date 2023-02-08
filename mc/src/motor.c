@@ -6,6 +6,7 @@
 #include "log.h"
 
 #include "config.h"
+#include "stm32l4xx_hal_tim.h"
 
 static TIM_HandleTypeDef* step_timer = NULL;
 static I32 step_channel = -1;
