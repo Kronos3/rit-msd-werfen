@@ -5,7 +5,7 @@
 #include "packet.h"
 #include "crc.h"
 
-#include <stm32f1xx_hal.h>
+#include <stm32l4xx_hal.h>
 #include <string.h>
 
 static U8 uart_rx_buffer[sizeof(Packet)];

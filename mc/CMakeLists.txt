@@ -18,8 +18,13 @@ project(Werfen C CXX ASM)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 99)
 
+#Uncomment for hardware floating point
+add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
+add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+
 #Uncomment for software floating point
-add_compile_options(-mfloat-abi=soft)
+#add_compile_options(-mfloat-abi=soft)
 
 add_compile_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
@@ -43,31 +48,31 @@ endif ()
 
 include_directories(
         Core/Inc
-        Drivers/STM32F1xx_HAL_Driver/Inc
-        Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
-        Drivers/CMSIS/Device/ST/STM32F1xx/Include
+        Drivers/STM32L4xx_HAL_Driver/Inc
+        Drivers/STM32L4xx_HAL_Driver/Inc/Legacy
+        Drivers/CMSIS/Device/ST/STM32L4xx/Include
         Drivers/CMSIS/Include
         Core/Inc
-        Drivers/STM32F1xx_HAL_Driver/Inc
-        Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
-        Drivers/CMSIS/Device/ST/STM32F1xx/Include
+        Drivers/STM32L4xx_HAL_Driver/Inc
+        Drivers/STM32L4xx_HAL_Driver/Inc/Legacy
+        Drivers/CMSIS/Device/ST/STM32L4xx/Include
         Drivers/CMSIS/Include
 )
 
 add_definitions(
         -DDEBUG
         -DUSE_HAL_DRIVER
-        -DSTM32F103xB
+        -DSTM32L476xx
         -DDEBUG
         -DUSE_HAL_DRIVER
-        -DSTM32F103xB)
+        -DSTM32L476xx)
 
 file(GLOB_RECURSE SOURCES
         "Core/*.*"
-        "Drivers/STM32F1xx_HAL_Driver/*.*"
+        "Drivers/STM32L4xx_HAL_Driver/*.*"
         )
 
-set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
+set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32L476RGTX_FLASH.ld)
 
 add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
 add_link_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)

@@ -5,7 +5,7 @@
 #ifndef WERFEN_CONFIG_H
 #define WERFEN_CONFIG_H
 
-#include <stm32f1xx_hal.h>
+#include <stm32l4xx_hal.h>
 
 #define MS1_PORT GPIOB
 #define MS1_PIN GPIO_PIN_12
