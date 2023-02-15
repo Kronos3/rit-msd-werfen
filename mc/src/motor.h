@@ -63,6 +63,7 @@ Status motor_step(motor_step_t step, U16 n,
                   MotorReply reply_cb);
 
 void motor_stop(void);
+Status motor_is_ready(motor_step_t step);
 
 /**
  * Get the position of the motor on the stage

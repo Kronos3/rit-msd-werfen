@@ -1,0 +1,66 @@
+### Module positions - created on Sun 12 Feb 2023 07:13:26 PM EST ###
+### Printed by Pcbnew version 6.0.10-86aedd382b~118~ubuntu22.10.1
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val                    Package                                                            PosX       PosY       Rot  Side
+A1        Pololu_Breakout_A4988  Pololu_Breakout-16_15.2x20.3mm                                  76.0000   -28.5000  -90.0000  top
+C1        1u                     CP_EIA-2012-12_Kemet-R                                          26.0000   -40.0000   90.0000  top
+C2        10n                    CP_EIA-2012-12_Kemet-R                                          23.7500   -40.0000   90.0000  top
+C3        4.7u                   CP_EIA-2012-12_Kemet-R                                          31.2000   -46.0500  180.0000  top
+C4        100n                   C_0402_1005Metric                                               31.6000   -44.3000  180.0000  top
+C5        100n                   C_0402_1005Metric                                               31.0000   -29.0000    0.0000  top
+C6        100n                   C_0402_1005Metric                                               38.2000   -44.1000  180.0000  top
+C7        100n                   C_0402_1005Metric                                               42.5140   -32.9788  -90.0000  top
+C8        100n                   C_0402_1005Metric                                               15.2300   -30.8600  180.0000  top
+C9        20p                    C_0402_1005Metric                                               24.3500   -32.8800   90.0000  top
+C10       20p                    C_0402_1005Metric                                               24.3500   -36.2300  -90.0000  top
+C14       100u                   C_Elec_8x5.4                                                    57.7500    -6.2500   90.0000  top
+C15       1000u                  C_Elec_8x5.4                                                    34.3763    -6.3350  -90.0000  top
+C16       100n                   C_0402_1005Metric                                               28.5500   -31.4500  180.0000  top
+D1        MS1                    LED_0805_2012Metric                                             60.7000   -47.0000   90.0000  top
+D2        MS2                    LED_0805_2012Metric                                             63.3000   -47.0000   90.0000  top
+D3        MS3                    LED_0805_2012Metric                                             66.0000   -47.0000   90.0000  top
+D4        USR                    LED_0805_2012Metric                                             40.0000   -22.5000  180.0000  top
+D5        E                      LED_0805_2012Metric                                             68.5000   -54.0000  -90.0000  top
+D6        S1                     LED_0805_2012Metric                                             52.5000   -49.2500  -90.0000  top
+D7        S2                     LED_0805_2012Metric                                             43.2500   -49.2500  -90.0000  top
+D8        D_Schottky             D_0805_2012Metric                                               51.5000   -12.9000  180.0000  top
+D9        LIGHT                  TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal    10.5000   -10.0000  -90.0000  top
+D10       PWR                    LED_0805_2012Metric                                             60.7500   -24.7500   90.0000  top
+FB1       FerriteBead            L_0603_1608Metric                                               21.2500   -40.1125  -90.0000  top
+HSE1      8M                     Crystal_SMD_MicroCrystal_CC4V-T1A-2Pin_5.0x1.9mm                22.0000   -34.5000   90.0000  top
+J1        MOTOR                  PinHeader_1x04_P2.54mm_Vertical                                 67.9000   -24.8000   90.0000  top
+J2        SWD                    PinHeader_1x05_P2.54mm_Vertical                                 22.7500    -9.6750    0.0000  top
+J3        POWER                  BarrelJack_Horizontal                                           64.4000   -11.4000  180.0000  top
+J4        UART3                  PinHeader_1x04_P2.54mm_Vertical                                 28.6500   -55.0000   90.0000  top
+J5        UART1                  PinHeader_1x04_P2.54mm_Vertical                                 16.4000    -3.0000   90.0000  top
+J6        PowerTerminal          TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal    74.4600   -20.7700   90.0000  top
+L1        68u                    SRP1040VA-1R5M                                                  46.3000    -6.1000  180.0000  top
+Q1        Q_Photo_NPN            PinHeader_1x02_P2.54mm_Vertical                                 17.7765   -46.2064    0.0000  top
+Q2        BCP56                  SOT-223                                                         12.5000   -23.0000  180.0000  top
+R1        2k                     R_Axial_DIN0411_L9.9mm_D3.6mm_P15.24mm_Horizontal                9.0000   -48.6200   90.0000  top
+R2        10k                    R_0402_1005Metric                                               21.0000   -49.7500    0.0000  top
+R3        160                    R_0402_1005Metric                                               60.7500   -44.0000  -90.0000  top
+R4        160                    R_0402_1005Metric                                               63.3000   -44.0000  -90.0000  top
+R5        160                    R_0402_1005Metric                                               66.0000   -44.0000  -90.0000  top
+R6        160                    R_0402_1005Metric                                               39.0000   -25.0000   90.0000  top
+R7        390                    R_0402_1005Metric                                               26.3000   -36.2500  -90.0000  top
+R8        1k                     R_0402_1005Metric                                               58.2500   -44.0000   90.0000  top
+R9        10k                    R_0402_1005Metric                                               50.3700   -47.7500   90.0000  top
+R10       10k                    R_0402_1005Metric                                               70.5000   -53.6036   90.0000  top
+R11       160                    R_0402_1005Metric                                               68.9750   -51.1200    0.0000  top
+R12       160                    R_0402_1005Metric                                               52.5000   -46.2500   90.0000  top
+R13       10k                    R_0402_1005Metric                                               45.5000   -47.7500   90.0000  top
+R14       160                    R_0402_1005Metric                                               43.2500   -46.2600   90.0000  top
+R15       10k                    R_0402_1005Metric                                               20.5000   -27.1200  180.0000  top
+R16       100                    R_0603_1608Metric                                               10.5000   -16.1750  -90.0000  top
+R17       160                    R_0402_1005Metric                                               62.7500   -24.1927   90.0000  top
+S1        BOOT                   Switch_Slide_11.6x4mm_EG1218                                    22.9500   -54.5300  180.0000  top
+S2        SWITCH1                PinHeader_1x03_P2.54mm_Vertical                                 49.9750   -55.0000   90.0000  top
+S3        SWITCH2                PinHeader_1x03_P2.54mm_Vertical                                 45.7500   -55.0000  -90.0000  top
+SW1       RESET                  SW_PUSH_6mm                                                     13.0000   -39.7600   90.0000  top
+SW2       ESTOP                  PinHeader_1x02_P2.54mm_Vertical                                 65.1000   -55.0000  -90.0000  top
+U1        STM32L476RGTx          LQFP-64_10x10mm_P0.5mm                                          34.7202   -36.4332    0.0000  top
+U2        LM2576HVS-5            TO-263-5_TabPin3                                                50.5000   -22.6000  -90.0000  top
+U3        AMS1117CD-3.3          TO-252-3_TabPin2                                                35.1000   -17.6000  180.0000  top
+## End

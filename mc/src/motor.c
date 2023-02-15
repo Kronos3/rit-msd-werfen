@@ -5,8 +5,7 @@
 #include "motor.h"
 #include "log.h"
 
-#include "config.h"
-#include "stm32l4xx_hal_tim.h"
+#include "main.h"
 
 static TIM_HandleTypeDef* step_timer = NULL;
 static I32 step_channel = -1;
@@ -85,7 +84,7 @@ void motor_stop(void)
     }
 }
 
-static Status motor_is_ready(motor_step_t step)
+Status motor_is_ready(motor_step_t step)
 {
     switch(step)
     {
@@ -127,21 +126,19 @@ Status motor_step(
     motor_request.reply_cb = reply_cb;
 
     // Set up the step size logic levels
-    HAL_GPIO_WritePin(MS1_PORT, MS1_PIN, (motor_request.step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(MS2_PORT, MS2_PIN, (motor_request.step & MOTOR_PIN_MS2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(MS3_PORT, MS3_PIN, (motor_request.step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-
-    // Enable the controller if needed
-    HAL_GPIO_WritePin(ENABLE_PORT, ENABLE_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS1_GPIO_Port, MS1_Pin, (motor_request.step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS2_GPIO_Port, MS2_Pin, (motor_request.step & MOTOR_PIN_MS2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS3_GPIO_Port, MS3_Pin, (motor_request.step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
     // Go forwards or backwards
-    HAL_GPIO_WritePin(DIR_PORT, DIR_PIN, motor_request.direction_reversed ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DIR_GPIO_Port, DIR_Pin,
+                      motor_request.direction_reversed ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
     // Wait for the MS pins to become stable
     HAL_Delay(1);
 
     // The PWM timer. @500Hz, timer each timer tick is a single motor step
-    HAL_TIM_PWM_Start(step_timer, step_channel);
+    HAL_TIM_PWM_Start_IT(step_timer, step_channel);
 
     return STATUS_SUCCESS;
 }
