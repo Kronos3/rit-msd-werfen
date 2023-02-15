@@ -139,7 +139,7 @@ int main(void)
       triggered = 0;
 
       motor_done = 0;
-      motor_step(MOTOR_STEP_FULL, 50, direction, motor_reply);
+      motor_step(MOTOR_STEP_FULL, 200, direction, motor_reply);
 
 //      direction = !direction;
 
