@@ -15,19 +15,29 @@ typedef enum
     OPCODE_ABSOLUTE,       //!< Absolute motion
     OPCODE_SET,            //!< Set the current position of the stage
     OPCODE_HOME,           //!< Step until limit switch
+    OPCODE_GET_POSITION,   //!< Get current motor position
 } opcode_t;
+
+typedef enum
+{
+    FLAGS_LIMIT_A = 1 << 0, //!< Limit switch A
+    FLAGS_LIMIT_B = 1 << 1, //!< Limit switch B
+    FLAGS_ESTOP = 1 << 2,   //!< E-STOP
+
+} flags_t;
 
 typedef struct
 {
     U8 start[2];
     U16 opcode;
-    U32 argument;
+    U32 arg1;
+    U32 arg2;
+    U16 flags;
     U16 checksum;
-    U8 end[2];
 } Packet;
 
-STATIC_ASSERT(sizeof(Packet) == 12, packet_size);
+STATIC_ASSERT(sizeof(Packet) == 16, packet_size);
 
-void packet_task(void);
+void packet_task(void* huart);
 
 #endif //MC_PACKET_H

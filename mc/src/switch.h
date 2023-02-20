@@ -5,7 +5,7 @@
 #ifndef WERFEN_SWITCH_H
 #define WERFEN_SWITCH_H
 
-#include <stm32f1xx_hal.h>
+#include <stm32l4xx_hal.h>
 
 #include "gbl.h"
 

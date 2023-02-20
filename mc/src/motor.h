@@ -25,78 +25,51 @@ typedef enum
 
 typedef enum
 {
-    /**
-     * The idle state will stop the running motor request
-     * Nominally this should not run in the motor tick
-     */
-    MOTOR_STATE_IDLE,
+    MOTOR_MASK_STEP = 0xFFFF,
+    MOTOR_MASK_DIRECTION = 0xFFFF0000
+} motor_mask;
 
-    /**
-     * Set the MS1 MS2 & MS3 control
-     * lines to the correct state to select
-     * the step size
-     */
-    MOTOR_STATE_SETUP,
+typedef struct
+{
+    U32 integer;
+    U32 sixteenth;
+} MotorPosition;
 
-    /**
-     * Rising edge on the step signal will run
-     * a single step with the selected MS lines
-     * from the setup step.
-     */
-    MOTOR_STATE_STEP_RISING,
+typedef void (*MotorReply)(void);
 
-    /**
-     * Holds the signal high so that it stays high
-     * for two clock cycles
-     */
-    MOTOR_STATE_STEP_HIGH_HOLD,
+/**
+ * Initialize the timers and channels being used to
+ * operate the motor
+ * @param step_timer Timer used for PWM output generation
+ * @param step_channel Channel on step timer for step pin
+ */
+void motor_init(void* step_timer,
+                I32 step_channel);
 
-    /**
-     * Drop the step down to low to prepare for the next
-     * step
-     */
-    MOTOR_STATE_STEP_FALLING,
-
-    /**
-     * Keep the signal low for a second clock cycle
-     */
-    MOTOR_STATE_STEP_LOW_HOLD,
-
-    /**
-     * E-stop has been hit, keep the timer running to keep checking
-     * the E-stop condition. This MC doesn't have an EXTI meaning
-     * we need to poll via the timer
-     */
-    MOTOR_STATE_ESTOP,
-
-    /**
-     * This state is an early exit state that will clean up the
-     * step controller signaling.
-     */
-    MOTOR_STATE_EXIT,
-} motor_state_t;
-
-typedef void (*MotorReply)(Status status);
+/**
+ *
+ */
+void motor_tick(void);
 
 /**
  * Apply n steps to the motor
  * @param step Step size
  * @param n number of steps
+ * @param direction_reversed TRUE for forward and false for backward
  * @param reply_cb callback when motor request is done
  */
-Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb);
+Status motor_step(motor_step_t step, U16 n,
+                  Bool direction_reversed,
+                  MotorReply reply_cb);
+
+void motor_stop(void);
+Status motor_is_ready(motor_step_t step);
 
 /**
  * Get the position of the motor on the stage
  * @return position in SIXTEENTH steps
  */
-I32 motor_get_position(void);
-
-/**
- * Get the current motor state
- * @return motor state
- */
-motor_state_t motor_state(void);
+MotorPosition motor_get_position(void);
 
 /**
  * Set the motor position. This does not move the
@@ -104,12 +77,6 @@ motor_state_t motor_state(void);
  * Useful if a limit switch is hit
  * @param position Position to set the motor to
  */
-void motor_set_position(I32 position);
-
-/**
- * Run a single 0.5us clock cycle for our driver
- * Used only during an executing motor request
- */
-void motor_tick(void);
+void motor_set_position(MotorPosition position);
 
 #endif //MC_MOTOR_H

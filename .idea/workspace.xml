@@ -33,6 +33,20 @@
   <component name="ChangeListManager">
     <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/.cproject" beforeDir="false" afterPath="$PROJECT_DIR$/mc/.cproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/.mxproject" beforeDir="false" afterPath="$PROJECT_DIR$/mc/.mxproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/CMakeLists_template.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mc/CMakeLists_template.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Inc/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Inc/main.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Inc/stm32l4xx_hal_conf.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Inc/stm32l4xx_hal_conf.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Inc/stm32l4xx_it.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Inc/stm32l4xx_it.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Src/stm32l4xx_hal_msp.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Src/stm32l4xx_hal_msp.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/Core/Src/stm32l4xx_it.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/Core/Src/stm32l4xx_it.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/STM32L476RGTX_FLASH.ld" beforeDir="false" afterPath="$PROJECT_DIR$/mc/STM32L476RGTX_FLASH.ld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/mc.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/mc/mc.ioc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/src/config.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/src/motor.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/motor.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mc/src/switch.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/switch.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,24 +84,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/tumbar/git/msd-gem-5000/mc",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/tumbar/git/msd-gem-5000&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />
@@ -95,9 +109,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -140,6 +154,9 @@
       <workItem from="1668020617498" duration="4547000" />
       <workItem from="1668453597043" duration="1858000" />
       <workItem from="1674106488417" duration="37000" />
+      <workItem from="1675032674819" duration="6707000" />
+      <workItem from="1675279904370" duration="624000" />
+      <workItem from="1675709417959" duration="599000" />
     </task>
     <servers />
   </component>

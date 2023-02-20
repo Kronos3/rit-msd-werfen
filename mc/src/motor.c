@@ -5,61 +5,30 @@
 #include "motor.h"
 #include "log.h"
 
-#include "config.h"
-#include "switch.h"
+#include "main.h"
 
-extern TIM_HandleTypeDef htim1;
+static TIM_HandleTypeDef* step_timer = NULL;
+static I32 step_channel = -1;
 
-static I32 motor_position = 0;
+static MotorPosition motor_position = {0, 0};
+
 static struct
 {
     Bool direction_reversed;
+    Bool is_running;
     motor_step_t step;
-    I32 n;
-    motor_state_t state;
-    void (*reply_cb)(Status status);
+    I32 step_scalar;
+    U16 i;
+    U16 n;
+    Bool direction;
+    MotorReply reply_cb;
 } motor_request = {
         .direction_reversed = FALSE,
+        .is_running = FALSE,
         .step = MOTOR_STEP_FULL,
         .n = 0,
-        .state = MOTOR_STATE_IDLE,
         .reply_cb = NULL,
 };
-
-static void motor_run_request(motor_step_t step, I32 n,
-                              MotorReply reply_cb)
-{
-    motor_request.step = step;
-    motor_request.n = n;
-    motor_request.state = MOTOR_STATE_SETUP;
-    motor_request.direction_reversed = FALSE;
-    motor_request.reply_cb = reply_cb;
-
-    if (motor_request.n < 0)
-    {
-        motor_request.direction_reversed = TRUE;
-        motor_request.n = -motor_request.n;
-    }
-
-    HAL_TIM_Base_Start_IT(&htim1);
-}
-
-static void motor_stop(Status status)
-{
-    motor_request.step = 0;
-    motor_request.n = 0;
-    motor_request.state = MOTOR_STATE_IDLE;
-    motor_request.direction_reversed = FALSE;
-
-    if (motor_request.reply_cb)
-    {
-        motor_request.reply_cb(status);
-    }
-
-    motor_request.reply_cb = NULL;
-
-    HAL_TIM_Base_Stop_IT(&htim1);
-}
 
 static I32 motor_get_step_size(motor_step_t step)
 {
@@ -73,81 +42,49 @@ static I32 motor_get_step_size(motor_step_t step)
     }
 }
 
+void motor_init(void* step_timer_,
+                I32 step_channel_)
+{
+    step_timer = step_timer_;
+    step_channel = step_channel_;
+}
+
 void motor_tick(void)
 {
-    // Check if E-stop signal
-    if (switch_e_stop_set() || motor_request.state == MOTOR_STATE_ESTOP)
+    // Increment the position
+    motor_position.sixteenth += motor_request.step_scalar;
+    motor_position.integer = motor_position.sixteenth / 16;
+    motor_position.sixteenth = motor_position.sixteenth % 16;
+
+    motor_request.i++;
+
+    if (motor_request.i >= motor_request.n)
     {
-        motor_request.state = MOTOR_STATE_ESTOP;
-    }
-    else if (switch_limit_a_set()
-             || switch_limit_b_set())
-    {
-        motor_request.state = MOTOR_STATE_EXIT;
-    }
-
-    switch(motor_request.state)
-    {
-        case MOTOR_STATE_SETUP:
-            // Set up the step size logic levels
-            HAL_GPIO_WritePin(MS1_PORT, MS1_PIN, (motor_request.step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(MS2_PORT, MS2_PIN, (motor_request.step & MOTOR_PIN_MS2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(MS3_PORT, MS3_PIN, (motor_request.step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-
-            // Enable the controller if needed
-            HAL_GPIO_WritePin(ENABLE_PORT, ENABLE_PIN, GPIO_PIN_RESET);
-
-            // Step should already be low
-            HAL_GPIO_WritePin(STEP_PORT, STEP_PIN, GPIO_PIN_RESET);
-
-            // Go forwards or backwards
-            HAL_GPIO_WritePin(DIR_PORT, DIR_PIN, motor_request.direction_reversed ? GPIO_PIN_SET : GPIO_PIN_RESET);
-
-            motor_request.state = MOTOR_STATE_STEP_RISING;
-            break;
-        case MOTOR_STATE_STEP_RISING:
-            // Check if there are any cycles left
-            if (motor_request.n > 0)
-            {
-                HAL_GPIO_WritePin(STEP_PORT, STEP_PIN, GPIO_PIN_SET);
-                motor_request.state = MOTOR_STATE_STEP_HIGH_HOLD;
-
-                // The motor steps on a rising STEP edge
-                // Increment the internal motor position
-                motor_position += motor_get_step_size(motor_request.step) *
-                        (motor_request.direction_reversed ? -1 : 1);
-                break;
-            }
-            // No more cycles, fallthrough
-        case MOTOR_STATE_EXIT:
-        case MOTOR_STATE_IDLE:
-            motor_stop(STATUS_SUCCESS);
-            break;
-        case MOTOR_STATE_STEP_HIGH_HOLD:
-            motor_request.state = MOTOR_STATE_STEP_FALLING;
-            break;
-        case MOTOR_STATE_STEP_FALLING:
-            HAL_GPIO_WritePin(STEP_PORT, STEP_PIN, GPIO_PIN_RESET);
-            motor_request.n--;
-            motor_request.state = MOTOR_STATE_STEP_LOW_HOLD;
-            break;
-        case MOTOR_STATE_STEP_LOW_HOLD:
-            // Next cycle
-            motor_request.state = MOTOR_STATE_STEP_RISING;
-            break;
-        case MOTOR_STATE_ESTOP:
-            // Disable the controller
-            HAL_GPIO_WritePin(ENABLE_PORT, ENABLE_PIN, GPIO_PIN_SET);
-
-            // Once the ESTOP is tripped during an executing motor request,
-            //   we will hang here forever. The only way to exit out of this
-            //   state is to release the ESTOP and hard reset the microcontroller
-            motor_stop(STATUS_FAILURE);
-            break;
+        motor_stop();
     }
 }
 
-static Status motor_is_ready(motor_step_t step)
+void motor_stop(void)
+{
+    HAL_TIM_PWM_Stop(step_timer, step_channel);
+
+    MotorReply reply_cb = motor_request.reply_cb;
+
+    motor_request.step = 0;
+    motor_request.step_scalar = 0;
+    motor_request.i = 0;
+    motor_request.n = 0;
+    motor_request.is_running = FALSE;
+    motor_request.direction_reversed = FALSE;
+    motor_request.reply_cb = NULL;
+
+    if (reply_cb)
+    {
+        reply_cb();
+    }
+}
+
+Status motor_is_ready(motor_step_t step)
 {
     switch(step)
     {
@@ -156,36 +93,62 @@ static Status motor_is_ready(motor_step_t step)
         case MOTOR_STEP_QUARTER:
         case MOTOR_STEP_EIGHTH:
         case MOTOR_STEP_SIXTEENTH:
+            break;
+        default:
             log_printf("Invalid step size %d", step);
             return STATUS_FAILURE;
     }
 
-    if (motor_request.state != MOTOR_STATE_IDLE)
+    if (motor_request.is_running)
     {
-        log_printf("Motor is busy with another request, state %d", motor_request.state);
+        log_printf("Motor is busy with another request");
         return STATUS_FAILURE;
     }
 
     return STATUS_SUCCESS;
 }
 
-Status motor_step(motor_step_t step, I32 n, MotorReply reply_cb)
+Status motor_step(
+        motor_step_t step, U16 n,
+        Bool direction_reversed, MotorReply reply_cb)
 {
     if (motor_is_ready(step) != STATUS_SUCCESS)
     {
         return STATUS_FAILURE;
     }
 
-    motor_run_request(step, n, reply_cb);
+    motor_request.step = step;
+    motor_request.step_scalar = motor_get_step_size(step);
+    motor_request.i = 0;
+    motor_request.n = n;
+    motor_request.is_running = TRUE;
+    motor_request.direction_reversed = direction_reversed;
+    motor_request.reply_cb = reply_cb;
+
+    // Set up the step size logic levels
+    HAL_GPIO_WritePin(MS1_GPIO_Port, MS1_Pin, (motor_request.step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS2_GPIO_Port, MS2_Pin, (motor_request.step & MOTOR_PIN_MS2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS3_GPIO_Port, MS3_Pin, (motor_request.step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
+    // Go forwards or backwards
+    HAL_GPIO_WritePin(DIR_GPIO_Port, DIR_Pin,
+                      motor_request.direction_reversed ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
+    // Wait for the MS pins to become stable
+    HAL_Delay(1);
+
+    // The PWM timer. @500Hz, timer each timer tick is a single motor step
+    HAL_TIM_PWM_Start_IT(step_timer, step_channel);
+
     return STATUS_SUCCESS;
 }
 
-I32 motor_get_position(void)
+MotorPosition motor_get_position(void)
 {
     return motor_position;
 }
 
-void motor_set_position(I32 position)
+void motor_set_position(const MotorPosition position)
 {
     motor_position = position;
 }

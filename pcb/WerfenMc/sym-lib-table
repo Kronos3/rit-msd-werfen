@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "LedRemap")(type "KiCad")(uri "${KIPRJMOD}/LedRemap.kicad_sym")(options "")(descr ""))
+)
