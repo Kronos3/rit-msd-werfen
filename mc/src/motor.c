@@ -10,7 +10,7 @@
 static TIM_HandleTypeDef* step_timer = NULL;
 static I32 step_channel = -1;
 
-static MotorPosition motor_position = {0, 0};
+static I32 motor_position = 0;
 
 static struct
 {
@@ -34,11 +34,14 @@ static I32 motor_get_step_size(motor_step_t step)
 {
     switch(step)
     {
-        case MOTOR_STEP_FULL: return 16;
-        case MOTOR_STEP_HALF: return 8;
-        case MOTOR_STEP_QUARTER: return 4;
-        case MOTOR_STEP_EIGHTH: return 2;
-        case MOTOR_STEP_SIXTEENTH: return 1;
+        case MOTOR_STEP_FULL: return 8;
+        case MOTOR_STEP_HALF: return 4;
+        case MOTOR_STEP_QUARTER: return 2;
+        case MOTOR_STEP_EIGHTH:
+        case MOTOR_STEP_SIXTEENTH:
+            // 1/16 step on this controller will not
+            // change the speed compared to 1/8
+            return 1;
     }
 }
 
@@ -52,10 +55,7 @@ void motor_init(void* step_timer_,
 void motor_tick(void)
 {
     // Increment the position
-    motor_position.sixteenth += motor_request.step_scalar;
-    motor_position.integer = motor_position.sixteenth / 16;
-    motor_position.sixteenth = motor_position.sixteenth % 16;
-
+    motor_position += motor_request.step_scalar;
     motor_request.i++;
 
     if (motor_request.i >= motor_request.n)
@@ -108,6 +108,11 @@ Status motor_is_ready(motor_step_t step)
     return STATUS_SUCCESS;
 }
 
+Bool motor_is_running()
+{
+    return motor_request.is_running;
+}
+
 Status motor_step(
         motor_step_t step, U16 n,
         Bool direction_reversed, MotorReply reply_cb)
@@ -143,12 +148,12 @@ Status motor_step(
     return STATUS_SUCCESS;
 }
 
-MotorPosition motor_get_position(void)
+I32 motor_get_position(void)
 {
     return motor_position;
 }
 
-void motor_set_position(const MotorPosition position)
+void motor_set_position(const I32 position)
 {
     motor_position = position;
 }

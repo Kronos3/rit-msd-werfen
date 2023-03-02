@@ -1,0 +1,21 @@
+Designator,Qnty,Comment,Name,Footprint,Description,JLCPCB Part #
+"C1, ",1,1uF,C,Capacitor_Tantalum_SMD:CP_EIA-2012-12_Kemet-R,Unpolarized capacitor,C28323
+"C2, ",1,10nF,C,Capacitor_Tantalum_SMD:CP_EIA-2012-12_Kemet-R,Unpolarized capacitor,C1710
+"C3, ",1,4.7uF,C,Capacitor_Tantalum_SMD:CP_EIA-2012-12_Kemet-R,Unpolarized capacitor,C17779
+"C4, C5, C6, C7, C8, C16, ",6,100nF,C,Capacitor_SMD:C_0402_1005Metric,Unpolarized capacitor,C1525
+"C9, C10, ",2,20pF,C,Capacitor_SMD:C_0402_1005Metric,Unpolarized capacitor,C1554
+"C14, ",1,100uF,C_Polarized,Capacitor_SMD:C_Elec_8x5.4,Polarized capacitor,C72481
+"C15, ",1,1000uF,C_Polarized,Capacitor_SMD:C_Elec_8x5.4,Polarized capacitor,C99833
+"D1, D2, D3, D4, D5, D6, D7, D10",8,LED Red,LED,LED_SMD:LED_0805_2012Metric,Light emitting diode,C84256
+"D8,",1,D_Schottky,D_Schottky,Diode_SMD:D_0805_2012Metric,Schottky diode,C35722
+"FB1, ",1,FerriteBead,FerriteBead,Inductor_SMD:L_0603_1608Metric,Ferrite bead,C1002
+"HSE1, ",1,8MHz,Crystal,Crystal:Crystal_SMD_TXC_7A-2Pin_5x3.2mm,Two pin crystal,C115962
+"Q2, ",1,BCP56,BCP56,Package_TO_SOT_SMD:SOT-223,"1A Ic, 80V Vce, NPN Medium Power Transistor, SOT-223",C95810
+"R2, R9, R10, R13, R15, ",5,10k,R,Resistor_SMD:R_0402_1005Metric,Resistor,C25744
+"R3, R4, R5, R6, R11, R12, R14, R17, ",8,160,R,Resistor_SMD:R_0402_1005Metric,Resistor,C25087
+"R7, ",1,390,R,Resistor_SMD:R_0402_1005Metric,Resistor,C25102
+"R8, ",1,1k,R,Resistor_SMD:R_0402_1005Metric,Resistor,C11702
+"R16, ",1,100,R,Resistor_SMD:R_0603_1608Metric,Resistor,C22775
+"U1, ",1,STM32L476RGTx,STM32L476RGTx,Package_QFP:LQFP-64_10x10mm_P0.5mm,"ARM Cortex-M4 MCU, 1024KB flash, 128KB RAM, 80MHz, 1.71-3.6V, 51 GPIO, LQFP-64",C74797
+"U2, ",1,LM2576HVS-5,LM2576HVS-5,Package_TO_SOT_SMD:TO-263-5_TabPin3,"5V 3A, SIMPLE SWITCHER® Step-Down Voltage Regulator, High Voltage Input, TO-263",C234209
+"U3, ",1,AMS1117CD-3.3,AMS1117CD-3.3,Package_TO_SOT_SMD:TO-252-3_TabPin2,"1A Low Dropout regulator, positive, 3.3V fixed output, TO-252",C841796

@@ -25,15 +25,9 @@ typedef enum
 
 typedef enum
 {
-    MOTOR_MASK_STEP = 0xFFFF,
-    MOTOR_MASK_DIRECTION = 0xFFFF0000
+    MOTOR_MASK_STEP = 0x0F,
+    MOTOR_MASK_DIRECTION = 0xF0
 } motor_mask;
-
-typedef struct
-{
-    U32 integer;
-    U32 sixteenth;
-} MotorPosition;
 
 typedef void (*MotorReply)(void);
 
@@ -64,12 +58,12 @@ Status motor_step(motor_step_t step, U16 n,
 
 void motor_stop(void);
 Status motor_is_ready(motor_step_t step);
+Bool motor_is_running();
 
 /**
- * Get the position of the motor on the stage
- * @return position in SIXTEENTH steps
+ * Get position of the motor in eighth steps
  */
-MotorPosition motor_get_position(void);
+I32 motor_get_position(void);
 
 /**
  * Set the motor position. This does not move the
@@ -77,6 +71,6 @@ MotorPosition motor_get_position(void);
  * Useful if a limit switch is hit
  * @param position Position to set the motor to
  */
-void motor_set_position(MotorPosition position);
+void motor_set_position(I32 position);
 
 #endif //MC_MOTOR_H

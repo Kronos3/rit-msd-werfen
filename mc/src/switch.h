@@ -9,8 +9,14 @@
 
 #include "gbl.h"
 
-GPIO_PinState switch_limit_a_set(void);
-GPIO_PinState switch_limit_b_set(void);
-GPIO_PinState switch_e_stop_set(void);
+Bool switch_limit_1_get(void);
+Bool switch_limit_2_get(void);
+Bool switch_e_stop_get(void);
+
+/**
+ * Handle an external interrupt from a pin
+ * @param event_pin pin where interrupt is coming from
+ */
+void switch_event(U16 event_pin);
 
 #endif //WERFEN_SWITCH_H

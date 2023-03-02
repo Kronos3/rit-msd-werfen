@@ -93,6 +93,10 @@ add_executable(${PROJECT_NAME}.elf
         src/packet.h
         src/switch.c
         src/switch.h
+        src/led.c
+        src/led.h
+        src/circular_buffer.c
+        src/circular_buffer.h
 )
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)

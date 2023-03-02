@@ -14,6 +14,9 @@ typedef uint16_t U16;
 typedef int32_t I32;
 typedef uint32_t U32;
 
+typedef float F32;
+typedef double F64;
+
 typedef enum
 {
     FALSE = 0,

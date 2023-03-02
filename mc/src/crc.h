@@ -7,6 +7,6 @@
 
 #include "gbl.h"
 
-U16 crc16(const U8* bytes, U32 n);
+U8 crc8(const U8* bytes, U32 n);
 
 #endif //WERFEN_CRC_H

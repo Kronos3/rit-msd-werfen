@@ -3,18 +3,34 @@
 //
 
 #include "switch.h"
+#include "main.h"
+#include "motor.h"
 
-GPIO_PinState switch_limit_a_set(void)
+Bool switch_limit_1_get(void)
 {
-//    return HAL_GPIO_ReadPin(LIMIT_A_PORT, LIMIT_A_PIN);
+    return HAL_GPIO_ReadPin(SWITCH1_GPIO_Port, SWITCH1_Pin) ? TRUE : FALSE;
 }
 
-GPIO_PinState switch_limit_b_set(void)
+Bool switch_limit_2_get(void)
 {
-//    return HAL_GPIO_ReadPin(LIMIT_B_PORT, LIMIT_B_PIN);
+    return HAL_GPIO_ReadPin(SWITCH2_GPIO_Port, SWITCH2_Pin) ? TRUE : FALSE;
 }
 
-GPIO_PinState switch_e_stop_set(void)
+Bool switch_e_stop_get(void)
 {
-//    return HAL_GPIO_ReadPin(ESTOP_PORT, ESTOP_PIN);
+    return HAL_GPIO_ReadPin(ENABLE_GPIO_Port, ENABLE_Pin) ? TRUE : FALSE;
+}
+
+void switch_event(U16 event_pin)
+{
+    switch(event_pin)
+    {
+        case SWITCH1_Pin:
+        case SWITCH2_Pin:
+        case ENABLE_Pin:
+            motor_stop();
+            break;
+        default:
+            break;
+    }
 }

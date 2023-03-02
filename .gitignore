@@ -62,4 +62,6 @@ rpi-kernel/*
 venv/*
 
 __pycache__
-
+*.zip
+*.gbr
+*.gbrjob
