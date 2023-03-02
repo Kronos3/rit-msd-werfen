@@ -130,9 +130,16 @@ class Stage:
 
         self.send(pkt)
 
-    def absolute(self, n: int):
-        pkt = StagePacket(StageOpcode.ABSOLUTE, abs(n))
-        self.send(pkt)
+    def absolute(self, n: int, size: StageStepSize = StageStepSize.HALF):
+        """
+        Perform absolute motion to stage position
+        using requested step size. The larger the step size
+        the faster the motion will happen but it'll only move to
+        multiple of the step size.
+        :param n: position to move to
+        :param size: step size
+        """
+        self.send(StagePacket(StageOpcode.ABSOLUTE, abs(n), size & 0x0F))
 
     def home(self, direction: StageDirection):
         # Full throttle to one of the edges

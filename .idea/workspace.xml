@@ -33,15 +33,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c754da46-50a7-4663-8228-d4bb533006ad" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mc/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/CMakeLists_template.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mc/CMakeLists_template.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/led.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/led.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/motor.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/motor.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/motor.h" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/motor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mc/src/packet.c" beforeDir="false" afterPath="$PROJECT_DIR$/mc/src/packet.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcb/WerfenMc/WerfenMc_power_edit-backups/WerfenMc_power_edit-2023-02-15_123530.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcb/WerfenMc/WerfenMc_power_edit-backups/WerfenMc_power_edit-2023-02-15_142531.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcb/WerfenMc/WerfenMc_power_edit.kicad_pcb" beforeDir="false" afterPath="$PROJECT_DIR$/pcb/WerfenMc/WerfenMc_power_edit.kicad_pcb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mc/stage.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mc/stage.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

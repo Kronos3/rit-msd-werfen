@@ -39,9 +39,12 @@ def main(args):
                 size = size_to_e[int(command[2])]
                 stage.relative(pos, size)
             elif op == "a":
-                assert len(command) == 2
+                assert len(command) == 2 or len(command) == 3
                 pos = int(command[1])
-                stage.absolute(pos)
+                size = 2
+                if len(command) == 3:
+                    size = int(command[2])
+                stage.absolute(pos, size_to_e[size])
             elif op == "h":
                 assert len(command) == 2
                 assert command[1] in ("-", "+")
