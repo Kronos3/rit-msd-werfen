@@ -1,6 +1,6 @@
 import serial
 
-from mc.stage import Stage, StageStepSize
+from stage import Stage, StageStepSize
 
 
 def main(args):

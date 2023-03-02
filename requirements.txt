@@ -7,3 +7,4 @@ pytesseract==0.3.10
 picamera2==0.3.8
 PyQt5==5.15.7
 coloredlogs~=15.0.1
+pyserial
