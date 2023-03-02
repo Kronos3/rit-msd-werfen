@@ -30,18 +30,20 @@ static struct
         .reply_cb = NULL,
 };
 
-static I32 motor_get_step_size(motor_step_t step)
+I32 motor_get_step_size(motor_step_t step, Bool reversed)
 {
+    I32 scalar = reversed ? -1 : 1;
+
     switch(step)
     {
-        case MOTOR_STEP_FULL: return 8;
-        case MOTOR_STEP_HALF: return 4;
-        case MOTOR_STEP_QUARTER: return 2;
+        case MOTOR_STEP_FULL: return scalar * 8;
+        case MOTOR_STEP_HALF: return scalar * 4;
+        case MOTOR_STEP_QUARTER: return scalar * 2;
         case MOTOR_STEP_EIGHTH:
         case MOTOR_STEP_SIXTEENTH:
             // 1/16 step on this controller will not
             // change the speed compared to 1/8
-            return 1;
+            return scalar * 1;
     }
 }
 
@@ -130,7 +132,7 @@ Status motor_step(
     }
 
     motor_request.step = step;
-    motor_request.step_scalar = motor_get_step_size(step);
+    motor_request.step_scalar = motor_get_step_size(step, direction_reversed);
     motor_request.i = 0;
     motor_request.n = n;
     motor_request.is_running = TRUE;

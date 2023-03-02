@@ -56,6 +56,8 @@ Status motor_step(motor_step_t step, U16 n,
                   Bool direction_reversed,
                   MotorReply reply_cb);
 
+I32 motor_get_step_size(motor_step_t step, Bool reversed);
+
 /**
  * Set the logic lines on the motor driver to
  * select a step size

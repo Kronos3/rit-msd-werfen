@@ -137,11 +137,23 @@ static void packet_handler(UART_HandleTypeDef* huart)
             reply(huart, status);
         }
             break;
+        case OPCODE_ABSOLUTE: {
+            I32 desired_position = (I32)packet.arg;
+            I32 delta = desired_position - motor_get_position();
+
+            // Compute how many steps at the requested size to take
+            motor_step_t step = packet.flags & MOTOR_MASK_STEP;
+            I32 nsteps = delta / motor_get_step_size(step, FALSE);
+            nsteps = nsteps < 0 ? -nsteps : nsteps;
+
+            Bool reversed = delta < 0;
+            Status status = motor_step(step, nsteps, reversed, clear_ms_lines);
+            reply(huart, status);
+        }
+            break;
         case OPCODE_SET_POSITION:
             motor_set_position((I32)packet.arg);
             reply(huart, 0);
-            break;
-        case OPCODE_ABSOLUTE:
             break;
         case OPCODE_GET_POSITION:
             reply(huart, motor_get_position());
