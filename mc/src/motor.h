@@ -56,6 +56,13 @@ Status motor_step(motor_step_t step, U16 n,
                   Bool direction_reversed,
                   MotorReply reply_cb);
 
+/**
+ * Set the logic lines on the motor driver to
+ * select a step size
+ * @param step step size to select
+ */
+void motor_set_ms(motor_step_t step);
+
 void motor_stop(void);
 Status motor_is_ready(motor_step_t step);
 Bool motor_is_running();

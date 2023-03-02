@@ -113,6 +113,13 @@ Bool motor_is_running()
     return motor_request.is_running;
 }
 
+void motor_set_ms(motor_step_t step)
+{
+    HAL_GPIO_WritePin(MS1_GPIO_Port, MS1_Pin, (step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS2_GPIO_Port, MS2_Pin, (step & MOTOR_PIN_MS2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MS3_GPIO_Port, MS3_Pin, (step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+}
+
 Status motor_step(
         motor_step_t step, U16 n,
         Bool direction_reversed, MotorReply reply_cb)
@@ -131,9 +138,7 @@ Status motor_step(
     motor_request.reply_cb = reply_cb;
 
     // Set up the step size logic levels
-    HAL_GPIO_WritePin(MS1_GPIO_Port, MS1_Pin, (motor_request.step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(MS2_GPIO_Port, MS2_Pin, (motor_request.step & MOTOR_PIN_MS2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(MS3_GPIO_Port, MS3_Pin, (motor_request.step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    motor_set_ms(motor_request.step);
 
     // Go forwards or backwards
     HAL_GPIO_WritePin(DIR_GPIO_Port, DIR_Pin,

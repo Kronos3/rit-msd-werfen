@@ -8,6 +8,7 @@
 #include "led.h"
 
 #define ADC_TO_VOLTAGE(adc_) ((((F32)(adc_)) / (1 << 12)) * 3.3f)
+#define ADC_NUM_INTEGRAL (20)
 
 static Bool led_running = FALSE;
 static Bool led_task_running = FALSE;
@@ -17,7 +18,9 @@ static F32 pid_p = 1.0f;
 static F32 pid_i = 0.0f;
 static F32 pid_d = 0.0f;
 
-static F32 last_errors[5] = {0};
+static F32 last_errors[ADC_NUM_INTEGRAL] = {0};
+STATIC_ASSERT(sizeof(last_errors) / sizeof(last_errors[0]) == ADC_NUM_INTEGRAL, check_i_length);
+
 static U32 last_errors_i = 0;
 static F32 last_error_d = 0.0f;
 
@@ -30,7 +33,15 @@ static volatile U16 light_sensor_adc = 0;
 
 void led_sensor_init(void* hadc)
 {
+    // This DMA request is on circular buffer with length of 1
+    // Which means that the value at this point will be the latest
+    // value from ADC measuring the light level
     HAL_ADC_Start_DMA(hadc, (U32*)&light_sensor_adc, 1);
+
+    // This timer tick at 100Hz will keep the light at a certain voltage
+    // on the phototransistor when requested. The timer will always be on
+    // and the requests will be process or ignored based on the type of
+    // lighting that is requested.
     HAL_TIM_Base_Start_IT(led_task_tim);
 }
 
@@ -134,7 +145,7 @@ void led_task(void)
 
     // Push the latest error to the 'I' term
     last_errors[last_errors_i++] = error;
-    last_errors_i %= sizeof(last_errors) / sizeof(last_errors[0]);
+    last_errors_i %= ADC_NUM_INTEGRAL;
 
     F32 integral = 0.0f;
     for (U32 i = 0; i < sizeof(last_errors) / sizeof(last_errors[0]); i++)

@@ -116,6 +116,13 @@ static void reply(UART_HandleTypeDef* huart, U32 arg)
     HAL_UART_Transmit(huart, (U8*) &reply_packet, sizeof(Packet), 100);
 }
 
+static void clear_ms_lines(void)
+{
+    // Clear out the motor step size signals to turn off
+    // the LEDs
+    motor_set_ms(0);
+}
+
 static void packet_handler(UART_HandleTypeDef* huart)
 {
     switch((opcode_t)packet.opcode)
@@ -126,8 +133,7 @@ static void packet_handler(UART_HandleTypeDef* huart)
         case OPCODE_RELATIVE: {
             motor_step_t step = packet.flags & MOTOR_MASK_STEP;
             Bool reversed = (packet.flags & MOTOR_MASK_DIRECTION) ? TRUE : FALSE;
-            Status status = motor_step(step, packet.arg, reversed, NULL);
-
+            Status status = motor_step(step, packet.arg, reversed, clear_ms_lines);
             reply(huart, status);
         }
             break;
