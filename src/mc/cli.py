@@ -1,6 +1,7 @@
+import re
 import serial
 
-from stage import Stage, StageStepSize
+from stage import Stage, StageStepSize, StageDirection
 
 
 def main(args):
@@ -18,7 +19,7 @@ def main(args):
 
     while True:
         try:
-            command = input("> ").split(" ")
+            command = re.split(r"(\s+|\s*,\s*)", input("> ").strip())
         except KeyboardInterrupt:
             continue
         except EOFError:
@@ -41,6 +42,10 @@ def main(args):
                 assert len(command) == 2
                 pos = int(command[1])
                 stage.absolute(pos)
+            elif op == "h":
+                assert len(command) == 2
+                assert command[1] in ("-", "+")
+                stage.home(StageDirection.FORWARD if command[1] == "+" else StageDirection.BACKWARD)
             elif op == "sp":
                 assert len(command) == 2
                 pos = int(command[1])
@@ -62,6 +67,20 @@ def main(args):
             elif op == "kd":
                 assert len(command) == 2
                 stage.led_pid_d(float(command[1]))
+            elif op == "?":
+                print("i: idle packet (show status flags)\n"
+                      "r [pos] [1,2,4,8]: relative motion with step size\n"
+                      "a [pos]: Absolute motion to position\n"
+                      "h [+,-]: Home the stage to one of the limit switches\n"
+                      "sp [pos]: Set the current position to pos\n"
+                      "gp -> pos: Get the current position of stage\n"
+                      "pwm [0.0% - 1.0%]: Set the ring light's pwm level\n"
+                      "v [0.0v - 3.3v]: Control the ring light level using voltage on the photo-transistor\n"
+                      "kp: Set voltage Kp value\n"
+                      "ki: Set voltage Ki value\n"
+                      "kd: Set voltage Kd value\n"
+                      "?: show this help message"
+                      )
             else:
                 print(f"Unknown command '{command[0]}'")
         except AssertionError as e:
