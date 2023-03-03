@@ -80,6 +80,12 @@ class StagePacket:
 
 
 class Stage:
+    """
+    Primary driver to interface with the single axis stage
+    Given a UART serial port, all the Tx/Rx operations are
+    hidden behind this class
+    """
+
     limit_1: bool
     limit_2: bool
     estop: bool
@@ -96,9 +102,19 @@ class Stage:
         self.led = False
 
     def send(self, pkt: StagePacket):
+        """
+        Send a packet to the microcontroller and
+        wait for a reply.
+        :param pkt:
+        :return:
+        """
+
         self.serial.write(pkt)
 
         reply_bytes = self.serial.read(12)
+        if len(reply_bytes) < 12:
+            raise TimeoutError(f"Stage UART timed out while waiting for a reply to {pkt.opcode.name}")
+
         reply = StagePacket.decode(reply_bytes)
 
         self.limit_1 = bool(StageFlags.LIMIT_1 & reply.flags)
@@ -134,7 +150,7 @@ class Stage:
         """
         Perform absolute motion to stage position
         using requested step size. The larger the step size
-        the faster the motion will happen but it'll only move to
+        the faster the motion will happen, but it'll only move to
         multiple of the step size.
         :param n: position to move to
         :param size: step size
@@ -142,33 +158,70 @@ class Stage:
         self.send(StagePacket(StageOpcode.ABSOLUTE, abs(n), size & 0x0F))
 
     def home(self, direction: StageDirection):
-        # Full throttle to one of the edges
-        # Stops when it hits a limit switch or ESTOP
+        """
+        Move at maximum speed to one of the edges of the stage
+        Stops when it hits a limit switch
+        :param direction: forward or backwards
+        """
         if direction == StageDirection.FORWARD:
             self.relative(100000, StageStepSize.FULL)
         else:
             self.relative(-100000, StageStepSize.FULL)
 
     def set_position(self, pos: int):
+        """
+        Set the internal position of the stage to
+        another value without moving the stage
+        :param pos: position to set current location to
+        """
         self.send(StagePacket(StageOpcode.SET_POSITION, pos))
 
     def get_position(self) -> int:
+        """
+        Get the current position of the stage
+        :return: Current position in 1/8th steps
+        """
         reply = self.send(StagePacket(StageOpcode.GET_POSITION))
         return reply.arg
 
     def led_pwm(self, pwm: float):
+        """
+        Directly set the PWM light duty cycle.
+        :param pwm: duty cycle from 0 to 1.0
+        """
         assert 0.0 <= pwm <= 1.0, pwm
         self.send(StagePacket(StageOpcode.LED_PWM, pwm))
 
     def led_voltage(self, voltage: float):
+        """
+        Use the internal PID controller to hold the
+        light around a voltage reading on the photo-transistor
+        ADC circuit.
+        :param voltage: Voltage to keep the light level at (0 - 3.3V)
+        """
         assert 0.0 <= voltage <= 3.3, f"Voltage must between 0V and 3.3V: {round(voltage, 2)}V"
         self.send(StagePacket(StageOpcode.LED_VOLTAGE, voltage))
 
     def led_pid_p(self, kp: float):
+        """
+        Set the proportional gain on the
+        voltage PID controller for light level
+        :param kp: Kp scalar
+        """
         self.send(StagePacket(StageOpcode.LED_PID, kp, StageFlags.PID_P))
 
     def led_pid_i(self, ki: float):
+        """
+        Set the integral gain on the
+        voltage PID controller for light level
+        :param ki: Ki scalar
+        """
         self.send(StagePacket(StageOpcode.LED_PID, ki, StageFlags.PID_I))
 
     def led_pid_d(self, kd: float):
+        """
+        Set the derivative gain on the
+        voltage PID controller for light level
+        :param kd: Kd scalar
+        """
         self.send(StagePacket(StageOpcode.LED_PID, kd, StageFlags.PID_D))

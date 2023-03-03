@@ -7,7 +7,7 @@ from stage import Stage, StageStepSize, StageDirection
 def main(args):
     assert len(args) == 2, f"Expecting only serial port argument"
 
-    ser = serial.Serial(args[1], 115200)
+    ser = serial.Serial(args[1], 115200, timeout=1.0)
     stage = Stage(ser)
 
     size_to_e = {
@@ -73,7 +73,7 @@ def main(args):
             elif op == "?":
                 print("i: idle packet (show status flags)\n"
                       "r [pos] [1,2,4,8]: relative motion with step size\n"
-                      "a [pos]: Absolute motion to position\n"
+                      "a [pos] [1,2,4,8]?: Absolute motion to position\n"
                       "h [+,-]: Home the stage to one of the limit switches\n"
                       "sp [pos]: Set the current position to pos\n"
                       "gp -> pos: Get the current position of stage\n"
