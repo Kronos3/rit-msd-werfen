@@ -4,29 +4,41 @@
 
 #include "packet.h"
 #include "crc.h"
-#include "circular_buffer.h"
 #include "switch.h"
 #include "led.h"
+
+#include "main.h"
 
 #include <stm32l4xx_hal.h>
 #include <string.h>
 
 static void packet_handler(UART_HandleTypeDef* huart);
 
-static U8 uart_rx_buffer[sizeof(Packet) * 4] = {0};
-STATIC_ASSERT(sizeof(uart_rx_buffer) == sizeof(Packet) * 4, array_sizing);
+static Packet rx_buffer = {0};
+static volatile Bool packet_ready = FALSE;
+static Packet packet = {0};
 
-CircularBuffer rx;
+static void packet_receive(UART_HandleTypeDef* huart)
+{
+    HAL_UART_Receive_IT(huart, (U8*)&rx_buffer, sizeof(Packet));
+}
 
-static Packet packet;
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    memcpy(&packet, &rx_buffer, sizeof(Packet));
+    packet_ready = TRUE;
 
-void packet_init(void)
+    // Receive the next packet into a new buffer
+    packet_receive(huart);
+}
+
+void packet_init(void* huart)
 {
     // Initiate the first uart RECV
-    memset(uart_rx_buffer, 0, sizeof(uart_rx_buffer));
-    circular_buf_init(&rx, uart_rx_buffer, sizeof(uart_rx_buffer));
-
+    memset(&rx_buffer, 0, sizeof(rx_buffer));
     memset(&packet, 0, sizeof(packet));
+
+    packet_receive(huart);
 }
 
 static Status packet_validate(const Packet* self)
@@ -45,29 +57,22 @@ static Status packet_validate(const Packet* self)
             ) ? STATUS_SUCCESS : STATUS_FAILURE;
 }
 
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    static Bool on = FALSE;
+    on = !on;
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, on ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
+    // do nothing here
+}
+
 void packet_task(void* huart)
 {
-    // Wait for the start bytes
-    U16 start_bytes;
-    while (circular_buf_size(&rx) >= 2)
+    if (packet_ready)
     {
-        // Wait for the start two bytes
-        circular_buf_peek(&rx, (U8*) &start_bytes, 2);
-        if (start_bytes == 0xADDE) // little endian byte swapped
-        {
-            break;
-        }
+        packet_ready = FALSE;
 
-        // Dump a single byte
-        U8 c;
-        circular_buf_get(&rx, &c);
-    }
-
-    if (circular_buf_size(&rx) >= sizeof(Packet))
-    {
-        circular_buf_get_n(&rx, (U8*) &packet, sizeof(Packet));
-
-        // Validate the packet
+        // Make sure the packet is ok
         if (packet_validate(&packet) == STATUS_FAILURE)
         {
             return;
@@ -75,22 +80,6 @@ void packet_task(void* huart)
 
         packet_handler(huart);
     }
-}
-
-void packet_isr_c(void* huart)
-{
-    U8 byte;
-    HAL_StatusTypeDef status = HAL_UART_Receive(huart, &byte, 1, 0);
-
-    if (status != HAL_OK)
-    {
-        // Error occurred on this byte,
-        // Get rid of it
-        return;
-    }
-
-    // Place the byte into the buffer
-    circular_buf_put(&rx, byte);
 }
 
 static U8 packet_compute_checksum(const Packet* pkt)
@@ -113,7 +102,7 @@ static void reply(UART_HandleTypeDef* huart, U32 arg)
         led_is_on() ? FLAGS_LED : 0
     );
 
-    HAL_UART_Transmit(huart, (U8*) &reply_packet, sizeof(Packet), 100);
+    HAL_UART_Transmit_IT(huart, (U8*) &reply_packet, sizeof(Packet));
 }
 
 static void clear_ms_lines(void)

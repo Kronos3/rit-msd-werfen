@@ -235,18 +235,10 @@ void TIM3_IRQHandler(void)
 /**
   * @brief This function handles USART1 global interrupt.
   */
+
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE))
-    {
-        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
-    }
-    else
-    {
-        packet_isr_c(&huart1);
-    }
-    return;
 
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);

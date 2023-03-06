@@ -128,7 +128,7 @@ int main(void)
     led_sensor_init(&hadc1);
 
     motor_init(&htim3, TIM_CHANNEL_3);
-    packet_init();
+    packet_init(&huart1);
 
   /* USER CODE END 2 */
 

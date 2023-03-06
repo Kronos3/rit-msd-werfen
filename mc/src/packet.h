@@ -47,10 +47,7 @@ typedef struct
 
 STATIC_ASSERT(sizeof(Packet) == 12, packet_size);
 
-void packet_init(void);
+void packet_init(void* huart);
 void packet_task(void* huart);
-
-void packet_isr_idle(void* huart);
-void packet_isr_c(void* huart);
 
 #endif //MC_PACKET_H

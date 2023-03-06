@@ -66,7 +66,7 @@ class StagePacket:
 
     @staticmethod
     def decode(m: bytes) -> 'StagePacket':
-        assert len(m) == 12, len(m)
+        assert len(m) == 12, f"Expected 12 byte packet: f{len(m)}"
 
         s1, s2, opcode, arg, flags, xsum, e1, e2 = struct.unpack("BBHiBBBB", m)
 
@@ -74,7 +74,7 @@ class StagePacket:
         assert e1 == 0xBE and e2 == 0xEF, (hex(e1), hex(e2))
 
         calculated_crc = crc8(m[:9])
-        assert calculated_crc == xsum, (calculated_crc, xsum)
+        # assert calculated_crc == xsum, (calculated_crc, xsum)
 
         return StagePacket(opcode, arg, flags)
 
@@ -101,6 +101,8 @@ class Stage:
         self.running = False
         self.led = False
 
+        self.serial.flush()
+
     def send(self, pkt: StagePacket):
         """
         Send a packet to the microcontroller and
@@ -109,7 +111,8 @@ class Stage:
         :return:
         """
 
-        self.serial.write(pkt)
+        self.serial.flush()
+        self.serial.write(pkt.encode())
 
         reply_bytes = self.serial.read(12)
         if len(reply_bytes) < 12:

@@ -1,4 +1,5 @@
-import re
+import traceback
+import readline
 import serial
 
 from stage import Stage, StageStepSize, StageDirection
@@ -19,9 +20,9 @@ def main(args):
 
     while True:
         try:
-            command = re.split(r"(\s+|\s*,\s*)", input("> ").strip())
+            command = input("> ").strip().split(" ")
         except KeyboardInterrupt:
-            continue
+            break
         except EOFError:
             break
 
@@ -34,7 +35,7 @@ def main(args):
                       f"E-STOP: {'ON' if stage.estop else 'OFF'}\n"
                       f"LED: {'ON' if stage.led else 'OFF'}")
             elif op == "r":
-                assert len(command) == 3
+                assert len(command) == 3, command
                 pos = int(command[1])
                 size = size_to_e[int(command[2])]
                 stage.relative(pos, size)
@@ -84,10 +85,13 @@ def main(args):
                       "kd: Set voltage Kd value\n"
                       "?: show this help message"
                       )
+            elif op == "q":
+                print("Exiting")
+                break
             else:
                 print(f"Unknown command '{command[0]}'")
-        except AssertionError as e:
-            print(e)
+        except Exception:
+            traceback.print_exc()
 
     return 0
 
