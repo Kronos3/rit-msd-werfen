@@ -167,9 +167,9 @@ class Stage:
         :param direction: forward or backwards
         """
         if direction == StageDirection.FORWARD:
-            self.relative(100000, StageStepSize.FULL)
+            self.relative(100000, StageStepSize.EIGHTH)
         else:
-            self.relative(-100000, StageStepSize.FULL)
+            self.relative(-100000, StageStepSize.EIGHTH)
 
     def set_position(self, pos: int):
         """
