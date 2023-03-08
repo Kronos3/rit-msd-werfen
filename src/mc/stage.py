@@ -9,7 +9,7 @@ class StageOpcode(enum.IntEnum):
     IDLE = 0
     RELATIVE = 1
     ABSOLUTE = 2
-    HOME = 3
+    SPEED = 3
     SET_POSITION = 4
     GET_POSITION = 5
     LED_PWM = 6,
@@ -167,9 +167,16 @@ class Stage:
         :param direction: forward or backwards
         """
         if direction == StageDirection.FORWARD:
-            self.relative(100000, StageStepSize.EIGHTH)
+            self.relative(100000, StageStepSize.FULL)
         else:
-            self.relative(-100000, StageStepSize.EIGHTH)
+            self.relative(-100000, StageStepSize.FULL)
+
+    def speed(self, hz: int):
+        """
+        Set the motor step rate
+        :param hz: step rate in hertz
+        """
+        self.send(StagePacket(StageOpcode.SPEED, hz))
 
     def set_position(self, pos: int):
         """

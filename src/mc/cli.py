@@ -46,6 +46,10 @@ def main(args):
                 if len(command) == 3:
                     size = int(command[2])
                 stage.absolute(pos, size_to_e[size])
+            elif op == "s":
+                assert len(command) == 2
+                hz = int(command[1])
+                stage.speed(hz)
             elif op == "h":
                 assert len(command) == 2
                 assert command[1] in ("-", "+")
@@ -76,6 +80,7 @@ def main(args):
                       "r [pos] [1,2,4,8]: relative motion with step size\n"
                       "a [pos] [1,2,4,8]?: Absolute motion to position\n"
                       "h [+,-]: Home the stage to one of the limit switches\n"
+                      "s [hz]: Set the motor step rate in hertz\n"
                       "sp [pos]: Set the current position to pos\n"
                       "gp -> pos: Get the current position of stage\n"
                       "pwm [0.0% - 1.0%]: Set the ring light's pwm level\n"

@@ -41,6 +41,14 @@ void motor_init(void* step_timer,
                 I32 step_channel);
 
 /**
+ * Set the step rate of the motor
+ * @param prescaler prescaler
+ * @param arr auto-reload register
+ * @return FAILURE or SUCCESS
+ */
+Status motor_speed(U16 prescaler, U16 arr);
+
+/**
  *
  */
 void motor_tick(void);

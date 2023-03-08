@@ -6,6 +6,7 @@
 #include "log.h"
 
 #include "main.h"
+#include "switch.h"
 
 static TIM_HandleTypeDef* step_timer = NULL;
 static I32 step_channel = -1;
@@ -45,6 +46,32 @@ I32 motor_get_step_size(motor_step_t step, Bool reversed)
             // change the speed compared to 1/8
             return scalar * 1;
     }
+}
+
+Status motor_speed(U16 prescaler, U16 arr)
+{
+    if (motor_is_running())
+    {
+        return STATUS_FAILURE;
+    }
+
+    step_timer->Init.Prescaler = prescaler - 1;
+    step_timer->Init.Period = arr - 1;
+
+    TIM_OC_InitTypeDef sConfigOC = {0};
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = arr/2-1;
+    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+
+    if (HAL_TIM_PWM_ConfigChannel(
+            step_timer, &sConfigOC, step_channel)
+            != HAL_OK)
+    {
+        return STATUS_FAILURE;
+    }
+
+    return STATUS_SUCCESS;
 }
 
 void motor_init(void* step_timer_,
@@ -127,6 +154,13 @@ Status motor_step(
         Bool direction_reversed, MotorReply reply_cb)
 {
     if (motor_is_ready(step) != STATUS_SUCCESS)
+    {
+        return STATUS_FAILURE;
+    }
+
+    // Check if we are against the limit switches
+    if (direction_reversed && switch_limit_2_get() ||
+        (!direction_reversed && switch_limit_1_get()))
     {
         return STATUS_FAILURE;
     }

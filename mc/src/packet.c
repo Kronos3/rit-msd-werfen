@@ -140,6 +140,14 @@ static void packet_handler(UART_HandleTypeDef* huart)
             reply(huart, status);
         }
             break;
+        case OPCODE_SPEED: {
+            // Compute prescaler + arr from Hz
+            U16 psc = 80; // 1 Mhz clock
+            U16 arr = (SystemCoreClock / psc) / packet.arg;
+            Status status = motor_speed(psc, arr);
+            reply(huart, status);
+        }
+            break;
         case OPCODE_SET_POSITION:
             motor_set_position((I32)packet.arg);
             reply(huart, 0);
