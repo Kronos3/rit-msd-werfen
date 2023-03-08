@@ -4974,7 +4974,7 @@
     (property "Value" "D_Schottky" (id 1) (at 217.17 138.1124 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Footprint" "Diode_SMD:D_0805_2012Metric" (id 2) (at 214.63 137.16 0)
+    (property "Footprint" "Diode_SMD:D_SMC" (id 2) (at 214.63 137.16 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 214.63 137.16 0)
@@ -5726,7 +5726,7 @@
       (reference "D7") (unit 1) (value "S2") (footprint "LED_SMD:LED_0805_2012Metric")
     )
     (path "/c3e73251-33aa-40ec-b69f-04b50752ec99"
-      (reference "D8") (unit 1) (value "D_Schottky") (footprint "Diode_SMD:D_0805_2012Metric")
+      (reference "D8") (unit 1) (value "D_Schottky") (footprint "Diode_SMD:D_SMC")
     )
     (path "/2e86fc63-f29e-4dc1-b1d0-9e149bbee12b"
       (reference "D9") (unit 1) (value "LIGHT") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal")
