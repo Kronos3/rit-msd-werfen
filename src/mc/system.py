@@ -50,6 +50,6 @@ class System:
 
             # Each sensor is 350 1/8th steps between each other
             self.stage.relative(350, StageStepSize.EIGHTH)
-            self.stage.wait()
+            self.stage.wait(granularity=0.05)
 
         self.hq_cam.stop()
