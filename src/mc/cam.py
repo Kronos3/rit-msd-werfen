@@ -29,6 +29,10 @@ class Camera(abc.ABC):
         if self.is_hardware:
             self.camera.capture_file(name)
 
+    def acquire_array(self):
+        if self.is_hardware:
+            return self.camera.capture_array()
+
 
 class HqCamera(Camera):
     def __init__(self, cam: int):

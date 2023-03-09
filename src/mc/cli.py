@@ -6,7 +6,7 @@ from typing import List
 
 import serial
 
-from mc.cam import HqCamera, AuxCamera
+from cam import HqCamera, AuxCamera
 from stage import Stage, StageStepSize, StageDirection
 from system import System
 
@@ -130,9 +130,11 @@ class Cli:
             assert len(command) >= 2
             cmd = self.system.__getattribute__(command[1])
             if len(command) > 2:
-                cmd(*command[2:])
+                ret = cmd(*command[2:])
             else:
-                cmd()
+                ret = cmd()
+            if ret:
+                print(ret)
         elif op in self.HELP:
             print("i: idle packet (show status flags)\n"
                   "w [timeout = 0.0s] [granularity = 0.1s]: wait for a motor request to finish\n"

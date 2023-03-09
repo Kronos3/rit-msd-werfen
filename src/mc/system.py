@@ -1,6 +1,9 @@
 from typing import Optional
 import time
 
+import pytesseract
+import cv2
+
 from cam import Camera
 from stage import Stage, StageDirection, StageStepSize
 
@@ -34,7 +37,35 @@ class System:
 
         # TODO(tumbar) Find the fiducial using live cam feed
 
-    def single_card(self):
+    def card_id(self) -> str:
+        img = self.aux_cam.acquire_array()
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # TODO(tumbar) Crop
+
+        # Clean up noise using OTSU thresholding
+        # Text is left black, background made white
+        ret, img = cv2.threshold(
+            img, 146, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+        tess_config = '--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789'
+        output = pytesseract.image_to_boxes(
+            img, lang='osd', config=tess_config)
+        boxes = output.strip().split('\n') if output.strip() else []
+        h, w = img.shape
+
+        output = ""
+        for b in boxes:
+            b = b.split(' ')
+            output += b[0]
+            img = cv2.rectangle(img,
+                                (int(b[1]), h - int(b[2])),
+                                (int(b[3]), h - int(b[4])),
+                                (0, 255, 0), 2)
+
+        return output
+
+    def single_card(self, path: str = "test"):
         self.stage.speed(1500)
 
         self.hq_cam.start()
@@ -46,7 +77,7 @@ class System:
             # we acquire an image
             time.sleep(0.2)
 
-            self.hq_cam.acquire(f"test-{sensor}.jpg")
+            self.hq_cam.acquire(f"{path}-{sensor}.jpg")
 
             # Each sensor is 350 1/8th steps between each other
             self.stage.relative(350, StageStepSize.EIGHTH)
