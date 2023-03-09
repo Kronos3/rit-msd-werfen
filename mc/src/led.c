@@ -45,17 +45,19 @@ void led_sensor_init(void* hadc)
     HAL_TIM_Base_Start_IT(led_task_tim);
 }
 
+static inline void led_set_direct(F32 pwm)
+{
+    __HAL_TIM_SET_COMPARE(led_tim, led_chan, pwm * led_tim->Init.Period);
+}
+
 void led_init(void* led_tim_, U16 led_chan_, void* task_tim_)
 {
     led_tim = led_tim_;
     led_chan = led_chan_;
     led_task_tim = task_tim_;
-}
 
-static inline void led_start(void)
-{
+    led_set_direct(0);
     HAL_TIM_PWM_Start(led_tim, led_chan);
-    led_running = TRUE;
 }
 
 static inline F32 led_clamp(F32 pwm)
@@ -72,20 +74,6 @@ static inline F32 led_clamp(F32 pwm)
     return pwm;
 }
 
-static inline void led_set_direct(F32 pwm)
-{
-    if (pwm == 0.0)
-    {
-        led_stop();
-        return;
-    }
-    else if (!led_running)
-    {
-        led_start();
-    }
-    __HAL_TIM_SET_COMPARE(led_tim, led_chan, pwm * led_tim->Init.Period);
-}
-
 void led_set(F32 pwm)
 {
     led_task_running = FALSE;
@@ -94,7 +82,7 @@ void led_set(F32 pwm)
 
 Bool led_is_on(void)
 {
-    return led_running;
+    return __HAL_TIM_GET_COMPARE(led_tim, led_chan) > 0;
 }
 
 void led_voltage(F32 voltage)
@@ -106,15 +94,6 @@ void led_voltage(F32 voltage)
     last_error_d = 0.0f;
 
     led_task_running = TRUE;
-}
-
-void led_stop()
-{
-    if (led_running)
-    {
-        HAL_TIM_PWM_Stop(led_tim, led_chan);
-        led_running = FALSE;
-    }
 }
 
 void led_set_p(F32 p)

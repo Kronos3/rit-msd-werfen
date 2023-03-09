@@ -1,5 +1,7 @@
 import enum
 import struct
+import time
+
 import serial
 
 from crc import crc8
@@ -10,11 +12,13 @@ class StageOpcode(enum.IntEnum):
     RELATIVE = 1
     ABSOLUTE = 2
     SPEED = 3
-    SET_POSITION = 4
-    GET_POSITION = 5
-    LED_PWM = 6,
-    LED_VOLTAGE = 7,
-    LED_PID = 8,
+    STOP = 4
+    SET_POSITION = 5
+    GET_POSITION = 6
+    LED_PWM = 7
+    LED_VOLTAGE = 8
+    LED_PID = 9
+    SWITCH_DEBOUNCE = 10
 
 
 class StageDirection(enum.IntEnum):
@@ -74,7 +78,7 @@ class StagePacket:
         assert e1 == 0xBE and e2 == 0xEF, (hex(e1), hex(e2))
 
         calculated_crc = crc8(m[:9])
-        # assert calculated_crc == xsum, (calculated_crc, xsum)
+        assert calculated_crc == xsum, (calculated_crc, xsum)
 
         return StagePacket(opcode, arg, flags)
 
@@ -135,6 +139,22 @@ class Stage:
         """
         self.send(StagePacket(StageOpcode.IDLE))
 
+    def wait(self, timeout: float = 0.0, granularity: float = 0.1):
+        """
+        Wait for a motion to finish by sending idle commands
+        until the motor status indicates the motion in complete
+        :param timeout: Denotes a timeout (0 for none) when the motor motion should be cancelled
+        :param granularity: Denotes how often to check if motor is running
+        """
+        self.idle()
+        start_time = time.time()
+        while self.running:
+            if (timeout > 0) and ((time.time() - start_time) > timeout):
+                self.stop()
+                raise TimeoutError(f"Motion timed out after {timeout}s")
+            time.sleep(granularity)
+            self.idle()
+
     def relative(self, n: int, size: StageStepSize):
         """
         Perform a relative motion
@@ -160,16 +180,17 @@ class Stage:
         """
         self.send(StagePacket(StageOpcode.ABSOLUTE, abs(n), size & 0x0F))
 
-    def home(self, direction: StageDirection):
+    def home(self, direction: StageDirection, size: StageStepSize):
         """
         Move at maximum speed to one of the edges of the stage
         Stops when it hits a limit switch
         :param direction: forward or backwards
+        :param size: step size to home motor at
         """
         if direction == StageDirection.FORWARD:
-            self.relative(100000, StageStepSize.FULL)
+            self.relative(100000, size)
         else:
-            self.relative(-100000, StageStepSize.FULL)
+            self.relative(-100000, size)
 
     def speed(self, hz: int):
         """
@@ -177,6 +198,9 @@ class Stage:
         :param hz: step rate in hertz
         """
         self.send(StagePacket(StageOpcode.SPEED, hz))
+
+    def stop(self):
+        self.send(StagePacket(StageOpcode.STOP))
 
     def set_position(self, pos: int):
         """
@@ -235,3 +259,16 @@ class Stage:
         :param kd: Kd scalar
         """
         self.send(StagePacket(StageOpcode.LED_PID, kd, StageFlags.PID_D))
+
+    def switch_debounce(self, ms: int):
+        """
+        Set debounce delay on the limit switches.
+        This will change the responsiveness of switches but will
+        also make them more robust to re-trigger when the stage is moving
+        off the limit switch.
+
+        If the stage stops prematurely as it is moving away from a pressed limit
+        switch, you may want to increase this number. By default, it is 10ms.
+        :param ms: millisecond delay to recheck the switch value after a rising edge
+        """
+        self.send(StagePacket(StageOpcode.SWITCH_DEBOUNCE, ms))

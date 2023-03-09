@@ -28,7 +28,6 @@ Bool led_is_on(void);
  * @return Success or failure
  */
 void led_voltage(F32 voltage);
-void led_stop();
 
 void led_set_p(F32 p);
 void led_set_i(F32 i);

@@ -42,11 +42,10 @@ void motor_init(void* step_timer,
 
 /**
  * Set the step rate of the motor
- * @param prescaler prescaler
- * @param arr auto-reload register
+ * @param hz Trigger frequency in Hz
  * @return FAILURE or SUCCESS
  */
-Status motor_speed(U16 prescaler, U16 arr);
+Status motor_speed(U32 hz);
 
 /**
  *

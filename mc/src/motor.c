@@ -48,28 +48,19 @@ I32 motor_get_step_size(motor_step_t step, Bool reversed)
     }
 }
 
-Status motor_speed(U16 prescaler, U16 arr)
+Status motor_speed(U32 hz)
 {
     if (motor_is_running())
     {
         return STATUS_FAILURE;
     }
 
-    step_timer->Init.Prescaler = prescaler - 1;
-    step_timer->Init.Period = arr - 1;
+    U16 arr = (SystemCoreClock / 80) / hz;
+    U16 cmp = (arr / 2) - 1;
 
-    TIM_OC_InitTypeDef sConfigOC = {0};
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = arr/2-1;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-
-    if (HAL_TIM_PWM_ConfigChannel(
-            step_timer, &sConfigOC, step_channel)
-            != HAL_OK)
-    {
-        return STATUS_FAILURE;
-    }
+    __HAL_TIM_SET_COUNTER(step_timer, 0);
+    __HAL_TIM_SET_AUTORELOAD(step_timer, arr - 1);
+    __HAL_TIM_SET_COMPARE(step_timer, step_channel, cmp);
 
     return STATUS_SUCCESS;
 }

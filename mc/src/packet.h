@@ -14,11 +14,13 @@ typedef enum
     OPCODE_RELATIVE,       //!< Relative motion
     OPCODE_ABSOLUTE,       //!< Absolute motion
     OPCODE_SPEED,          //!< Set the motor tick rate
+    OPCODE_STOP,           //!< Stop a running motion
     OPCODE_SET_POSITION,   //!< Set the current position of the stage
     OPCODE_GET_POSITION,   //!< Get current motor position
     OPCODE_LED_PWM,        //!< Directly set the PWM level of LED
     OPCODE_LED_VOLTAGE,    //!< PID around a voltage on the phototransistor
     OPCODE_LED_PID,        //!< Set a PID parameter on the voltage controller
+    OPCODE_SWITCH_DEBOUNCE,//!< Set the limit switch debounce delay in ms
 } opcode_t;
 
 typedef enum

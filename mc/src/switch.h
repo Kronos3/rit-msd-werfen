@@ -9,6 +9,16 @@
 
 #include "gbl.h"
 
+void switch_init(void* debounce_timer);
+
+/**
+ * Set debounce time delay
+ * Sets the responsiveness of limit switches
+ * @param ms ms delay to account to debounce
+ */
+void switch_debounce_period(U16 ms);
+void switch_debounce_check(void);
+
 Bool switch_limit_1_get(void);
 Bool switch_limit_2_get(void);
 Bool switch_e_stop_get(void);

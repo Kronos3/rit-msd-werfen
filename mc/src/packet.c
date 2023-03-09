@@ -12,7 +12,7 @@
 #include <stm32l4xx_hal.h>
 #include <string.h>
 
-static void packet_handler(UART_HandleTypeDef* huart);
+static U32 packet_handler(void);
 
 static Packet rx_buffer = {0};
 static volatile Bool packet_ready = FALSE;
@@ -66,6 +66,29 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     // do nothing here
 }
 
+static U8 packet_compute_checksum(const Packet* pkt)
+{
+    return crc8((const U8*) pkt, offsetof(Packet, checksum));
+}
+
+static void reply(UART_HandleTypeDef* huart, U32 arg)
+{
+    static Packet reply_packet;
+    reply_packet = packet;
+    reply_packet.arg = arg;
+    reply_packet.checksum = packet_compute_checksum(&reply_packet);
+
+    reply_packet.flags = (
+            switch_limit_1_get() ? FLAGS_LIMIT_1 : 0
+            | switch_limit_2_get() ? FLAGS_LIMIT_2 : 0
+            | switch_e_stop_get() ? FLAGS_ESTOP : 0
+            | motor_is_running() ? FLAGS_RUNNING : 0
+            | led_is_on() ? FLAGS_LED : 0
+    );
+
+    HAL_UART_Transmit_IT(huart, (U8*) &reply_packet, sizeof(Packet));
+}
+
 void packet_task(void* huart)
 {
     if (packet_ready)
@@ -78,31 +101,8 @@ void packet_task(void* huart)
             return;
         }
 
-        packet_handler(huart);
+        reply(huart, packet_handler());
     }
-}
-
-static U8 packet_compute_checksum(const Packet* pkt)
-{
-    return crc8((const U8*) pkt, sizeof(Packet) - 2);
-}
-
-static void reply(UART_HandleTypeDef* huart, U32 arg)
-{
-    static Packet reply_packet;
-    reply_packet = packet;
-    reply_packet.arg = arg;
-    reply_packet.checksum = packet_compute_checksum(&reply_packet);
-
-    reply_packet.flags = (
-        switch_limit_1_get() ? FLAGS_LIMIT_1 : 0 |
-        switch_limit_2_get() ? FLAGS_LIMIT_2 : 0 |
-        switch_e_stop_get() ? FLAGS_ESTOP : 0 |
-        motor_is_running() ? FLAGS_RUNNING : 0 |
-        led_is_on() ? FLAGS_LED : 0
-    );
-
-    HAL_UART_Transmit_IT(huart, (U8*) &reply_packet, sizeof(Packet));
 }
 
 static void clear_ms_lines(void)
@@ -112,20 +112,16 @@ static void clear_ms_lines(void)
     motor_set_ms(0);
 }
 
-static void packet_handler(UART_HandleTypeDef* huart)
+static U32 packet_handler(void)
 {
     switch((opcode_t)packet.opcode)
     {
-        case OPCODE_IDLE:
-            reply(huart, 0);
-            break;
+        case OPCODE_IDLE: return 0;
         case OPCODE_RELATIVE: {
             motor_step_t step = packet.flags & MOTOR_MASK_STEP;
             Bool reversed = (packet.flags & MOTOR_MASK_DIRECTION) ? TRUE : FALSE;
-            Status status = motor_step(step, packet.arg, reversed, clear_ms_lines);
-            reply(huart, status);
+            return motor_step(step, packet.arg, reversed, clear_ms_lines);
         }
-            break;
         case OPCODE_ABSOLUTE: {
             I32 desired_position = (I32)packet.arg;
             I32 delta = desired_position - motor_get_position();
@@ -136,25 +132,16 @@ static void packet_handler(UART_HandleTypeDef* huart)
             nsteps = nsteps < 0 ? -nsteps : nsteps;
 
             Bool reversed = delta < 0;
-            Status status = motor_step(step, nsteps, reversed, clear_ms_lines);
-            reply(huart, status);
+            return motor_step(step, nsteps, reversed, clear_ms_lines);
         }
-            break;
-        case OPCODE_SPEED: {
-            // Compute prescaler + arr from Hz
-            U16 psc = 80; // 1 Mhz clock
-            U16 arr = (SystemCoreClock / psc) / packet.arg;
-            Status status = motor_speed(psc, arr);
-            reply(huart, status);
-        }
+        case OPCODE_SPEED: return motor_speed(packet.arg);
+        case OPCODE_STOP:
+            motor_stop();
             break;
         case OPCODE_SET_POSITION:
             motor_set_position((I32)packet.arg);
-            reply(huart, 0);
             break;
-        case OPCODE_GET_POSITION:
-            reply(huart, motor_get_position());
-            break;
+        case OPCODE_GET_POSITION: return motor_get_position();
         case OPCODE_LED_PWM:
             led_set(*(F32*)&packet.arg);
             break;
@@ -174,10 +161,12 @@ static void packet_handler(UART_HandleTypeDef* huart)
                     led_set_d(*(F32*)&packet.arg);
                     break;
             }
-            reply(huart, 0);
             break;
-        default:
-            reply(huart, 0);
+        case OPCODE_SWITCH_DEBOUNCE:
+            switch_debounce_period(packet.arg);
             break;
+        default: return 0xFF;
     }
+
+    return 0;
 }
