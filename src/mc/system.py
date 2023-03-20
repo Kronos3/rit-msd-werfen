@@ -73,8 +73,8 @@ class System:
         # TODO(tumbar) Use a better naming scheme
         sensor_names = [str(x) for x in range(12)]
         for sensor in sensor_names:
-            # This delay is used to allow the system to stabilize before
-            # we acquire an image
+            # This delay is used to allow the system to
+            # stabilize before we acquire an image
             time.sleep(0.2)
 
             self.hq_cam.acquire(f"{path}-{sensor}.jpg")

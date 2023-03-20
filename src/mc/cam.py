@@ -37,14 +37,16 @@ class Camera(abc.ABC):
 class HqCamera(Camera):
     def __init__(self, cam: int):
         super().__init__(cam)
-        self.config = self.camera.create_still_configuration(
-            main={"size": (4056, 3040)},
-        )
+        if self.is_hardware:
+            self.config = self.camera.create_still_configuration(
+                main={"size": (4056, 3040)},
+            )
 
 
 class AuxCamera(Camera):
     def __init__(self, cam: int):
         super().__init__(cam)
-        self.config = self.camera.create_still_configuration(
-            main={"size": (3280, 2464)},
-        )
+        if self.is_hardware:
+            self.config = self.camera.create_still_configuration(
+                main={"size": (3280, 2464)},
+            )

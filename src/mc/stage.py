@@ -1,6 +1,7 @@
 import enum
 import struct
 import time
+from typing import Union
 
 import serial
 
@@ -47,11 +48,11 @@ class StageStepSize(enum.IntEnum):
 
 class StagePacket:
     opcode: StageOpcode
-    arg: int | float
+    arg: Union[int, float]
     flags: int
 
     def __init__(self, opcode: StageOpcode,
-                 arg: int | float = 0,
+                 arg: Union[int, float] = 0,
                  flags: int = 0):
         self.opcode = opcode
         self.arg = arg

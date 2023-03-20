@@ -25,4 +25,4 @@ class StagePacket:
         self.flags = flags
 
     def encode(self) -> bytes:
-
+        pass
