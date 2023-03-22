@@ -65,17 +65,18 @@ class System:
 
         return output
 
-    def single_card(self, path: str = "test"):
+    def single_card(self, delay_s: str = "0.2", path: str = "test"):
         self.stage.speed(1500)
 
         self.hq_cam.start()
+        delay = float(delay_s)
 
         # TODO(tumbar) Use a better naming scheme
         sensor_names = [str(x) for x in range(12)]
         for sensor in sensor_names:
             # This delay is used to allow the system to
             # stabilize before we acquire an image
-            time.sleep(0.2)
+            time.sleep(delay)
 
             self.hq_cam.acquire(f"{path}-{sensor}.jpg")
 

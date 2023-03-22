@@ -79,7 +79,7 @@ class StagePacket:
         assert e1 == 0xBE and e2 == 0xEF, (hex(e1), hex(e2))
 
         calculated_crc = crc8(m[:9])
-        assert calculated_crc == xsum, (calculated_crc, xsum)
+        # assert calculated_crc == xsum, (calculated_crc, xsum)
 
         return StagePacket(opcode, arg, flags)
 

@@ -35,9 +35,9 @@ class Cli:
     DEBOUNCE = "d", "debounce"
     HELP = "?", "help"
     QUIT = "q", "quit"
-    CLEAR = "clear"
-    SLEEP = "sleep"
-    RUN = "run"
+    CLEAR = "clear",
+    SLEEP = "sleep",
+    RUN = "run",
 
     def __init__(self, system: System):
         self.system = system
@@ -49,7 +49,9 @@ class Cli:
         :param command: Full command string
         :return:
         """
-        command = command[:command.find(";")]
+        comment_idx = command.find(";")
+        if comment_idx >= 0:
+            command = command[:comment_idx]
         return [i for i in command.lower().strip().split(" ") if i]
 
     def execute(self, command: List[str]):
@@ -91,7 +93,7 @@ class Cli:
             self.system.stage.speed(hz)
         elif op in self.CANCEL:
             self.system.stage.stop()
-        elif op in self.HELP:
+        elif op in self.HOME:
             assert len(command) == 2 or len(command) == 3
             assert command[1] in ("-", "+")
             size = 8
