@@ -117,6 +117,8 @@ class Stage:
         """
 
         self.serial.flush()
+        self.serial.reset_input_buffer()
+        self.serial.reset_output_buffer()
         self.serial.write(pkt.encode())
 
         reply_bytes = self.serial.read(12)

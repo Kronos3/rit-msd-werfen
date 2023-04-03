@@ -156,7 +156,8 @@ class Cli:
                   "?: show this help message\n"
                   "q: quit the program\n"
                   "clear: clear the terminal screen\n"
-                  "sleep [seconds]: wait for a certain amount of time"
+                  "sleep [seconds]: wait for a certain amount of time\n",
+                  "run [script] args...\n"
                   )
         elif op in self.QUIT:
             print("Exiting")
@@ -195,6 +196,8 @@ def main(args):
 
         try:
             cli.execute(Cli.parse(command))
+        except KeyboardInterrupt:
+            continue
         except Exception:
             traceback.print_exc()
 
