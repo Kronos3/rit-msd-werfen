@@ -1,3 +1,4 @@
+import os
 from typing import Literal
 
 import cv2
@@ -30,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-is_dummy = True
+is_dummy = os.getenv("WERFEN_DUMMY")
 if is_dummy:
     system = System(Stage(None), HqCamera(-1), AuxCamera(-1))
 else:
