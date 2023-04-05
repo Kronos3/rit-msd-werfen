@@ -4,8 +4,8 @@ import time
 import pytesseract
 import cv2
 
-from cam import Camera
-from stage import Stage, StageDirection, StageStepSize
+from mc.cam import Camera
+from mc.stage import Stage, StageDirection, StageStepSize
 
 
 class System:
@@ -38,7 +38,8 @@ class System:
         # TODO(tumbar) Find the fiducial using live cam feed
 
     def card_id(self) -> str:
-        img = self.aux_cam.acquire_array()
+        with self.aux_cam:
+            img = self.aux_cam.acquire_array()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # TODO(tumbar) Crop
@@ -66,22 +67,27 @@ class System:
         return output
 
     def single_card(self, delay_s: str = "0.2", path: str = "test"):
-        self.stage.speed(1500)
+        i = 0
+        for image in self.single_card_raw(float(delay_s)):
+            # TODO(tumbar) Create a better naming scheme
+            cv2.imwrite(f"{path}-{i}.jpg", image)
+            i += 1
 
-        self.hq_cam.start()
-        delay = float(delay_s)
+    def single_card_raw(self,
+                        delay: float = 0.2,
+                        speed: int = 1500,
+                        step: int = 350,
+                        step_size: StageStepSize = StageStepSize.EIGHTH):
+        self.stage.speed(speed)
 
-        # TODO(tumbar) Use a better naming scheme
-        sensor_names = [str(x) for x in range(12)]
-        for sensor in sensor_names:
-            # This delay is used to allow the system to
-            # stabilize before we acquire an image
-            time.sleep(delay)
+        with self.hq_cam:
+            for i in range(12):
+                # This delay is used to allow the system to
+                # stabilize before we acquire an image
+                time.sleep(delay)
 
-            self.hq_cam.acquire(f"{path}-{sensor}.jpg")
+                yield self.hq_cam.acquire_array()
 
-            # Each sensor is 350 1/8th steps between each other
-            self.stage.relative(350, StageStepSize.EIGHTH)
-            self.stage.wait(granularity=0.05)
-
-        self.hq_cam.stop()
+                # Move to the next sensor and wait for the motion to finish
+                self.stage.relative(step, step_size)
+                self.stage.wait(granularity=0.05)

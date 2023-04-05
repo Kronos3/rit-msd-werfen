@@ -134,14 +134,16 @@ static U32 packet_handler(void)
             Bool reversed = delta < 0;
             return motor_step(step, nsteps, reversed, clear_ms_lines);
         }
-        case OPCODE_SPEED: return motor_speed(packet.arg);
+        case OPCODE_SPEED:
+            return motor_speed(packet.arg);
         case OPCODE_STOP:
             motor_stop();
             break;
         case OPCODE_SET_POSITION:
             motor_set_position((I32)packet.arg);
             break;
-        case OPCODE_GET_POSITION: return motor_get_position();
+        case OPCODE_GET_POSITION:
+            return motor_get_position();
         case OPCODE_LED_PWM:
             led_set(*(F32*)&packet.arg);
             break;

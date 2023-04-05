@@ -1,11 +1,13 @@
 import enum
 import struct
+import threading
 import time
 from typing import Union
 
 import serial
 
-from crc import crc8
+from mc.log import log
+from mc.crc import crc8
 
 
 class StageOpcode(enum.IntEnum):
@@ -79,7 +81,9 @@ class StagePacket:
         assert e1 == 0xBE and e2 == 0xEF, (hex(e1), hex(e2))
 
         calculated_crc = crc8(m[:9])
-        # assert calculated_crc == xsum, (calculated_crc, xsum)
+        if calculated_crc != xsum:
+            log.warning("Checksum for %s mismatch 0x%02x != 0x%02x",
+                        StageOpcode[opcode].name, calculated_crc, xsum)
 
         return StagePacket(opcode, arg, flags)
 
@@ -97,7 +101,9 @@ class Stage:
     running: bool
     led: bool
 
-    def __init__(self, ser: serial.Serial):
+    mutex: threading.Lock
+
+    def __init__(self, ser: Union[serial.Serial, None]):
         self.serial = ser
 
         self.limit_1 = False
@@ -106,7 +112,11 @@ class Stage:
         self.running = False
         self.led = False
 
-        self.serial.flush()
+        self.mutex = threading.Lock()
+
+        with self.mutex:
+            if self.serial:
+                self.serial.flush()
 
     def send(self, pkt: StagePacket):
         """
@@ -116,12 +126,16 @@ class Stage:
         :return:
         """
 
-        self.serial.flush()
-        self.serial.reset_input_buffer()
-        self.serial.reset_output_buffer()
-        self.serial.write(pkt.encode())
+        with self.mutex:
+            if self.serial:
+                self.serial.flush()
+                self.serial.reset_input_buffer()
+                self.serial.reset_output_buffer()
+                self.serial.write(pkt.encode())
+                reply_bytes = self.serial.read(12)
+            else:
+                reply_bytes = b""
 
-        reply_bytes = self.serial.read(12)
         if len(reply_bytes) < 12:
             raise TimeoutError(f"Stage UART timed out while waiting for a reply to {pkt.opcode.name}")
 
@@ -142,7 +156,7 @@ class Stage:
         """
         self.send(StagePacket(StageOpcode.IDLE))
 
-    def wait(self, timeout: float = 0.0, granularity: float = 0.1):
+    async def wait(self, timeout: float = 0.0, granularity: float = 0.1):
         """
         Wait for a motion to finish by sending idle commands
         until the motor status indicates the motion in complete

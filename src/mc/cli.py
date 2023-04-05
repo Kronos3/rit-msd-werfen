@@ -6,9 +6,9 @@ from typing import List
 
 import serial
 
-from cam import HqCamera, AuxCamera
-from stage import Stage, StageStepSize, StageDirection
-from system import System
+from mc.cam import HqCamera, AuxCamera
+from mc.stage import Stage, StageStepSize, StageDirection
+from mc.system import System
 
 
 class Cli:
@@ -168,11 +168,12 @@ class Cli:
             print(f"Unknown command '{command[0]}'")
 
 
-def main(args):
-    assert len(args) >= 2, f"Serial port argument"
-
-    ser = serial.Serial(args[1], 115200, timeout=1.0)
-    stage = Stage(ser)
+def create_system(args) -> System:
+    if len(args) >= 2:
+        ser = serial.Serial(args[1], 115200, timeout=1.0)
+        stage = Stage(ser)
+    else:
+        stage = Stage(None)
 
     hq_cam = -1
     aux_cam = -1
@@ -181,8 +182,11 @@ def main(args):
     if len(args) >= 4:
         aux_cam = int(args[3])
 
-    system = System(stage, HqCamera(hq_cam), AuxCamera(aux_cam))
-    cli = Cli(system)
+    return System(stage, HqCamera(hq_cam), AuxCamera(aux_cam))
+
+
+def main(args):
+    cli = Cli(create_system(args))
 
     while True:
         try:
