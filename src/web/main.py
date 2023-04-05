@@ -20,28 +20,25 @@ else:
     system = System(Stage(ser), HqCamera(1), AuxCamera(0))
 
 
-class JpegResponse(Response):
-    media_type = "image/jpeg"
-
-    def render(self, img) -> bytes:
-        return bytearray(cv2.imencode(".jpg", img)[1])
+Encodings = Literal["jpeg", "png", "tiff", "raw"]
 
 
-class PngResponse(Response):
-    media_type = "image/png"
+class ImageResponse(Response):
+    def render(self, content) -> bytes:
+        if self.media_type == "image/jpeg":
+            img = cv2.imencode(".jpg", content)[1]
+        elif self.media_type == "image/png":
+            img = cv2.imencode(".png", content)[1]
+        elif self.media_type == "image/tiff":
+            img = cv2.imencode(".tiff", content)[1]
+        else:
+            img = content
 
-    def render(self, img) -> bytes:
-        return bytearray(cv2.imencode(".png", img)[1])
+        return bytearray(img)
 
 
-class TiffResponse(Response):
-    media_type = "image/tiff"
-
-    def render(self, img) -> bytes:
-        return bytearray(cv2.imencode(".tiff", img)[1])
-
-
-def cam_acquire_common(cam_name: Literal["hq", "aux"]):
+@app.get("/cam/acquire/jpeg/{cam_name}", response_class=ImageResponse)
+def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
     if cam_name == "hq":
         with system.hq_cam:
             img = system.hq_cam.acquire_array()
@@ -49,22 +46,8 @@ def cam_acquire_common(cam_name: Literal["hq", "aux"]):
         with system.aux_cam:
             img = system.aux_cam.acquire_array()
 
-    return img
-
-
-@app.get("/cam/acquire/jpeg/{cam_name}", response_class=JpegResponse)
-def cam_acquire(cam_name: Literal["hq", "aux"]):
-    return cam_acquire_common(cam_name)
-
-
-@app.get("/cam/acquire/png/{cam_name}", response_class=PngResponse)
-def cam_acquire(cam_name: Literal["hq", "aux"]):
-    return cam_acquire_common(cam_name)
-
-
-@app.get("/cam/acquire/tiff/{cam_name}", response_class=TiffResponse)
-def cam_acquire(cam_name: Literal["hq", "aux"]):
-    return cam_acquire_common(cam_name)
+    # Encode the image if requested
+    return ImageResponse(img, media_type=f"image/{encoding}")
 
 
 @app.get("/stage/status")
@@ -112,6 +95,7 @@ StageStepSizesMap = {
 
 @app.get("/system/single_card")
 def single_card(
+        encoding: Encodings = "tiff",
         delay: float = 0.2,
         speed: int = 1500,
         step: int = 350,
@@ -120,7 +104,6 @@ def single_card(
 
     def streamer():
         for image in system.single_card_raw(delay, speed, step, sys_step_size):
-            # processed_image = process_encoding(image, encoding)
-            yield bytearray(image)
+            yield ImageResponse(image, media_type=f"image/{encoding}").body
 
     return StreamingResponse(streamer())
