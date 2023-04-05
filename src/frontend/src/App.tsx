@@ -20,14 +20,19 @@ import {
     Button,
     AlertDialogBody,
     AlertDialogFooter,
+    Select
 } from '@chakra-ui/react'
 
 import ApiForm from './Form';
 
+import * as cookies from './cookie';
+
 
 function App() {
-    const [address, setAddress] = useState("localhost");
-    const [port, setPort] = useState(8000);
+    const [address, setAddress] = useState(cookies.get("address") || "localhost");
+    const [port, setPort] = useState(parseInt(cookies.get("port") || "8000"));
+
+    const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
 
     const portDisclose = useDisclosure();
     const portCancelRef = React.useRef<any>();
@@ -39,7 +44,15 @@ function App() {
             .then(async value => {
                 setApiSchema(await value.json());
             });
-    }, [address, port])
+    }, [address, port]);
+
+    useEffect(() => {
+        cookies.set("address", address)
+    }, [address]);
+
+    useEffect(() => {
+        cookies.set("port", `${port}`)
+    }, [port]);
 
     return (
         <Container>
@@ -64,7 +77,7 @@ function App() {
                         </AlertDialogHeader>
 
                         <AlertDialogBody>
-                            <Input value={`${port}`} onChange={(e) => setPort(parseInt(e.target.value))}/>
+                            <Input value={`${port}`} onChange={(e) => setPort(parseInt(e.target.value))} />
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
@@ -80,6 +93,7 @@ function App() {
                 <TabList>
                     <Tab>Operate</Tab>
                     <Tab>Single Card</Tab>
+                    <Tab>Stage</Tab>
                     <Tab>Calibrate</Tab>
                 </TabList>
 
@@ -96,7 +110,20 @@ function App() {
                             }} />
                     </TabPanel>
                     <TabPanel>
-                        <p>three!</p>
+                        <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)} placeholder='Select option'>
+                            <option value='/stage/relative'>Relative Motion</option>
+                            <option value='/stage/absolute'>Absolute Motion</option>
+                            <option value='/stage/speed'>Stage Speed</option>
+                            <option value='/stage/led_pwm'>Ring Light PWM</option>
+                        </Select>
+                        <ApiForm
+                            address={address}
+                            port={port}
+                            path={stageSelect}
+                            schema={apiSchema}/>
+                    </TabPanel>
+                    <TabPanel>
+                        <p>Calibrate</p>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

@@ -189,7 +189,7 @@ class Stage:
 
         self.send(pkt)
 
-    def absolute(self, n: int, size: StageStepSize = StageStepSize.HALF):
+    def absolute(self, n: int, size: StageStepSize = StageStepSize.EIGHTH):
         """
         Perform absolute motion to stage position
         using requested step size. The larger the step size

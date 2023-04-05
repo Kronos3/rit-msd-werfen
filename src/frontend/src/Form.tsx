@@ -20,9 +20,8 @@ function generateRjsfSchema(schema: any) {
     } as any
 }
 
-export default function ApiForm(props: ApiProps & { path: string, schema: any, onReply: (response: Response) => void }) {
+export default function ApiForm(props: ApiProps & { path: string, schema: any, onReply?: (response: Response) => void }) {
     const schema = props.schema?.paths[props.path]?.post;
-    console.log(schema);
     if (!schema) {
         return <Text>Non-post requests are not supported</Text>
     }
@@ -35,6 +34,6 @@ export default function ApiForm(props: ApiProps & { path: string, schema: any, o
             body: JSON.stringify(formProp.formData)
         });
 
-        props.onReply(response);
+        props.onReply?.(response);
     }} />
 }

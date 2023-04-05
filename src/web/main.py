@@ -125,6 +125,26 @@ StageStepSizesMap = {
 }
 
 
+@app.post("/stage/relative")
+def stage_relative(n: int, size: StageStepSizes):
+    system.stage.relative(n, StageStepSizesMap[size])
+
+
+@app.post("/stage/absolute")
+def stage_absolute(n: int, size: StageStepSizes = "EIGHTH"):
+    system.stage.absolute(n, StageStepSizesMap[size])
+
+
+@app.post("/stage/speed")
+def stage_speed(hz: int):
+    system.stage.speed(hz)
+
+
+@app.post("/stage/led_pwm")
+def stage_speed(pwm: float):
+    system.stage.led_pwm(pwm)
+
+
 @app.post("/system/single_card")
 def single_card(
         encoding: Encodings = "tiff",
@@ -135,12 +155,11 @@ def single_card(
         step_size: StageStepSizes = "EIGHTH",
         buffer: bool = False
 ):
-    sys_step_size = StageStepSizesMap[step_size]
-
     if buffer:
         images = []
         for image in system.single_card_raw(
-                delay, speed, step, num_captures, sys_step_size
+                delay, speed, step, num_captures,
+                StageStepSizesMap[step_size]
         ):
             images.append(image)
 
@@ -152,5 +171,5 @@ def single_card(
             (ImageResponse(image, media_type=f"image/{encoding}").body
              for image in system.single_card_raw(
                 delay, speed, step,
-                num_captures, sys_step_size)),
+                num_captures, StageStepSizesMap[step_size])),
             media_type="application/octet-stream")
