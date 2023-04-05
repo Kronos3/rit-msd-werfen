@@ -19,7 +19,7 @@ if is_dummy:
     system = System(Stage(None), HqCamera(-1), AuxCamera(-1))
 else:
     ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
-    system = System(Stage(ser), HqCamera(1), AuxCamera(0))
+    system = System(Stage(None), HqCamera(1), AuxCamera(0))
 
 
 Encodings = Literal["jpeg", "png", "tiff", "raw"]
@@ -37,7 +37,7 @@ class ImageResponse(Response):
         else:
             img = content
 
-        return bytearray(img)
+        return bytes(img)
 
 
 def get_camera(cam_name: Cameras) -> Camera:
@@ -123,4 +123,4 @@ def single_card(
         for image in system.single_card_raw(delay, speed, step, sys_step_size):
             yield ImageResponse(image, media_type=f"image/{encoding}").body
 
-    return StreamingResponse(streamer())
+    return StreamingResponse(streamer(), media_type="application/octet-stream")
