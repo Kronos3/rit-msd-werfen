@@ -137,7 +137,7 @@ class Stage:
                 self.serial.write(pkt.encode())
                 reply_bytes = self.serial.read(12)
             else:
-                reply_bytes = b""
+                reply_bytes = StagePacket(pkt.opcode, 0, 0).encode()
 
         if len(reply_bytes) < 12:
             raise TimeoutError(f"Stage UART timed out while waiting for a reply to {pkt.opcode.name}")

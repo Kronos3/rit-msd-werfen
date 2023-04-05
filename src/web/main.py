@@ -39,6 +39,7 @@ class ImageResponse(Response):
 
         return bytearray(img)
 
+
 def get_camera(cam_name: Cameras) -> Camera:
     if cam_name == "hq":
         return system.hq_cam
