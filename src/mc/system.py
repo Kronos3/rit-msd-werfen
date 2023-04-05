@@ -89,7 +89,8 @@ class System:
             for i in range(num_captures):
                 # This delay is used to allow the system to
                 # stabilize before we acquire an image
-                time.sleep(delay)
+                if delay > 0:
+                    time.sleep(delay)
 
                 yield self.hq_cam.acquire_array()
                 log.info("Captured %s / %s images", i + 1, num_captures)
