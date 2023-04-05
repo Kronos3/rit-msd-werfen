@@ -86,7 +86,7 @@ class StagePacket:
         calculated_crc = crc8(m[:9])
         if calculated_crc != xsum:
             log.warning("Checksum for %s mismatch 0x%02x != 0x%02x",
-                        StageOpcode[opcode].name, calculated_crc, xsum)
+                        StageOpcode(opcode).name, calculated_crc, xsum)
 
         return StagePacket(opcode, arg, flags)
 
