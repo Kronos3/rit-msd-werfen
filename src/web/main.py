@@ -1,5 +1,5 @@
+import io
 from typing import Literal
-import base64
 
 import cv2
 import serial
@@ -45,7 +45,10 @@ def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
 
     # Encode the image if requested
 
-    return bytearray(process_encoding(img, encoding))
+    return StreamingResponse(
+        io.BytesIO(process_encoding(img, encoding).tobytes()),
+        media_type=f"image/{encoding}"
+    )
 
 
 @app.get("/stage/status")

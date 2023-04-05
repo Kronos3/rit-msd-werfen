@@ -5,3 +5,4 @@ pytesseract
 coloredlogs
 picamera2
 pyserial
+fastapi[all]
