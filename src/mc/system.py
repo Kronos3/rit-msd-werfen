@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 import time
 
@@ -6,6 +7,9 @@ import cv2
 
 from mc.cam import Camera
 from mc.stage import Stage, StageDirection, StageStepSize
+
+
+log = logging.getLogger(__name__)
 
 
 class System:
@@ -77,16 +81,18 @@ class System:
                         delay: float = 0.2,
                         speed: int = 1500,
                         step: int = 350,
+                        num_captures: int = 12,
                         step_size: StageStepSize = StageStepSize.EIGHTH):
         self.stage.speed(speed)
 
         with self.hq_cam:
-            for i in range(12):
+            for i in range(num_captures):
                 # This delay is used to allow the system to
                 # stabilize before we acquire an image
                 time.sleep(delay)
 
                 yield self.hq_cam.acquire_array()
+                log.info("Captured %s / %s images", i + 1, num_captures)
 
                 # Move to the next sensor and wait for the motion to finish
                 self.stage.relative(step, step_size)

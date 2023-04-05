@@ -159,7 +159,7 @@ class Stage:
         """
         self.send(StagePacket(StageOpcode.IDLE))
 
-    async def wait(self, timeout: float = 0.0, granularity: float = 0.1):
+    def wait(self, timeout: float = 0.0, granularity: float = 0.1):
         """
         Wait for a motion to finish by sending idle commands
         until the motor status indicates the motion in complete

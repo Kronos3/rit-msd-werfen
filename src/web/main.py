@@ -21,7 +21,6 @@ else:
     ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
     system = System(Stage(None), HqCamera(1), AuxCamera(0))
 
-
 Encodings = Literal["jpeg", "png", "tiff", "raw"]
 Cameras = Literal["hq", "aux"]
 
@@ -116,11 +115,24 @@ def single_card(
         delay: float = 0.2,
         speed: int = 1500,
         step: int = 350,
-        step_size: StageStepSizes = "EIGHTH"):
+        num_captures: int = 12,
+        step_size: StageStepSizes = "EIGHTH",
+        buffer: bool = False
+):
     sys_step_size = StageStepSizesMap[step_size]
 
-    def streamer():
-        for image in system.single_card_raw(delay, speed, step, sys_step_size):
-            yield ImageResponse(image, media_type=f"image/{encoding}").body
+    if buffer:
+        images = []
+        for image in system.single_card_raw(
+                delay, speed, step, num_captures, sys_step_size
+        ):
+            images.append(ImageResponse(image, media_type=f"image/{encoding}").body)
 
-    return StreamingResponse(streamer(), media_type="application/octet-stream")
+        return StreamingResponse(iter(images), media_type="application/octet-stream")
+    else:
+        return StreamingResponse(
+            (ImageResponse(image, media_type=f"image/{encoding}").body
+             for image in system.single_card_raw(
+                delay, speed, step,
+                num_captures, sys_step_size)),
+            media_type="application/octet-stream")
