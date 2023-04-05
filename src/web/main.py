@@ -6,6 +6,8 @@ import serial
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse, Response
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from mc.cam import HqCamera, AuxCamera, Camera
 from mc.stage import StageStepSize, Stage
 from mc.system import System
@@ -14,12 +16,26 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-is_dummy = False
+
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+is_dummy = True
 if is_dummy:
     system = System(Stage(None), HqCamera(-1), AuxCamera(-1))
 else:
     ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
-    system = System(Stage(None), HqCamera(1), AuxCamera(0))
+    system = System(Stage(ser), HqCamera(1), AuxCamera(0))
 
 Encodings = Literal["jpeg", "png", "tiff", "raw"]
 Cameras = Literal["hq", "aux"]
@@ -109,7 +125,7 @@ StageStepSizesMap = {
 }
 
 
-@app.get("/system/single_card")
+@app.post("/system/single_card")
 def single_card(
         encoding: Encodings = "tiff",
         delay: float = 0.2,
