@@ -73,10 +73,9 @@ static U8 packet_compute_checksum(const Packet* pkt)
 
 static void reply(UART_HandleTypeDef* huart, U32 arg)
 {
-    static Packet reply_packet;
-    reply_packet = packet;
+    Packet reply_packet = {0};
+    memcpy(&reply_packet, &packet, sizeof(Packet));
     reply_packet.arg = arg;
-    reply_packet.checksum = packet_compute_checksum(&reply_packet);
 
     reply_packet.flags = (
             switch_limit_1_get() ? FLAGS_LIMIT_1 : 0
@@ -86,6 +85,7 @@ static void reply(UART_HandleTypeDef* huart, U32 arg)
             | led_is_on() ? FLAGS_LED : 0
     );
 
+    reply_packet.checksum = packet_compute_checksum(&reply_packet);
     HAL_UART_Transmit_IT(huart, (U8*) &reply_packet, sizeof(Packet));
 }
 
