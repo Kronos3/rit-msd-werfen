@@ -18,7 +18,7 @@ if is_dummy:
     system = System(Stage(None), HqCamera(-1), AuxCamera(-1))
 else:
     ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
-    system = System(Stage(ser), HqCamera(-1), AuxCamera(-1))
+    system = System(Stage(ser), HqCamera(1), AuxCamera(0))
 
 
 Encodings = Literal["jpeg", "png", "tiff", "raw"]
