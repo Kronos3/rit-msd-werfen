@@ -1,11 +1,10 @@
-import io
 from typing import Literal
 
 import cv2
 import serial
 
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, Response
 
 from mc.cam import HqCamera, AuxCamera
 from mc.stage import StageStepSize, Stage
@@ -21,21 +20,28 @@ else:
     system = System(Stage(ser), HqCamera(1), AuxCamera(0))
 
 
-Encodings = Literal["jpeg", "png", "tiff", "raw"]
+class JpegResponse(Response):
+    media_type = "image/jpeg"
+
+    def render(self, img) -> bytes:
+        return bytearray(cv2.imencode(".jpg", img)[1])
 
 
-def process_encoding(img, encoding: Encodings):
-    if encoding == "jpeg":
-        return cv2.imencode(".jpg", img)[1]
-    elif encoding == "png":
-        return cv2.imencode(".png", img)[1]
-    elif encoding == "tiff":
-        return cv2.imencode(".tiff", img)[1]
-    return img
+class PngResponse(Response):
+    media_type = "image/png"
+
+    def render(self, img) -> bytes:
+        return bytearray(cv2.imencode(".png", img)[1])
 
 
-@app.get("/cam/acquire/{cam_name}")
-def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
+class TiffResponse(Response):
+    media_type = "image/tiff"
+
+    def render(self, img) -> bytes:
+        return bytearray(cv2.imencode(".tiff", img)[1])
+
+
+def cam_acquire_common(cam_name: Literal["hq", "aux"]):
     if cam_name == "hq":
         with system.hq_cam:
             img = system.hq_cam.acquire_array()
@@ -43,12 +49,22 @@ def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
         with system.aux_cam:
             img = system.aux_cam.acquire_array()
 
-    # Encode the image if requested
+    return img
 
-    return StreamingResponse(
-        io.BytesIO(process_encoding(img, encoding).tobytes()),
-        media_type=f"image/{encoding}"
-    )
+
+@app.get("/cam/acquire/jpeg/{cam_name}", response_class=JpegResponse)
+def cam_acquire(cam_name: Literal["hq", "aux"]):
+    return cam_acquire_common(cam_name)
+
+
+@app.get("/cam/acquire/png/{cam_name}", response_class=PngResponse)
+def cam_acquire(cam_name: Literal["hq", "aux"]):
+    return cam_acquire_common(cam_name)
+
+
+@app.get("/cam/acquire/tiff/{cam_name}", response_class=TiffResponse)
+def cam_acquire(cam_name: Literal["hq", "aux"]):
+    return cam_acquire_common(cam_name)
 
 
 @app.get("/stage/status")
@@ -96,7 +112,6 @@ StageStepSizesMap = {
 
 @app.get("/system/single_card")
 def single_card(
-        encoding: Encodings = "tiff",
         delay: float = 0.2,
         speed: int = 1500,
         step: int = 350,
@@ -105,7 +120,7 @@ def single_card(
 
     def streamer():
         for image in system.single_card_raw(delay, speed, step, sys_step_size):
-            processed_image = process_encoding(image, encoding)
-            yield bytearray(processed_image)
+            # processed_image = process_encoding(image, encoding)
+            yield bytearray(image)
 
     return StreamingResponse(streamer())
