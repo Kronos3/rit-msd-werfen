@@ -126,9 +126,11 @@ def single_card(
         for image in system.single_card_raw(
                 delay, speed, step, num_captures, sys_step_size
         ):
-            images.append(ImageResponse(image, media_type=f"image/{encoding}").body)
+            images.append(image)
 
-        return StreamingResponse(iter(images), media_type="application/octet-stream")
+        return StreamingResponse(
+            (ImageResponse(image, media_type=f"image/{encoding}").body for image in images),
+            media_type="application/octet-stream")
     else:
         return StreamingResponse(
             (ImageResponse(image, media_type=f"image/{encoding}").body
