@@ -6,9 +6,11 @@ import serial
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse, Response
 
-from mc.cam import HqCamera, AuxCamera
+from mc.cam import HqCamera, AuxCamera, Camera
 from mc.stage import StageStepSize, Stage
 from mc.system import System
+
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -21,6 +23,7 @@ else:
 
 
 Encodings = Literal["jpeg", "png", "tiff", "raw"]
+Cameras = Literal["hq", "aux"]
 
 
 class ImageResponse(Response):
@@ -36,36 +39,49 @@ class ImageResponse(Response):
 
         return bytearray(img)
 
+def get_camera(cam_name: Cameras) -> Camera:
+    if cam_name == "hq":
+        return system.hq_cam
+    else:
+        return system.aux_cam
+
 
 @app.get("/cam/acquire/{cam_name}", response_class=ImageResponse)
-def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
-    if cam_name == "hq":
-        with system.hq_cam:
-            img = system.hq_cam.acquire_array()
-    else:
-        with system.aux_cam:
-            img = system.aux_cam.acquire_array()
+def cam_acquire(cam_name: Cameras, encoding: Encodings = "jpeg", start_stop: bool = True):
+    camera = get_camera(cam_name)
+
+    if start_stop:
+        camera.start()
+
+    img = camera.acquire_array()
+
+    if start_stop:
+        camera.stop()
 
     # Encode the image if requested
     return ImageResponse(img, media_type=f"image/{encoding}")
 
 
-@app.get("/stage/status")
-def stage_status(ping: bool = True):
-    # Send an idle packet to update the status flags
-    if ping:
-        system.stage.idle()
-
-    return {
-        "limit1": system.stage.limit_1,
-        "limit2": system.stage.limit_2,
-        "estop": system.stage.estop,
-        "running": system.stage.running,
-        "led": system.stage.led,
-    }
+@app.get("/cam/start/{cam_name}")
+def cam_start(cam_name: Cameras):
+    get_camera(cam_name).start()
 
 
-@app.get("/stage/position")
+@app.get("/cam/stop/{cam_name}")
+def cam_start(cam_name: Cameras):
+    get_camera(cam_name).stop()
+
+
+class StageStatus(BaseModel):
+    limit1: bool
+    limit2: bool
+    estop: bool
+    running: bool
+    led: bool
+    position: int
+
+
+@app.get("/stage/status", response_model=StageStatus)
 def state_position():
     position = system.stage.get_position()
     return {

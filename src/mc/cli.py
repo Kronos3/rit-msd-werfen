@@ -168,7 +168,7 @@ class Cli:
             print(f"Unknown command '{command[0]}'")
 
 
-def create_system(args) -> System:
+def main(args):
     if len(args) >= 2:
         ser = serial.Serial(args[1], 115200, timeout=1.0)
         stage = Stage(ser)
@@ -182,11 +182,8 @@ def create_system(args) -> System:
     if len(args) >= 4:
         aux_cam = int(args[3])
 
-    return System(stage, HqCamera(hq_cam), AuxCamera(aux_cam))
-
-
-def main(args):
-    cli = Cli(create_system(args))
+    system = System(stage, HqCamera(hq_cam), AuxCamera(aux_cam))
+    cli = Cli(system)
 
     while True:
         try:

@@ -2,8 +2,11 @@ import abc
 import threading
 
 import numpy as np
+import logging
+import coloredlogs as coloredlogs
 
-from mc.log import log
+coloredlogs.install(fmt='%(asctime)s,%(msecs)03d %(levelname)s %(message)s')
+log = logging.getLogger(__name__)
 
 
 class Camera(abc.ABC):
@@ -23,26 +26,28 @@ class Camera(abc.ABC):
     def is_hardware(self) -> bool:
         return self.cam >= 0
 
-    def __enter__(self):
+    def start(self):
         if self.is_hardware:
             self.camera.configure(self.config)
             self.camera.start()
-        self._lock.acquire()
-        log.info("Starting %s camera", self.name)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._lock.release()
-        log.info("Stopping %s camera", self.name)
+    def stop(self):
         if self.is_hardware:
             self.camera.stop()
 
+    def __enter__(self):
+        self.start()
+        self._lock.acquire()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop()
+        self._lock.release()
+
     def acquire(self, name: str):
-        assert self._lock.locked()
         if self.is_hardware:
             self.camera.capture_file(name)
 
     def acquire_array(self) -> np.ndarray:
-        assert self._lock.locked()
         if self.is_hardware:
             return self.camera.capture_array()
 

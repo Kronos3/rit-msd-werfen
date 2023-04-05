@@ -1,4 +1,5 @@
 import enum
+import logging
 import struct
 import threading
 import time
@@ -6,8 +7,10 @@ from typing import Union
 
 import serial
 
-from mc.log import log
 from mc.crc import crc8
+
+
+log = logging.getLogger(__name__)
 
 
 class StageOpcode(enum.IntEnum):
