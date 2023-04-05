@@ -21,6 +21,8 @@ typedef enum
     OPCODE_LED_VOLTAGE,    //!< PID around a voltage on the phototransistor
     OPCODE_LED_PID,        //!< Set a PID parameter on the voltage controller
     OPCODE_SWITCH_DEBOUNCE,//!< Set the limit switch debounce delay in ms
+    OPCODE_EMERGENCY_STOP, //!< Lock the system until the lock is cleared
+    OPCODE_EMERGENCY_CLEAR,//!< Clear the ESTOP lock
 } opcode_t;
 
 typedef enum

@@ -23,6 +23,9 @@ Bool switch_limit_1_get(void);
 Bool switch_limit_2_get(void);
 Bool switch_e_stop_get(void);
 
+void emergency_stop(void);
+void emergency_clear(void);
+
 /**
  * Handle an external interrupt from a pin
  * @param event_pin pin where interrupt is coming from

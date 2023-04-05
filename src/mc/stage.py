@@ -25,6 +25,8 @@ class StageOpcode(enum.IntEnum):
     LED_VOLTAGE = 8
     LED_PID = 9
     SWITCH_DEBOUNCE = 10
+    EMERGENCY_STOP = 11
+    EMERGENCY_CLEAR = 12
 
 
 class StageDirection(enum.IntEnum):
@@ -279,6 +281,12 @@ class Stage:
         :param kd: Kd scalar
         """
         self.send(StagePacket(StageOpcode.LED_PID, kd, StageFlags.PID_D))
+
+    def emergency_stop(self):
+        self.send(StagePacket(StageOpcode.EMERGENCY_STOP))
+
+    def emergency_clear(self):
+        self.send(StagePacket(StageOpcode.EMERGENCY_CLEAR))
 
     def switch_debounce(self, ms: int):
         """

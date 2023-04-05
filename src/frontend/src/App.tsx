@@ -26,6 +26,7 @@ import {
 import ApiForm from './Form';
 
 import * as cookies from './cookie';
+import Status from './Status';
 
 
 function App() {
@@ -89,6 +90,8 @@ function App() {
                 </AlertDialogOverlay>
             </AlertDialog>
 
+            <Status address={address} port={port} />
+
             <Tabs>
                 <TabList>
                     <Tab>Operate</Tab>
@@ -120,7 +123,7 @@ function App() {
                             address={address}
                             port={port}
                             path={stageSelect}
-                            schema={apiSchema}/>
+                            schema={apiSchema} />
                     </TabPanel>
                     <TabPanel>
                         <p>Calibrate</p>

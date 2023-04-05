@@ -146,6 +146,14 @@ def stage_speed(pwm: float):
     system.stage.led_pwm(pwm)
 
 
+@app.get("/system/estop")
+def estop(stop: bool):
+    if stop:
+        system.stage.emergency_stop()
+    else:
+        system.stage.emergency_clear()
+
+
 @app.post("/system/single_card")
 def single_card(
         encoding: Encodings = "tiff",

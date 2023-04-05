@@ -1,0 +1,57 @@
+import {
+    Stack,
+    Badge,
+    Switch
+} from '@chakra-ui/react'
+
+import { ApiProps } from './common';
+import { useEffect, useState } from 'react';
+
+interface StageStatus {
+    limit1: boolean;
+    limit2: boolean;
+    estop: boolean;
+    running: boolean;
+    led: boolean;
+    position: number;
+}
+
+function offGreen(state: boolean): string {
+    return state ? 'red' : 'green'
+}
+
+export default function Status(props: ApiProps) {
+    const [state, setState] = useState<StageStatus>({
+        limit1: false,
+        limit2: false,
+        estop: false,
+        running: false,
+        led: false,
+        position: 0
+    });
+
+    const [ping, setPing] = useState<boolean>(true);
+
+    // Ping for status @10Hz
+    useEffect(() => {
+        if (ping) {
+            const interval = setInterval(async () => {
+                const responseRaw = await fetch(`http://${props.address}:${props.port}/stage/status`);
+                const response: StageStatus = await responseRaw.json();
+                setState(response);
+            }, 500);
+            return () => clearInterval(interval);
+        }
+    }, [props.address, props.port, ping]);
+
+    return (
+        <Stack paddingTop={4} direction='row' spacing={1} align='center' justify='center'>
+            <Badge colorScheme={offGreen(state.limit1)}>LIMIT-1</Badge>
+            <Badge colorScheme={offGreen(state.limit2)}>LIMIT-2</Badge>
+            <Badge colorScheme={offGreen(state.estop)}>ESTOP</Badge>
+            <Badge colorScheme={state.running ? 'blue' : 'gray'}>{state.running ? 'RUNNING' : 'STOPPED'}</Badge>
+            <Badge colorScheme='blue'>{state.position}</Badge>
+            <Switch alignSelf='right' isChecked={ping} onChange={(e) => setPing(e.target.checked)} />
+        </Stack>
+    )
+}

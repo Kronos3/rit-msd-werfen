@@ -167,6 +167,12 @@ static U32 packet_handler(void)
         case OPCODE_SWITCH_DEBOUNCE:
             switch_debounce_period(packet.arg);
             break;
+        case OPCODE_EMERGENCY_STOP:
+            emergency_stop();
+            break;
+        case OPCODE_EMERGENCY_CLEAR:
+            emergency_clear();
+            break;
         default: return 0xFF;
     }
 
