@@ -37,7 +37,7 @@ class ImageResponse(Response):
         return bytearray(img)
 
 
-@app.get("/cam/acquire/jpeg/{cam_name}", response_class=ImageResponse)
+@app.get("/cam/acquire/{cam_name}", response_class=ImageResponse)
 def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
     if cam_name == "hq":
         with system.hq_cam:
