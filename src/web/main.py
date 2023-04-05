@@ -13,7 +13,7 @@ from mc.system import System
 
 app = FastAPI()
 
-is_dummy = True
+is_dummy = False
 if is_dummy:
     system = System(Stage(None), HqCamera(-1), AuxCamera(-1))
 else:
@@ -26,37 +26,26 @@ Encodings = Literal["jpeg", "png", "tiff", "raw"]
 
 def process_encoding(img, encoding: Encodings):
     if encoding == "jpeg":
-        return cv2.imencode(".jpg", img)
+        return cv2.imencode(".jpg", img)[1]
     elif encoding == "png":
-        return cv2.imencode(".png", img)
+        return cv2.imencode(".png", img)[1]
     elif encoding == "tiff":
-        return cv2.imencode(".tiff", img)
+        return cv2.imencode(".tiff", img)[1]
     return img
 
 
 @app.get("/cam/acquire/{cam_name}")
 def cam_acquire(cam_name: Literal["hq", "aux"], encoding: Encodings = "jpeg"):
     if cam_name == "hq":
-        out = system.hq_cam.acquire_array()
+        with system.hq_cam:
+            img = system.hq_cam.acquire_array()
     else:
-        out = system.aux_cam.acquire_array()
-
-    original = out
+        with system.aux_cam:
+            img = system.aux_cam.acquire_array()
 
     # Encode the image if requested
-    if encoding == "jpeg":
-        out = cv2.imencode(".jpg", out)
-    elif encoding == "png":
-        out = cv2.imencode(".png", out)
-    elif encoding == "tiff":
-        out = cv2.imencode(".tiff", out)
 
-    return {
-        "img": base64.b64encode(out),
-        "encoding": encoding,
-        "height": original.shape[0],
-        "width": original.shape[1],
-    }
+    return bytearray(process_encoding(img, encoding))
 
 
 @app.get("/stage/status")
