@@ -129,13 +129,18 @@ StageStepSizesMap = {
 
 
 @app.post("/stage/relative")
-def stage_relative(n: int, size: StageStepSizes):
-    system.stage.relative(n, StageStepSizesMap[size])
+def stage_relative(n: int, size: StageStepSizes, ignore_limits: bool = False):
+    system.stage.relative(n, StageStepSizesMap[size], ignore_limits)
 
 
 @app.post("/stage/absolute")
-def stage_absolute(n: int, size: StageStepSizes = "EIGHTH"):
-    system.stage.absolute(n, StageStepSizesMap[size])
+def stage_absolute(n: int, size: StageStepSizes = "EIGHTH", ignore_limits: bool = False):
+    system.stage.absolute(n, StageStepSizesMap[size], ignore_limits)
+
+
+@app.post("/stage/set_position")
+def stage_absolute(position: int):
+    system.stage.set_position(position)
 
 
 @app.post("/stage/speed")
@@ -146,6 +151,11 @@ def stage_speed(hz: int):
 @app.post("/stage/led_pwm")
 def stage_speed(pwm: float):
     system.stage.led_pwm(pwm)
+
+
+@app.post("/stage/step_off")
+def stage_speed(n: int, size: StageStepSizes = "EIGHTH"):
+    system.stage.switch_step_off(StageStepSizesMap[size], n)
 
 
 @app.get("/system/estop")

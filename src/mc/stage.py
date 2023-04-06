@@ -27,6 +27,7 @@ class StageOpcode(enum.IntEnum):
     SWITCH_DEBOUNCE = 10
     EMERGENCY_STOP = 11
     EMERGENCY_CLEAR = 12
+    LIMIT_STEP_OFF = 13
 
 
 class StageDirection(enum.IntEnum):
@@ -38,6 +39,9 @@ class StageFlags(enum.IntFlag):
     PID_P = 0
     PID_I = 1
     PID_D = 2
+
+    MOTOR_IS_REVERSED = 1 << 5,
+    MOTOR_IGNORE_LIMITS = 1 << 6
 
     LIMIT_1 = 1 << 0
     LIMIT_2 = 1 << 1
@@ -177,21 +181,23 @@ class Stage:
             time.sleep(granularity)
             self.idle()
 
-    def relative(self, n: int, size: StageStepSize):
+    def relative(self, n: int, size: StageStepSize, ignore_limits: bool = False):
         """
         Perform a relative motion
         :param n: number of steps
         :param size: size of the stage steps
+        :param ignore_limits: Run the motion request even if stuck on a limit switch
         """
         pkt = StagePacket(
             StageOpcode.RELATIVE,
             abs(n),
-            (size & 0x0F) | (0xF0 if n < 0 else 0x00)
+            (size & 0x0F) | (StageFlags.MOTOR_IS_REVERSED if n < 0 else 0)
+            | (StageFlags.MOTOR_IGNORE_LIMITS if ignore_limits else 0)
         )
 
         self.send(pkt)
 
-    def absolute(self, n: int, size: StageStepSize = StageStepSize.EIGHTH):
+    def absolute(self, n: int, size: StageStepSize = StageStepSize.EIGHTH, ignore_limits: bool = False):
         """
         Perform absolute motion to stage position
         using requested step size. The larger the step size
@@ -199,8 +205,10 @@ class Stage:
         multiple of the step size.
         :param n: position to move to
         :param size: step size
+        :param ignore_limits: Run the motion request even if stuck on a limit switch
         """
-        self.send(StagePacket(StageOpcode.ABSOLUTE, abs(n), size & 0x0F))
+        self.send(StagePacket(StageOpcode.ABSOLUTE, abs(n),
+                              size & 0x0F | (StageFlags.MOTOR_IGNORE_LIMITS if ignore_limits else 0)))
 
     def home(self, direction: StageDirection, size: StageStepSize):
         """
@@ -283,10 +291,32 @@ class Stage:
         self.send(StagePacket(StageOpcode.LED_PID, kd, StageFlags.PID_D))
 
     def emergency_stop(self):
+        """
+        Set the E-stop software flag
+        This will block all motor requests until the flag
+        is cleared. This overrides the hardware signal via software.
+        """
         self.send(StagePacket(StageOpcode.EMERGENCY_STOP))
 
     def emergency_clear(self):
+        """
+        Clear the software E-stop flag. The hardware signal will
+        still remain in effect if on.
+        """
         self.send(StagePacket(StageOpcode.EMERGENCY_CLEAR))
+
+    def switch_step_off(self, size: StageStepSize, nsteps: int):
+        """
+        Set up the limit switch step off motion which is run after
+        a limit switch is hit during a motion request
+        :param size: Step size
+        :param nsteps: number of steps
+        """
+        self.send(StagePacket(
+            StageOpcode.LIMIT_STEP_OFF,
+            abs(nsteps),
+            (size & 0x0F)
+        ))
 
     def switch_debounce(self, ms: int):
         """

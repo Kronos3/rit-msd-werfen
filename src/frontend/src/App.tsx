@@ -28,6 +28,7 @@ import ApiForm from './Form';
 import * as cookies from './cookie';
 import Status from './Status';
 import SingleCard from './SingleCard';
+import Camera from './Camera';
 
 
 function App() {
@@ -98,6 +99,7 @@ function App() {
                     <Tab>Operate</Tab>
                     <Tab>Single Card</Tab>
                     <Tab>Stage</Tab>
+                    <Tab>Camera</Tab>
                     <Tab>Calibrate</Tab>
                 </TabList>
 
@@ -107,7 +109,7 @@ function App() {
                         <SingleCard address={address} port={port} schema={apiSchema} />
                     </TabPanel>
                     <TabPanel>
-                        <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)} placeholder='Select option'>
+                        <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)}>
                             <option value='/stage/relative'>Relative Motion</option>
                             <option value='/stage/absolute'>Absolute Motion</option>
                             <option value='/stage/speed'>Stage Speed</option>
@@ -118,6 +120,9 @@ function App() {
                             port={port}
                             path={stageSelect}
                             schema={apiSchema} />
+                    </TabPanel>
+                    <TabPanel>
+                        <Camera address={address} port={port} />
                     </TabPanel>
                     <TabPanel>
                         <p>Calibrate</p>

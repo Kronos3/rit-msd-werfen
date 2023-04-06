@@ -145,6 +145,13 @@ void motor_set_ms(motor_step_t step)
 
 void motor_limit_step_off(void)
 {
+    // Don't step off the limit switch if we are not
+    // currently running a motion
+    if (!motor_request.is_running)
+    {
+        return;
+    }
+
     // Run the motor the other direction
     Bool is_reversed = !motor_request.direction_reversed;
 
