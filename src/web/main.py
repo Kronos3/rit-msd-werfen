@@ -19,11 +19,6 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -33,10 +28,14 @@ app.add_middleware(
 )
 
 is_dummy = os.getenv("WERFEN_DUMMY")
+serial_file = os.getenv("WERFEN_SERIAL")
 if is_dummy:
     system = System(Stage(None), HqCamera(-1), AuxCamera(-1))
 else:
-    ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
+    if serial_file:
+        ser = serial.Serial(serial_file, 115200, timeout=1.0)
+    else:
+        ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
     system = System(Stage(ser), HqCamera(1), AuxCamera(0))
 
 Encodings = Literal["jpeg", "png", "tiff", "raw"]

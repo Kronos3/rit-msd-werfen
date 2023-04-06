@@ -27,5 +27,5 @@ CRC8_TABLE = [
 def crc8(m: Union[bytes, bytearray]):
     crc = 0xFF
     for c in m:
-        crc = CRC8_TABLE[crc ^ c]
+        crc = CRC8_TABLE[crc ^ c] & 0xFF
     return crc & 0xFF
