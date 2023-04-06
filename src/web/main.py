@@ -44,6 +44,8 @@ Cameras = Literal["hq", "aux"]
 
 class ImageResponse(Response):
     def render(self, content) -> bytes:
+        content = cv2.resize(content, (int(content.shape[1] * 0.2), int(content.shape[0] * 0.2)))
+
         if self.media_type == "image/jpeg":
             img = cv2.imencode(".jpg", content)[1]
         elif self.media_type == "image/png":
