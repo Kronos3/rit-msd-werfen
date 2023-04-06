@@ -1,7 +1,9 @@
 import os
-from typing import Literal
+import struct
+from typing import Literal, Iterable
 
 import cv2
+import numpy as np
 import serial
 
 from fastapi import FastAPI
@@ -16,7 +18,6 @@ from mc.system import System
 from pydantic import BaseModel
 
 app = FastAPI()
-
 
 origins = [
     "http://localhost",
@@ -164,6 +165,17 @@ def single_card(
         step_size: StageStepSizes = "EIGHTH",
         buffer: bool = False
 ):
+    def wrap(imgs: Iterable[np.ndarray]):
+        for img in imgs:
+            # Encode the image
+            encoded = ImageResponse(img, media_type=f"image/{encoding}").body
+
+            # Tell the receiving end how big the next file is
+            yield struct.pack("I", len(encoded))
+
+            # Send the actual image
+            yield encoded
+
     if buffer:
         images = []
         for image in system.single_card_raw(
@@ -172,13 +184,10 @@ def single_card(
         ):
             images.append(image)
 
-        return StreamingResponse(
-            (ImageResponse(image, media_type=f"image/{encoding}").body for image in images),
-            media_type="application/octet-stream")
+        return StreamingResponse(wrap(images), media_type="application/octet-stream")
     else:
         return StreamingResponse(
-            (ImageResponse(image, media_type=f"image/{encoding}").body
-             for image in system.single_card_raw(
+            wrap(system.single_card_raw(
                 delay, speed, step,
                 num_captures, StageStepSizesMap[step_size])),
             media_type="application/octet-stream")

@@ -27,6 +27,7 @@ import ApiForm from './Form';
 
 import * as cookies from './cookie';
 import Status from './Status';
+import SingleCard from './SingleCard';
 
 
 function App() {
@@ -103,14 +104,7 @@ function App() {
                 <TabPanels>
                     <TabPanel></TabPanel>
                     <TabPanel>
-                        <ApiForm
-                            address={address}
-                            port={port}
-                            path="/system/single_card"
-                            schema={apiSchema}
-                            onReply={(response) => {
-
-                            }} />
+                        <SingleCard address={address} port={port} schema={apiSchema} />
                     </TabPanel>
                     <TabPanel>
                         <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)} placeholder='Select option'>
