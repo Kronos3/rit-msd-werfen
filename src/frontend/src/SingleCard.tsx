@@ -16,7 +16,15 @@ export default function SingleCard(props: ApiProps & { schema: any }) {
                 path="/system/single_card"
                 schema={props.schema}
                 onReply={async (response) => {
-
+                    const fids: number[] = await response.json()
+                    setImages([]);
+                    const out = [];
+                    for (const fid of fids) {
+                        const fidRes = await fetch(`http://${props.address}:${props.port}/future/${fid}`)
+                        const imgBlob = await fidRes.blob();
+                        out.push(imgBlob);
+                        setImages([...out]);
+                    }
                 }} />
             <VStack>
                 {
