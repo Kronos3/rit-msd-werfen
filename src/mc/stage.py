@@ -207,7 +207,7 @@ class Stage:
         :param size: step size
         :param ignore_limits: Run the motion request even if stuck on a limit switch
         """
-        self.send(StagePacket(StageOpcode.ABSOLUTE, abs(n),
+        self.send(StagePacket(StageOpcode.ABSOLUTE, n,
                               size & 0x0F | (StageFlags.MOTOR_IGNORE_LIMITS if ignore_limits else 0)))
 
     def home(self, direction: StageDirection, size: StageStepSize):

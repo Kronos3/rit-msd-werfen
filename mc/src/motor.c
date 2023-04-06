@@ -143,11 +143,19 @@ void motor_set_ms(motor_step_t step)
     HAL_GPIO_WritePin(MS3_GPIO_Port, MS3_Pin, (step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
+static Bool motor_is_stepping_off = FALSE;
+
+static void motor_limit_step_off_done(void)
+{
+    motor_is_stepping_off = FALSE;
+}
+
 void motor_limit_step_off(void)
 {
     // Don't step off the limit switch if we are not
-    // currently running a motion
-    if (!motor_request.is_running)
+    // currently running a motion.
+    // Also ignore limit switch events during step off
+    if (!motor_request.is_running || motor_is_stepping_off)
     {
         return;
     }
@@ -157,11 +165,14 @@ void motor_limit_step_off(void)
 
     motor_stop();
 
+    motor_is_stepping_off = TRUE;
+
     // Step off the limit switch by running the motor backwards
     motor_step(limit_step_off_size,
                limit_step_off_count,
                is_reversed,
-               NULL, TRUE);
+               motor_limit_step_off_done,
+               TRUE);
 
 }
 
