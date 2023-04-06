@@ -1,7 +1,5 @@
 import { useCallback, useState } from "react";
 
-import { ApiProps } from "./common";
-
 import {
     Image,
     Select,
@@ -9,7 +7,7 @@ import {
     Center,
 } from '@chakra-ui/react'
 
-export default function Camera(props: ApiProps) {
+export default function Camera(props: { host: string }) {
     const [camera, setCamera] = useState("hq");
     const [image, setImage] = useState<Blob | undefined>();
     const [disabled, setDisabled] = useState(false);
@@ -19,11 +17,11 @@ export default function Camera(props: ApiProps) {
         setImage(undefined);
         (async () => {
             setDisabled(true);
-            const response = await fetch(`http://${props.address}:${props.port}/cam/acquire/${camera}`);
+            const response = await fetch(`http://${props.host}/cam/acquire/${camera}`);
             setImage(await response.blob());
             setDisabled(false);
         })();
-    }, [camera, props.address, props.port]);
+    }, [camera, props.host]);
 
     return (
         <>

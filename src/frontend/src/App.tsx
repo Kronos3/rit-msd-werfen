@@ -1,26 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-    AlertDialog,
     Container,
     InputLeftAddon,
-    InputRightAddon,
     InputGroup,
     Input,
     Text,
     Tabs,
+    Select,
     TabList,
     TabPanels,
     Tab,
     TabPanel,
-    useDisclosure,
-    AlertDialogOverlay,
-    AlertDialogContent,
-    AlertDialogHeader,
-    Button,
-    AlertDialogBody,
-    AlertDialogFooter,
-    Select
 } from '@chakra-ui/react'
 
 import ApiForm from './Form';
@@ -32,30 +23,22 @@ import Camera from './Camera';
 
 
 function App() {
-    const [address, setAddress] = useState(cookies.get("address") || window.location.hostname);
-    const [port, setPort] = useState(parseInt(cookies.get("port") || window.location.port));
+    const [host, setHost] = useState(cookies.get("host") || window.location.host);
 
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
-
-    const portDisclose = useDisclosure();
-    const portCancelRef = React.useRef<any>();
 
     const [apiSchema, setApiSchema] = useState<any>();
 
     useEffect(() => {
-        fetch(`http://${address}:${port}/openapi.json`)
+        fetch(`http://${host}/openapi.json`)
             .then(async value => {
                 setApiSchema(await value.json());
             });
-    }, [address, port]);
+    }, [host]);
 
     useEffect(() => {
-        cookies.set("address", address)
-    }, [address]);
-
-    useEffect(() => {
-        cookies.set("port", `${port}`)
-    }, [port]);
+        cookies.set("host", host)
+    }, [host]);
 
     return (
         <Container>
@@ -63,36 +46,11 @@ function App() {
                 <Text mb='8px'>Middleware API Address</Text>
                 <InputGroup size='sm'>
                     <InputLeftAddon children='http://' />
-                    <Input placeholder='localhost' value={address} onChange={(e) => setAddress(e.target.value)} />
-                    <InputRightAddon onClick={portDisclose.onOpen} children={`:${port}`} />
+                    <Input value={host} onChange={(e) => setHost(e.target.value)} />
                 </InputGroup>
             </>
 
-            <AlertDialog
-                isOpen={portDisclose.isOpen}
-                leastDestructiveRef={portCancelRef}
-                onClose={portDisclose.onClose}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                            Set port
-                        </AlertDialogHeader>
-
-                        <AlertDialogBody>
-                            <Input value={`${port}`} onChange={(e) => setPort(parseInt(e.target.value))} />
-                        </AlertDialogBody>
-
-                        <AlertDialogFooter>
-                            <Button ref={portCancelRef} onClick={portDisclose.onClose}>
-                                Close
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            <Status address={address} port={port} />
+            <Status host={host} />
 
             <Tabs>
                 <TabList>
@@ -106,7 +64,7 @@ function App() {
                 <TabPanels>
                     <TabPanel></TabPanel>
                     <TabPanel>
-                        <SingleCard address={address} port={port} schema={apiSchema} />
+                        <SingleCard host={host} schema={apiSchema} />
                     </TabPanel>
                     <TabPanel>
                         <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)}>
@@ -118,13 +76,12 @@ function App() {
                             <option value='/stage/step_off'>Limit Switch Step Off</option>
                         </Select>
                         <ApiForm
-                            address={address}
-                            port={port}
+                            host={host}
                             path={stageSelect}
                             schema={apiSchema} />
                     </TabPanel>
                     <TabPanel>
-                        <Camera address={address} port={port} />
+                        <Camera host={host} />
                     </TabPanel>
                     <TabPanel>
                         <p>Calibrate</p>

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Text } from '@chakra-ui/react'
-import { ApiProps } from './common';
 
 import schemaGenerator from 'openapi-schema-to-json-schema'
 
@@ -31,7 +30,7 @@ function generateQuery(params: any): string {
     return Object.keys(params).map(key => key + '=' + params[key]).join('&');
 }
 
-export default function ApiForm(props: ApiProps & { path: string, schema: any, onReply?: (response: Response) => void }) {
+export default function ApiForm(props: { host: string, path: string, schema: any, onReply?: (response: Response) => void }) {
     const [schema, setSchema] = useState();
     const [disabled, setDisabled] = useState(false);
     const [value, setValue] = useState();
@@ -46,7 +45,7 @@ export default function ApiForm(props: ApiProps & { path: string, schema: any, o
             setDisabled(true);
 
             const query = generateQuery(formProp.formData);
-            const response = await fetch(`http://${props.address}:${props.port}${props.path}?${query}`, {
+            const response = await fetch(`http://${props.host}${props.path}?${query}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
             });

@@ -6,7 +6,6 @@ import {
     Center
 } from '@chakra-ui/react'
 
-import { ApiProps } from './common';
 import { useCallback, useEffect, useState } from 'react';
 
 interface StageStatus {
@@ -22,7 +21,7 @@ function offGreen(state: boolean): string {
     return state ? 'red' : 'green'
 }
 
-export default function Status(props: ApiProps) {
+export default function Status(props: { host: string }) {
     const [state, setState] = useState<StageStatus>({
         limit1: false,
         limit2: false,
@@ -39,12 +38,12 @@ export default function Status(props: ApiProps) {
             setDisableEstop(true);
             if (state.estop) {
                 // Clear the estop signal
-                await fetch(`http://${props.address}:${props.port}/system/estop?stop=false`);
+                await fetch(`http://${props.host}/system/estop?stop=false`);
             } else {
-                await fetch(`http://${props.address}:${props.port}/system/estop?stop=true`);
+                await fetch(`http://${props.host}/system/estop?stop=true`);
             }
         })();
-    }, [props.address, props.port, state]);
+    }, [props.host, state]);
 
     const [ping, setPing] = useState<boolean>(true);
 
@@ -52,14 +51,14 @@ export default function Status(props: ApiProps) {
     useEffect(() => {
         if (ping) {
             const interval = setInterval(async () => {
-                const responseRaw = await fetch(`http://${props.address}:${props.port}/stage/status`);
+                const responseRaw = await fetch(`http://${props.host}/stage/status`);
                 const response: StageStatus = await responseRaw.json();
                 setState(response);
                 setDisableEstop(false);
             }, 500);
             return () => clearInterval(interval);
         }
-    }, [props.address, props.port, ping]);
+    }, [props.host, ping]);
 
     return (
         <>
