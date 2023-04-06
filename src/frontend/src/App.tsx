@@ -32,8 +32,8 @@ import Camera from './Camera';
 
 
 function App() {
-    const [address, setAddress] = useState(cookies.get("address") || "localhost");
-    const [port, setPort] = useState(parseInt(cookies.get("port") || "8000"));
+    const [address, setAddress] = useState(cookies.get("address") || window.location.hostname);
+    const [port, setPort] = useState(parseInt(cookies.get("port") || window.location.port));
 
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
 
