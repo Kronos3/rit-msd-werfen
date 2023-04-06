@@ -1,13 +1,13 @@
+import asyncio
 import os
-import struct
-from typing import Literal, Iterable
+import threading
+from typing import Literal, Dict, Tuple
 
 import cv2
-import numpy as np
 import serial
 
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse, Response
+from fastapi.responses import Response
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -56,6 +56,33 @@ class ImageResponse(Response):
             img = content
 
         return bytes(img)
+
+
+class FutureManager:
+    _current_id: int
+    _futures: Dict[int, asyncio.Future]
+
+    def __init__(self):
+        self._futures = {}
+        self._current_id = 0
+
+    def create(self) -> Tuple[int, asyncio.Future]:
+        fid = self._current_id
+        self._current_id += 1
+
+        out = asyncio.Future()
+        self._futures[fid] = out
+
+        return fid, out
+
+    def get(self, fid: int) -> asyncio.Future:
+        return self._futures[fid]
+
+    def delete(self, fid: int):
+        del self._futures[fid]
+
+
+future_manager = FutureManager()
 
 
 def get_camera(cam_name: Cameras) -> Camera:
@@ -166,6 +193,15 @@ def estop(stop: bool):
         system.stage.emergency_clear()
 
 
+@app.get("/future/{fid}")
+async def get_future(fid: int):
+    img = await future_manager.get(fid)
+
+    # Free up resources (should free the image)
+    future_manager.delete(fid)
+    return img
+
+
 @app.post("/system/single_card")
 def single_card(
         encoding: Encodings = "tiff",
@@ -176,29 +212,40 @@ def single_card(
         step_size: StageStepSizes = "EIGHTH",
         buffer: bool = False
 ):
-    def wrap(imgs: Iterable[np.ndarray]):
-        for img in imgs:
-            # Encode the image
-            encoded = ImageResponse(img, media_type=f"image/{encoding}").body
+    # Generate the futures for the frontend to request these images
+    futures = []
+    fids = []
+    for _ in range(num_captures):
+        fid, future = future_manager.create()
+        futures.append(future)
+        fids.append(fid)
 
-            # Tell the receiving end how big the next file is
-            yield struct.pack(">I", len(encoded))
+    def execute():
+        if buffer:
+            # First gather all the images
+            images = []
+            for image in system.single_card_raw(
+                    delay, speed, step, num_captures,
+                    StageStepSizesMap[step_size]
+            ):
+                images.append(image)
 
-            # Send the actual image
-            yield encoded
+            # Now reply to the futures
+            for i, image in enumerate(images):
+                futures[i].set_result(ImageResponse(image, media_type=f"image/{encoding}"))
+        else:
+            # Reply to the futures as they come
+            # This encodes in-between each step
+            for i, image in enumerate(system.single_card_raw(
+                    delay, speed, step, num_captures,
+                    StageStepSizesMap[step_size]
+            )):
+                futures[i].set_result(ImageResponse(image, media_type=f"image/{encoding}"))
 
-    if buffer:
-        images = []
-        for image in system.single_card_raw(
-                delay, speed, step, num_captures,
-                StageStepSizesMap[step_size]
-        ):
-            images.append(image)
+    # Actually execute the request
+    # Do this asynchronously
+    thread = threading.Thread(target=execute)
+    thread.start()
 
-        return StreamingResponse(wrap(images), media_type="application/octet-stream")
-    else:
-        return StreamingResponse(
-            wrap(system.single_card_raw(
-                delay, speed, step,
-                num_captures, StageStepSizesMap[step_size])),
-            media_type="application/octet-stream")
+    # Get all the required futures
+    return fids

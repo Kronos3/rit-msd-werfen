@@ -112,8 +112,10 @@ function App() {
                         <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)}>
                             <option value='/stage/relative'>Relative Motion</option>
                             <option value='/stage/absolute'>Absolute Motion</option>
+                            <option value='/stage/set_position'>Set Position</option>
                             <option value='/stage/speed'>Stage Speed</option>
                             <option value='/stage/led_pwm'>Ring Light PWM</option>
+                            <option value='/stage/step_off'>Limit Switch Step Off</option>
                         </Select>
                         <ApiForm
                             address={address}
