@@ -171,7 +171,7 @@ def single_card(
             encoded = ImageResponse(img, media_type=f"image/{encoding}").body
 
             # Tell the receiving end how big the next file is
-            yield struct.pack("I", len(encoded))
+            yield struct.pack(">I", len(encoded))
 
             # Send the actual image
             yield encoded
