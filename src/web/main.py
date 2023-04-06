@@ -10,6 +10,8 @@ from fastapi import FastAPI
 from fastapi.responses import Response
 
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse
+from starlette.staticfiles import StaticFiles
 
 from mc.cam import HqCamera, AuxCamera, Camera
 from mc.stage import StageStepSize, Stage
@@ -83,6 +85,23 @@ class FutureManager:
 
 
 future_manager = FutureManager()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/")
+def index():
+    return FileResponse("index.html")
+
+
+@app.get("/favicon.ico")
+def index():
+    return FileResponse("favicon.ico")
+
+
+@app.get("/manifest.json")
+def index():
+    return FileResponse("manifest.json")
 
 
 def get_camera(cam_name: Cameras) -> Camera:
