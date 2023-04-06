@@ -28,7 +28,7 @@ export default function SingleCard(props: ApiProps & { schema: any }) {
                 }} />
             <VStack>
                 {
-                    images.map(v => <Image src={URL.createObjectURL(v)} />)
+                    images.map((v, idx) => <Image key={idx} src={URL.createObjectURL(v)} />)
                 }
             </VStack>
         </>

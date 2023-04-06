@@ -204,7 +204,7 @@ async def get_future(fid: int):
 
 @app.post("/system/single_card")
 async def single_card(
-        encoding: Encodings = "tiff",
+        encoding: Encodings = "jpeg",
         delay: float = 0.2,
         speed: int = 1500,
         step: int = 350,
