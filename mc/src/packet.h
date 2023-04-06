@@ -23,6 +23,7 @@ typedef enum
     OPCODE_SWITCH_DEBOUNCE,//!< Set the limit switch debounce delay in ms
     OPCODE_EMERGENCY_STOP, //!< Lock the system until the lock is cleared
     OPCODE_EMERGENCY_CLEAR,//!< Clear the ESTOP lock
+    OPCODE_LIMIT_STEP_OFF, //!< Set the size and number of steps from the limit switch to move when moving off a limit switch
 } opcode_t;
 
 typedef enum

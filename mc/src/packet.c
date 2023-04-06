@@ -78,11 +78,11 @@ static void reply(UART_HandleTypeDef* huart, U32 arg)
     reply_packet.arg = arg;
 
     reply_packet.flags = (
-            switch_limit_1_get() ? FLAGS_LIMIT_1 : 0
-            | switch_limit_2_get() ? FLAGS_LIMIT_2 : 0
-            | switch_e_stop_get() ? FLAGS_ESTOP : 0
-            | motor_is_running() ? FLAGS_RUNNING : 0
-            | led_is_on() ? FLAGS_LED : 0
+            (switch_limit_1_get() ? FLAGS_LIMIT_1 : 0)
+            | (switch_limit_2_get() ? FLAGS_LIMIT_2 : 0)
+            | (switch_e_stop_get() ? FLAGS_ESTOP : 0)
+            | (motor_is_running() ? FLAGS_RUNNING : 0)
+            | (led_is_on() ? FLAGS_LED : 0)
     );
 
     reply_packet.checksum = packet_compute_checksum(&reply_packet);
@@ -120,7 +120,8 @@ static U32 packet_handler(void)
         case OPCODE_RELATIVE: {
             motor_step_t step = packet.flags & MOTOR_MASK_STEP;
             Bool reversed = (packet.flags & MOTOR_MASK_DIRECTION) ? TRUE : FALSE;
-            return motor_step(step, packet.arg, reversed, clear_ms_lines);
+            return motor_step(step, packet.arg, reversed, clear_ms_lines,
+                              packet.flags & MOTOR_IGNORE_LIMITS);
         }
         case OPCODE_ABSOLUTE: {
             I32 desired_position = (I32)packet.arg;
@@ -132,7 +133,8 @@ static U32 packet_handler(void)
             nsteps = nsteps < 0 ? -nsteps : nsteps;
 
             Bool reversed = delta < 0;
-            return motor_step(step, nsteps, reversed, clear_ms_lines);
+            return motor_step(step, nsteps, reversed, clear_ms_lines,
+                              packet.flags & MOTOR_IGNORE_LIMITS);
         }
         case OPCODE_SPEED:
             return motor_speed(packet.arg);
@@ -168,10 +170,14 @@ static U32 packet_handler(void)
             switch_debounce_period(packet.arg);
             break;
         case OPCODE_EMERGENCY_STOP:
+            motor_stop();
             emergency_stop();
             break;
         case OPCODE_EMERGENCY_CLEAR:
             emergency_clear();
+            break;
+        case OPCODE_LIMIT_STEP_OFF:
+            motor_set_limit_step_off(packet.flags & MOTOR_MASK_STEP, packet.arg);
             break;
         default: return 0xFF;
     }

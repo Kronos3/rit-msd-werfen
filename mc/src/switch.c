@@ -10,7 +10,7 @@ static TIM_HandleTypeDef* debounce_timer;
 
 static Bool software_estop = FALSE;
 
-static Bool use_debounce = TRUE;
+static Bool use_debounce = FALSE;
 static Bool debounce_check_limit_1 = FALSE;
 static volatile Bool debounce_running = FALSE;
 
@@ -36,7 +36,12 @@ void emergency_clear(void)
 
 Bool switch_e_stop_get(void)
 {
-    return software_estop || HAL_GPIO_ReadPin(ENABLE_GPIO_Port, ENABLE_Pin) ? TRUE : FALSE;
+    if (software_estop)
+    {
+        return TRUE;
+    }
+
+    return HAL_GPIO_ReadPin(ENABLE_GPIO_Port, ENABLE_Pin) ? TRUE : FALSE;
 }
 
 void switch_init(void* debounce_timer_)
@@ -61,7 +66,7 @@ void switch_debounce_check(void)
     if ((debounce_check_limit_1 && switch_limit_1_get()) ||
         (!debounce_check_limit_1 && switch_limit_2_get()))
     {
-        motor_stop();
+        motor_limit_step_off();
     }
 }
 
@@ -92,7 +97,7 @@ void switch_event(U16 event_pin)
             }
             else
             {
-                motor_stop();
+                motor_limit_step_off();
             }
         default:
             break;

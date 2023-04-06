@@ -13,6 +13,9 @@ static I32 step_channel = -1;
 
 static I32 motor_position = 0;
 
+static motor_step_t limit_step_off_size = MOTOR_STEP_EIGHTH;
+static U32 limit_step_off_count = 50;
+
 static struct
 {
     Bool direction_reversed;
@@ -140,9 +143,32 @@ void motor_set_ms(motor_step_t step)
     HAL_GPIO_WritePin(MS3_GPIO_Port, MS3_Pin, (step & MOTOR_PIN_MS3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
+void motor_limit_step_off(void)
+{
+    // Run the motor the other direction
+    Bool is_reversed = !motor_request.direction_reversed;
+
+    motor_stop();
+
+    // Step off the limit switch by running the motor backwards
+    motor_step(limit_step_off_size,
+               limit_step_off_count,
+               is_reversed,
+               NULL, TRUE);
+
+}
+
+void motor_set_limit_step_off(motor_step_t step, U32 nstep)
+{
+    limit_step_off_size = step;
+    limit_step_off_count = nstep;
+}
+
 Status motor_step(
         motor_step_t step, U16 n,
-        Bool direction_reversed, MotorReply reply_cb)
+        Bool direction_reversed,
+        MotorReply reply_cb,
+        Bool ignore_limits)
 {
     if (motor_is_ready(step) != STATUS_SUCCESS)
     {
@@ -150,8 +176,16 @@ Status motor_step(
     }
 
     // Check if we are against the limit switches
-    if (direction_reversed && switch_limit_2_get() ||
-        (!direction_reversed && switch_limit_1_get()))
+    if (!ignore_limits)
+    {
+        if (switch_limit_1_get() ||
+            switch_limit_2_get() ||
+            switch_e_stop_get())
+        {
+            return STATUS_FAILURE;
+        }
+    }
+    else if (switch_e_stop_get())
     {
         return STATUS_FAILURE;
     }

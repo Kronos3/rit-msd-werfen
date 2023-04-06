@@ -26,7 +26,8 @@ typedef enum
 typedef enum
 {
     MOTOR_MASK_STEP = 0x0F,
-    MOTOR_MASK_DIRECTION = 0xF0
+    MOTOR_MASK_DIRECTION = 1 << 5,
+    MOTOR_IGNORE_LIMITS = 1 << 6
 } motor_mask;
 
 typedef void (*MotorReply)(void);
@@ -58,10 +59,12 @@ void motor_tick(void);
  * @param n number of steps
  * @param direction_reversed TRUE for forward and false for backward
  * @param reply_cb callback when motor request is done
+ * @param ignore_limits Execute the motor motion event through we are sitting on a limit switch
  */
 Status motor_step(motor_step_t step, U16 n,
                   Bool direction_reversed,
-                  MotorReply reply_cb);
+                  MotorReply reply_cb,
+                  Bool ignore_limits);
 
 I32 motor_get_step_size(motor_step_t step, Bool reversed);
 
@@ -73,6 +76,9 @@ I32 motor_get_step_size(motor_step_t step, Bool reversed);
 void motor_set_ms(motor_step_t step);
 
 void motor_stop(void);
+void motor_set_limit_step_off(motor_step_t step, U32 nstep);
+void motor_limit_step_off(void);
+
 Status motor_is_ready(motor_step_t step);
 Bool motor_is_running();
 
