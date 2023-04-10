@@ -87,22 +87,17 @@ class FutureManager:
 
 future_manager = FutureManager()
 
-# app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
+app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
 
 @app.get("/")
 def index():
-    return FileResponse("frontend/build/index.html")
+    return FileResponse("frontend/dist/index.html")
 
 
 @app.get("/favicon.ico")
 def index():
-    return FileResponse("frontend/build/favicon.ico")
-
-
-@app.get("/manifest.json")
-def index():
-    return FileResponse("frontend/build/manifest.json")
+    return FileResponse("frontend/dist/favicon.ico")
 
 
 def get_camera(cam_name: Cameras) -> Camera:
