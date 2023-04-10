@@ -1,6 +1,7 @@
 import asyncio
 import os
 import threading
+import typing
 from typing import Literal, Dict, Tuple, Optional
 
 import cv2
@@ -10,6 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import Response
 
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.background import BackgroundTask
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
@@ -45,8 +47,19 @@ Cameras = Literal["hq", "aux"]
 
 
 class ImageResponse(Response):
+    def __init__(self,
+                 content: typing.Any = None,
+                 scale: float = 0.2,
+                 status_code: int = 200,
+                 headers: typing.Optional[typing.Mapping[str, str]] = None,
+                 media_type: typing.Optional[str] = None,
+                 background: typing.Optional[BackgroundTask] = None
+                 ):
+        super().__init__(content, status_code, headers, media_type, background)
+        self.scale = scale
+
     def render(self, content) -> bytes:
-        content = cv2.resize(content, (int(content.shape[1] * 0.2), int(content.shape[0] * 0.2)))
+        content = cv2.resize(content, (int(content.shape[1] * self.scale), int(content.shape[0] * self.scale)))
         content = cv2.cvtColor(content, cv2.COLOR_BGR2RGB)
 
         if self.media_type == "image/jpeg":
@@ -221,6 +234,7 @@ async def get_future(fid: int):
 async def single_card(
         encoding: Encodings = "jpeg",
         initial_position: Optional[int] = None,
+        scale: float = 0.2,
         delay: float = 0.2,
         speed: int = 1500,
         step: int = 350,
@@ -249,7 +263,7 @@ async def single_card(
 
             # Now reply to the futures
             for i, image in enumerate(images):
-                futures[i].set_result(ImageResponse(image, media_type=f"image/{encoding}"))
+                futures[i].set_result(ImageResponse(image, scale=scale, media_type=f"image/{encoding}"))
         else:
             # Reply to the futures as they come
             # This encodes in-between each step
@@ -258,7 +272,7 @@ async def single_card(
                     delay, speed, step, num_captures,
                     StageStepSizesMap[step_size]
             )):
-                futures[i].set_result(ImageResponse(image, media_type=f"image/{encoding}"))
+                futures[i].set_result(ImageResponse(image, scale=scale, media_type=f"image/{encoding}"))
 
     # Actually execute the request
     # Do this asynchronously
