@@ -14,7 +14,7 @@ static I32 step_channel = -1;
 static I32 motor_position = 0;
 
 static motor_step_t limit_step_off_size = MOTOR_STEP_EIGHTH;
-static U32 limit_step_off_count = 300;
+static U32 limit_step_off_count = 100;
 static Bool motor_has_failure_flag = FALSE;
 
 static struct
@@ -217,7 +217,7 @@ Status motor_step(
         return STATUS_FAILURE;
     }
 
-    if (motor_request.n == 0)
+    if (n == 0)
     {
         return STATUS_SUCCESS;
     }

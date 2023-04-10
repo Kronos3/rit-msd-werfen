@@ -95,7 +95,9 @@ class System:
             # over the cards. This way the motor does not need to change
             # direction causing a single Y-axis shift.
             self.stage.absolute(initial_position - 300)
+            self.stage.wait()
             self.stage.absolute(initial_position)
+            self.stage.wait()
 
         with self.hq_cam:
             for i in range(num_captures):
