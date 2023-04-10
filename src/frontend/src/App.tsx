@@ -62,7 +62,9 @@ function App() {
                 </TabList>
 
                 <TabPanels>
-                    <TabPanel></TabPanel>
+                    <TabPanel>
+                        
+                    </TabPanel>
                     <TabPanel>
                         <SingleCard host={host} schema={apiSchema} />
                     </TabPanel>

@@ -21,6 +21,10 @@ function offGreen(state: boolean): string {
     return state ? 'red' : 'green'
 }
 
+function onGreen(state: boolean): string {
+    return state ? 'green' : 'red'
+}
+
 export default function Status(props: { host: string }) {
     const [state, setState] = useState<StageStatus>({
         limit1: false,
@@ -66,6 +70,7 @@ export default function Status(props: { host: string }) {
                 <Badge colorScheme={offGreen(state.limit1)}>LIMIT-1</Badge>
                 <Badge colorScheme={offGreen(state.limit2)}>LIMIT-2</Badge>
                 <Badge colorScheme={offGreen(state.estop)}>ESTOP</Badge>
+                <Badge colorScheme={onGreen(state.led)}>RING</Badge>
                 <Badge colorScheme={state.running ? 'blue' : 'gray'}>{state.running ? 'RUNNING' : 'STOPPED'}</Badge>
                 <Badge colorScheme='blue'>{state.position}</Badge>
                 <Switch alignSelf='right' isChecked={ping} onChange={(e) => setPing(e.target.checked)} />
