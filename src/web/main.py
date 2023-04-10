@@ -55,8 +55,8 @@ class ImageResponse(Response):
                  media_type: typing.Optional[str] = None,
                  background: typing.Optional[BackgroundTask] = None
                  ):
-        super().__init__(content, status_code, headers, media_type, background)
         self.scale = scale
+        super().__init__(content, status_code, headers, media_type, background)
 
     def render(self, content) -> bytes:
         content = cv2.resize(content, (int(content.shape[1] * self.scale), int(content.shape[0] * self.scale)))
