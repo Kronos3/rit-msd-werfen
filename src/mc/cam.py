@@ -21,6 +21,7 @@ class Camera(abc.ABC):
         if self.is_hardware:
             from picamera2 import Picamera2
             self.camera = Picamera2(cam)
+            self.camera.set_controls({"AwbEnable": False})
 
     @property
     def is_hardware(self) -> bool:
