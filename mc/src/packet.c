@@ -59,6 +59,8 @@ static Status packet_validate(const Packet* self)
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
+    (void) huart;
+
     static Bool on = FALSE;
     on = !on;
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, on ? GPIO_PIN_SET : GPIO_PIN_RESET);
@@ -83,6 +85,7 @@ static void reply(UART_HandleTypeDef* huart, U32 arg)
             | (switch_e_stop_get() ? FLAGS_ESTOP : 0)
             | (motor_is_running() ? FLAGS_RUNNING : 0)
             | (led_is_on() ? FLAGS_LED : 0)
+            | (motor_has_failure() ? FLAGS_FAILURE : 0)
     );
 
     reply_packet.checksum = packet_compute_checksum(&reply_packet);
@@ -139,7 +142,7 @@ static U32 packet_handler(void)
         case OPCODE_SPEED:
             return motor_speed(packet.arg);
         case OPCODE_STOP:
-            motor_stop();
+            motor_stop(FALSE);
             break;
         case OPCODE_SET_POSITION:
             motor_set_position((I32)packet.arg);
@@ -170,7 +173,6 @@ static U32 packet_handler(void)
             switch_debounce_period(packet.arg);
             break;
         case OPCODE_EMERGENCY_STOP:
-            motor_stop();
             emergency_stop();
             break;
         case OPCODE_EMERGENCY_CLEAR:

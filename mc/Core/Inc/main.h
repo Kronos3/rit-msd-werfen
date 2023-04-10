@@ -91,7 +91,8 @@ void Error_Handler(void);
 #define LIGHT_Pin GPIO_PIN_8
 #define LIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+#define LIGHT_PWM_CHANNEL TIM_CHANNEL_3
+#define MOTOR_PWM_CHANNEL TIM_CHANNEL_3
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

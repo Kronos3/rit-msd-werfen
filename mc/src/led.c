@@ -7,6 +7,8 @@
 #include <string.h>
 #include "led.h"
 
+// 12-bit ADC with a VA+ voltage of 3.3V
+// (Hardwired on PCB with extra ferrite-bead for stability)
 #define ADC_TO_VOLTAGE(adc_) ((((F32)(adc_)) / (1 << 12)) * 3.3f)
 #define ADC_NUM_INTEGRAL (20)
 

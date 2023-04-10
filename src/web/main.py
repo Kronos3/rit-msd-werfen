@@ -1,7 +1,7 @@
 import asyncio
 import os
 import threading
-from typing import Literal, Dict, Tuple
+from typing import Literal, Dict, Tuple, Optional
 
 import cv2
 import serial
@@ -87,7 +87,7 @@ class FutureManager:
 
 future_manager = FutureManager()
 
-app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
+# app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
 
 
 @app.get("/")
@@ -225,6 +225,7 @@ async def get_future(fid: int):
 @app.post("/system/single_card")
 async def single_card(
         encoding: Encodings = "jpeg",
+        initial_position: Optional[int] = None,
         delay: float = 0.2,
         speed: int = 1500,
         step: int = 350,
@@ -245,6 +246,7 @@ async def single_card(
             # First gather all the images
             images = []
             for image in system.single_card_raw(
+                    initial_position,
                     delay, speed, step, num_captures,
                     StageStepSizesMap[step_size]
             ):
@@ -257,6 +259,7 @@ async def single_card(
             # Reply to the futures as they come
             # This encodes in-between each step
             for i, image in enumerate(system.single_card_raw(
+                    initial_position,
                     delay, speed, step, num_captures,
                     StageStepSizesMap[step_size]
             )):

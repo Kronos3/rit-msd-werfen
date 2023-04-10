@@ -128,10 +128,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     switch_init(&htim7);
-    led_init(&htim4, TIM_CHANNEL_3, &htim5);
+    led_init(&htim4, LIGHT_PWM_CHANNEL, &htim5);
     led_sensor_init(&hadc1);
 
-    motor_init(&htim3, TIM_CHANNEL_3);
+    motor_init(&htim3, MOTOR_PWM_CHANNEL);
     packet_init(&huart1);
 
   /* USER CODE END 2 */

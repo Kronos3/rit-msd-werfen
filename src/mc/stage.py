@@ -48,6 +48,7 @@ class StageFlags(enum.IntFlag):
     ESTOP = 1 << 2
     RUNNING = 1 << 3
     LED = 1 << 4
+    FAILURE = 1 << 5
 
 
 class StageStepSize(enum.IntEnum):
@@ -109,6 +110,7 @@ class Stage:
     estop: bool
     running: bool
     led: bool
+    failure: bool
 
     mutex: threading.Lock
 
@@ -120,6 +122,7 @@ class Stage:
         self.estop = False
         self.running = False
         self.led = False
+        self.failure = False
 
         self.mutex = threading.Lock()
 
@@ -155,6 +158,7 @@ class Stage:
         self.estop = bool(StageFlags.ESTOP & reply.flags)
         self.running = bool(StageFlags.RUNNING & reply.flags)
         self.led = bool(StageFlags.LED & reply.flags)
+        self.failure = bool(StageFlags.FAILURE & reply.flags)
 
         return reply
 
@@ -165,12 +169,16 @@ class Stage:
         """
         self.send(StagePacket(StageOpcode.IDLE))
 
-    def wait(self, timeout: float = 0.0, granularity: float = 0.1):
+    def wait(self,
+             timeout: float = 0.0,
+             granularity: float = 0.1,
+             fault_on_limit: bool = True):
         """
         Wait for a motion to finish by sending idle commands
         until the motor status indicates the motion in complete
         :param timeout: Denotes a timeout (0 for none) when the motor motion should be cancelled
         :param granularity: Denotes how often to check if motor is running
+        :param fault_on_limit: Throw assertion failure if motion hit a limit switch
         """
         self.idle()
         start_time = time.time()
@@ -180,6 +188,9 @@ class Stage:
                 raise TimeoutError(f"Motion timed out after {timeout}s")
             time.sleep(granularity)
             self.idle()
+
+        if fault_on_limit:
+            assert not self.failure, "Motor request hit a limit switch"
 
     def relative(self, n: int, size: StageStepSize, ignore_limits: bool = False):
         """

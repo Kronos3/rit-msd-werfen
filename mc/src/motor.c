@@ -14,7 +14,8 @@ static I32 step_channel = -1;
 static I32 motor_position = 0;
 
 static motor_step_t limit_step_off_size = MOTOR_STEP_EIGHTH;
-static U32 limit_step_off_count = 50;
+static U32 limit_step_off_count = 300;
+static Bool motor_has_failure_flag = FALSE;
 
 static struct
 {
@@ -83,11 +84,11 @@ void motor_tick(void)
 
     if (motor_request.i >= motor_request.n)
     {
-        motor_stop();
+        motor_stop(FALSE);
     }
 }
 
-void motor_stop(void)
+void motor_stop(Bool motion_failure)
 {
     HAL_TIM_PWM_Stop(step_timer, step_channel);
 
@@ -100,6 +101,8 @@ void motor_stop(void)
     motor_request.is_running = FALSE;
     motor_request.direction_reversed = FALSE;
     motor_request.reply_cb = NULL;
+
+    motor_has_failure_flag = motion_failure;
 
     if (reply_cb)
     {
@@ -136,6 +139,11 @@ Bool motor_is_running()
     return motor_request.is_running;
 }
 
+Bool motor_has_failure(void)
+{
+    return motor_has_failure_flag;
+}
+
 void motor_set_ms(motor_step_t step)
 {
     HAL_GPIO_WritePin(MS1_GPIO_Port, MS1_Pin, (step & MOTOR_PIN_MS1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
@@ -163,8 +171,7 @@ void motor_limit_step_off(void)
     // Run the motor the other direction
     Bool is_reversed = !motor_request.direction_reversed;
 
-    motor_stop();
-
+    motor_stop(TRUE);
     motor_is_stepping_off = TRUE;
 
     // Step off the limit switch by running the motor backwards
@@ -173,7 +180,6 @@ void motor_limit_step_off(void)
                is_reversed,
                motor_limit_step_off_done,
                TRUE);
-
 }
 
 void motor_set_limit_step_off(motor_step_t step, U32 nstep)
@@ -202,10 +208,18 @@ Status motor_step(
         {
             return STATUS_FAILURE;
         }
+
+        // A non limit ignore will clear the failure flag
+        motor_has_failure_flag = FALSE;
     }
     else if (switch_e_stop_get())
     {
         return STATUS_FAILURE;
+    }
+
+    if (motor_request.n == 0)
+    {
+        return STATUS_SUCCESS;
     }
 
     motor_request.step = step;
@@ -222,9 +236,6 @@ Status motor_step(
     // Go forwards or backwards
     HAL_GPIO_WritePin(DIR_GPIO_Port, DIR_Pin,
                       motor_request.direction_reversed ? GPIO_PIN_SET : GPIO_PIN_RESET);
-
-    // Wait for the MS pins to become stable
-    HAL_Delay(1);
 
     // The PWM timer. @500Hz, timer each timer tick is a single motor step
     HAL_TIM_PWM_Start_IT(step_timer, step_channel);

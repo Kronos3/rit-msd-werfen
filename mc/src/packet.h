@@ -39,6 +39,7 @@ typedef enum
     FLAGS_ESTOP = 1 << 2,   //!< E-STOP
     FLAGS_RUNNING = 1 << 3, //!< Running motor request
     FLAGS_LED = 1 << 4,     //!< LED is on
+    FLAGS_FAILURE = 1 << 5, //!< The last motor request hit a limit switch
 } flags_t;
 
 typedef struct

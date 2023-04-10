@@ -26,6 +26,7 @@ Bool switch_limit_2_get(void)
 
 void emergency_stop(void)
 {
+    motor_stop(TRUE);
     software_estop = TRUE;
 }
 
@@ -87,18 +88,12 @@ void switch_event(U16 event_pin)
     switch(event_pin)
     {
         case ENABLE_Pin:
-            motor_stop();
+            motor_stop(TRUE);
             break;
         case SWITCH1_Pin:
         case SWITCH2_Pin:
-            if (use_debounce)
-            {
-                switch_debounce(event_pin);
-            }
-            else
-            {
-                motor_limit_step_off();
-            }
+            motor_limit_step_off();
+            break;
         default:
             break;
     }

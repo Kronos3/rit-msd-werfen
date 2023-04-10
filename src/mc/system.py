@@ -33,7 +33,7 @@ class System:
         # Move to the start of the stage
         self.stage.speed(1000)
         self.stage.home(StageDirection.BACKWARD, StageStepSize.QUARTER)
-        self.stage.wait()
+        self.stage.wait(fault_on_limit=False)
 
         # We are at the start of the stage
         # Reset the internal position to 0
@@ -70,20 +70,32 @@ class System:
 
         return output
 
-    def single_card(self, delay_s: str = "0.2", path: str = "test"):
+    def single_card(self,
+                    initial_position: Optional[str] = None,
+                    delay_s: str = "0.2", path: str = "test"):
         i = 0
-        for image in self.single_card_raw(float(delay_s)):
+        for image in self.single_card_raw(
+                int(initial_position) if initial_position is not None else None,
+                float(delay_s)):
             # TODO(tumbar) Create a better naming scheme
             cv2.imwrite(f"{path}-{i}.jpg", image)
             i += 1
 
     def single_card_raw(self,
+                        initial_position: Optional[int] = None,
                         delay: float = 0.2,
                         speed: int = 1500,
                         step: int = 350,
                         num_captures: int = 12,
                         step_size: StageStepSize = StageStepSize.EIGHTH):
         self.stage.speed(speed)
+
+        if initial_position is not None:
+            # Move in from the same direction that we are iterating
+            # over the cards. This way the motor does not need to change
+            # direction causing a single Y-axis shift.
+            self.stage.absolute(initial_position - 300)
+            self.stage.absolute(initial_position)
 
         with self.hq_cam:
             for i in range(num_captures):

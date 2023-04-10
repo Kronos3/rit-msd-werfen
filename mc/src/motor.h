@@ -75,12 +75,13 @@ I32 motor_get_step_size(motor_step_t step, Bool reversed);
  */
 void motor_set_ms(motor_step_t step);
 
-void motor_stop(void);
+void motor_stop(Bool motion_failed);
 void motor_set_limit_step_off(motor_step_t step, U32 nstep);
 void motor_limit_step_off(void);
 
 Status motor_is_ready(motor_step_t step);
 Bool motor_is_running();
+Bool motor_has_failure(void);
 
 /**
  * Get position of the motor in eighth steps
