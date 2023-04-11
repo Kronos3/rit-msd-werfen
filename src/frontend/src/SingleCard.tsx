@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Image, VStack } from "@chakra-ui/react";
 
 import ApiForm from "./Form";
 
-import { Image, VStack } from "@chakra-ui/react";
 
 export default function SingleCard(props: { host: string, schema: any }) {
     const [images, setImages] = useState<Blob[]>([]);

@@ -35,6 +35,8 @@ export default function ApiForm(props: { host: string, path: string, schema: any
     const [disabled, setDisabled] = useState(false);
     const [value, setValue] = useState();
 
+    const [error, setError] = useState("");
+
     useEffect(() => {
         setSchema(generateRjsfSchema(props.schema?.paths[props.path]?.post));
     }, [props.path, props.schema]);
@@ -43,14 +45,20 @@ export default function ApiForm(props: { host: string, path: string, schema: any
         (async (formProp) => {
             // Merge parameters into query
             setDisabled(true);
+            setError("");
 
             const query = generateQuery(formProp.formData);
             const response = await fetch(`http://${props.host}${props.path}?${query}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
             });
-    
+
             setDisabled(false);
+
+            if (!response.ok) {
+                setError(await response.text())
+                return;
+            }
 
             props.onReply?.(response);
         })(data)
@@ -60,11 +68,14 @@ export default function ApiForm(props: { host: string, path: string, schema: any
         return <Text>Non-post requests are not supported</Text>
     }
 
-    return <Form
-        formData={value}
-        onChange={e => setValue(e.formData)}
-        disabled={disabled}
-        schema={schema}
-        validator={validator}
-        onSubmit={submit} />
+    return <>
+        <Form
+            formData={value}
+            onChange={e => setValue(e.formData)}
+            disabled={disabled}
+            schema={schema}
+            validator={validator}
+            onSubmit={submit} />
+        <Text>{error}</Text>
+    </>
 }
