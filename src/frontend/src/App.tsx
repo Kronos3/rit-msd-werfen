@@ -20,6 +20,7 @@ import * as cookies from './cookie';
 import Status from './Status';
 import SingleCard from './SingleCard';
 import Camera from './Camera';
+import Align from './Align';
 
 
 function App() {
@@ -58,12 +59,12 @@ function App() {
                     <Tab>Single Card</Tab>
                     <Tab>Stage</Tab>
                     <Tab>Camera</Tab>
-                    <Tab>Calibrate</Tab>
+                    <Tab>Align</Tab>
                 </TabList>
 
                 <TabPanels>
                     <TabPanel>
-                        
+
                     </TabPanel>
                     <TabPanel>
                         <SingleCard host={host} schema={apiSchema} />
@@ -86,7 +87,7 @@ function App() {
                         <Camera host={host} />
                     </TabPanel>
                     <TabPanel>
-                        <p>Calibrate</p>
+                        <Align host={host} schema={apiSchema} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>

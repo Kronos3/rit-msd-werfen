@@ -5,11 +5,14 @@ import time
 import pytesseract
 import cv2
 
+from mc import processing
 from mc.cam import Camera
 from mc.stage import Stage, StageDirection, StageStepSize
 
-
 log = logging.getLogger(__name__)
+
+# Calibrated using GIMP :)
+IM_WIDTH_PER_EIGHTH_STEP = 0.0010059171597633137
 
 
 class System:
@@ -25,21 +28,75 @@ class System:
         self.hq_cam = hq_cam
         self.aux_cam = aux_cam
 
-    def homing(self):
-        # Test the stage uart connection
-        # This errors out if the connection isn't good
-        self.stage.idle()
+    def approach_relative(self,
+                          n: int,
+                          size: StageStepSize = StageStepSize.EIGHTH,
+                          from_negative: bool = True):
+        if from_negative:
+            self.stage.relative(n - 300, size)
+            self.stage.wait(granularity=0.05)
+            self.stage.relative(300, size)
+            self.stage.wait(granularity=0.05)
+        else:
+            self.stage.relative(n + 300, size)
+            self.stage.wait(granularity=0.05)
+            self.stage.relative(-300, size)
+            self.stage.wait(granularity=0.05)
+
+    def align(self,
+              coarse_n: int = 400,
+              coarse_size: StageStepSize = StageStepSize.QUARTER,
+              laplacian_threshold: float = 10.0,
+              standard_deviation_threshold: float = 50.0,
+              vertical_rad_threshold: float = 0.1,
+              debug: bool = False):
+
+        self.stage.speed(1500)
 
         # Move to the start of the stage
-        self.stage.speed(1000)
         self.stage.home(StageDirection.BACKWARD, StageStepSize.QUARTER)
         self.stage.wait(fault_on_limit=False)
 
         # We are at the start of the stage
         # Reset the internal position to 0
+        # This will be overriden later
         self.stage.set_position(0)
 
-        # TODO(tumbar) Find the fiducial using live cam feed
+        try:
+            # Start the camera in live stream mode
+            self.hq_cam.start(still=False)
+
+            while True:
+                self.stage.relative(coarse_n, coarse_size)
+                self.stage.wait(granularity=0.05)
+
+                img = self.hq_cam.acquire_array()
+                edge_position = processing.detect_card_edge(
+                    img, laplacian_threshold, standard_deviation_threshold,
+                    vertical_rad_threshold, debug
+                )
+
+                if edge_position is not None:
+                    # Found the edge of the card
+                    # Perform the fine motion
+                    fine_step = (edge_position - 0.5) / IM_WIDTH_PER_EIGHTH_STEP
+                    log.info("Edge position @{}", round(edge_position, 2))
+                    log.info("Performing {} steps for fine motion", int(fine_step))
+                    self.approach_relative(int(fine_step), StageStepSize.EIGHTH)
+
+                    # Get the final stage position
+                    img = self.hq_cam.acquire_array()
+                    new_edge_position = processing.detect_card_edge(
+                        img, laplacian_threshold, standard_deviation_threshold,
+                        vertical_rad_threshold, debug
+                    )
+
+                    log.info("Card position is now {}", round(new_edge_position, 2))
+                    self.stage.set_position(0)
+                    return img, new_edge_position
+        finally:
+            # Stop the camera, even on error
+            self.hq_cam.stop()
 
     def card_id(self) -> str:
         with self.aux_cam:
@@ -95,15 +152,15 @@ class System:
             # over the cards. This way the motor does not need to change
             # direction causing a single Y-axis shift.
             self.stage.absolute(initial_position - 300)
-            self.stage.wait()
+            self.stage.wait(granularity=0.05)
             self.stage.absolute(initial_position)
-            self.stage.wait()
+            self.stage.wait(granularity=0.05)
 
         with self.hq_cam:
             for i in range(num_captures):
                 # This delay is used to allow the system to
                 # stabilize before we acquire an image
-                if delay > 0:
+                if delay > 0 and i > 0:
                     time.sleep(delay)
 
                 yield self.hq_cam.acquire_array()

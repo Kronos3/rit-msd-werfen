@@ -27,7 +27,7 @@ export default function Camera(props: { host: string }) {
         <>
             <Select disabled={disabled} value={camera} onChange={(e) => setCamera(e.target.value)}>
                 <option value='hq'>HQ Camera</option>
-                <option value='aux'>Auxilliary Camera</option>
+                <option value='aux'>Auxiliary Camera</option>
             </Select>
             <Center
                 marginTop={3}

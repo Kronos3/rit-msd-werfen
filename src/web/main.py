@@ -281,3 +281,26 @@ async def single_card(
 
     # Get all the required futures
     return fids
+
+
+@app.get("/system/align", response_class=ImageResponse)
+def system_align(
+        coarse_n: int = 400,
+        coarse_size: StageStepSize = StageStepSize.QUARTER,
+        laplacian_threshold: float = 10.0,
+        standard_deviation_threshold: float = 50.0,
+        vertical_rad_threshold: float = 0.1,
+        debug: bool = False
+):
+    img, position = system.align(coarse_n, coarse_size,
+                                 laplacian_threshold, standard_deviation_threshold,
+                                 vertical_rad_threshold, debug)
+
+    if position is not None:
+        center = [int(position * img.shape[1]), img.shape[0] // 2]
+        img = cv2.putText(img, str(round(position, 2)), (50, 50),
+                          cv2.FONT_HERSHEY_SIMPLEX,
+                          1, (0, 255, 0), 2, cv2.LINE_AA)
+        img = cv2.circle(img, center, 20, (0, 255, 0), 20)
+
+    return img

@@ -11,7 +11,8 @@ log = logging.getLogger(__name__)
 
 class Camera(abc.ABC):
     cam: int
-    config: dict
+    still_config: dict
+    stream_config: dict
     _lock: threading.Lock
 
     def __init__(self, cam: int, name: str):
@@ -26,9 +27,9 @@ class Camera(abc.ABC):
     def is_hardware(self) -> bool:
         return self.cam >= 0
 
-    def start(self):
+    def start(self, still=True):
         if self.is_hardware:
-            self.camera.configure(self.config)
+            self.camera.configure(self.still_config if still else self.stream_config)
             self.camera.set_controls({"AwbEnable": False})
             self.camera.start()
 
@@ -57,15 +58,18 @@ class HqCamera(Camera):
     def __init__(self, cam: int):
         super().__init__(cam, "HQ")
         if self.is_hardware:
-            self.config = self.camera.create_still_configuration(
+            self.still_config = self.camera.create_still_configuration(
                 main={"size": (4056, 3040)},
             )
+
+            self.stream_config = self.camera.create_preview_configuration()
 
 
 class AuxCamera(Camera):
     def __init__(self, cam: int):
         super().__init__(cam, "AUX")
         if self.is_hardware:
-            self.config = self.camera.create_still_configuration(
+            self.still_config = self.camera.create_still_configuration(
                 main={"size": (3280, 2464)},
             )
+            self.stream_config = self.camera.create_preview_configuration()
