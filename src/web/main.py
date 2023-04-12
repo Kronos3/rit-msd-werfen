@@ -289,9 +289,9 @@ def system_align(
         coarse_size: StageStepSizes = "QUATER",
         laplacian_threshold: float = 10.0,
         num_points_threshold: int = 100,
-        standard_deviation_threshold: float = 50.0,
-        vertical_rad_threshold: float = 0.1,
-        step_delay: float = 0.1,
+        standard_deviation_threshold: float = 800.0,
+        vertical_rad_threshold: float = 0.5,
+        step_delay: float = 0.2,
         debug: bool = False
 ):
     img, position = system.align(coarse_n, StageStepSizesMap[coarse_size],
@@ -319,5 +319,5 @@ def system_card_id(
     system.stage.wait()
     system.stage.led_pwm(light_level)
 
-    img = system.card_id()
+    card_id, img = system.card_id()
     return ImageResponse(img, scale=1)

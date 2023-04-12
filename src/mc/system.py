@@ -142,7 +142,7 @@ class System:
                                 (int(b[3]), h - int(b[4])),
                                 (0, 255, 0), 2)
 
-        return output
+        return output, img
 
     def single_card(self,
                     initial_position: Optional[str] = None,
