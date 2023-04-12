@@ -291,12 +291,14 @@ def system_align(
         num_points_threshold: int = 100,
         standard_deviation_threshold: float = 50.0,
         vertical_rad_threshold: float = 0.1,
+        step_delay: float = 0.1,
         debug: bool = False
 ):
     img, position = system.align(coarse_n, StageStepSizesMap[coarse_size],
                                  laplacian_threshold, num_points_threshold,
                                  standard_deviation_threshold,
-                                 vertical_rad_threshold, debug)
+                                 vertical_rad_threshold, step_delay,
+                                 debug)
 
     if position is not None:
         center = [int(position * img.shape[1]), img.shape[0] // 2]

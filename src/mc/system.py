@@ -50,6 +50,7 @@ class System:
               num_points_threshold: int = 100,
               standard_deviation_threshold: float = 50.0,
               vertical_rad_threshold: float = 0.1,
+              step_delay: float = 0.1,
               debug: bool = False):
 
         self.stage.speed(1500)
@@ -70,6 +71,8 @@ class System:
             while True:
                 self.stage.relative(coarse_n, coarse_size)
                 self.stage.wait(granularity=0.05)
+
+                time.sleep(step_delay)
 
                 img = self.hq_cam.acquire_array()
                 edge_position = processing.detect_card_edge(
