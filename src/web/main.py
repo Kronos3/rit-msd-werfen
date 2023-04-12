@@ -52,7 +52,7 @@ class ImageResponse(Response):
                  scale: float = 0.2,
                  status_code: int = 200,
                  headers: typing.Optional[typing.Mapping[str, str]] = None,
-                 media_type: typing.Optional[str] = None,
+                 media_type: typing.Optional[str] = "image/jpeg",
                  background: typing.Optional[BackgroundTask] = None
                  ):
         self.scale = scale
