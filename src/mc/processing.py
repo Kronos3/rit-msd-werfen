@@ -96,7 +96,7 @@ def detect_card_edge(img: np.ndarray,
     err, theta = compute_error(points, vx, vy, cx, cy)
 
     if debug:
-        log.info("Edge detection error: {}, theta: {}", err, theta)
+        log.info("Edge detection error: %.2f, theta: %.2f", err, theta)
 
     # This is not an actual edge
     # We just fit some garbage
