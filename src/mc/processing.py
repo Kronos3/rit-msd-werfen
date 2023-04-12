@@ -83,7 +83,7 @@ def detect_card_edge(img: np.ndarray,
     # Gather a list of potential points on the edge of the sensor card
     points = cv2.findNonZero(img)
 
-    if len(points) < num_points_threshold:
+    if points is None or len(points) < num_points_threshold:
         if debug:
             log.info("Found only %d points, no edges", len(points))
         return None
