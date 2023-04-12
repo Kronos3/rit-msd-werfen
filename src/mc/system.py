@@ -56,7 +56,7 @@ class System:
 
         # Move to the start of the stage
         self.stage.home(StageDirection.BACKWARD, StageStepSize.QUARTER)
-        self.stage.wait(fault_on_limit=False)
+        self.stage.wait(fault_on_limit=False, granularity=0.05)
 
         # We are at the start of the stage
         # Reset the internal position to 0
@@ -73,7 +73,9 @@ class System:
 
                 img = self.hq_cam.acquire_array()
                 edge_position = processing.detect_card_edge(
-                    img, laplacian_threshold, standard_deviation_threshold,
+                    img, laplacian_threshold,
+                    num_points_threshold,
+                    standard_deviation_threshold,
                     vertical_rad_threshold, debug
                 )
 
