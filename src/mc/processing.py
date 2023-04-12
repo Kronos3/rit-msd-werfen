@@ -121,4 +121,9 @@ def detect_card_edge(img: np.ndarray,
     # Plug in the second parametric parameter into the original parametric equation
     # This will yield the center point along X axis
     # Scale this solution to the width
-    return center_ts[1] / w
+    pos = center_ts[1] / w
+
+    if pos < 0.05 or pos > 0.95:
+        return None
+
+    return pos
