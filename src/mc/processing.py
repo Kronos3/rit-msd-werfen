@@ -8,7 +8,7 @@ import cv2
 log = logging.getLogger(__name__)
 
 
-def compute_error(points: np.ndarray, vx: float, vy: float, cx: float, cy: float):
+def compute_error(img: np.ndarray, vx: float, vy: float, cx: float, cy: float):
     """
     Compute the standard deviation of the point errors given
     a line of best fit
@@ -19,7 +19,6 @@ def compute_error(points: np.ndarray, vx: float, vy: float, cx: float, cy: float
     :param cy: Start Y point of regression
     :return: Standard deviation in pixels
     """
-    points = np.squeeze(points, 1)
     v = np.array([vx, vy])
     p = np.array([cx, cy])
 
@@ -29,18 +28,13 @@ def compute_error(points: np.ndarray, vx: float, vy: float, cx: float, cy: float
     theta = np.arccos(np.dot(v, [0, 1]) / np.linalg.norm(v))
 
     # Construct a rotation matrix
-    r = np.array([
-        [np.cos(theta), -np.sin(theta)],
-        [np.sin(theta), np.cos(theta)]
-    ])
-
-    # Shift the points over to align points to center of line
-    # Rotation all the points by the rotation matrix
-    rot_points = np.dot(r, (points - p).T)
+    r = cv2.getRotationMatrix2D(p, -180 / np.pi * theta, 1.0)
+    rot_img = cv2.warpAffine(img, r, img.shape[0:2], flags=cv2.INTER_LINEAR)
 
     # Compute the error using only the X coordinate
     # This will be the norm distance of each point to the line
-    err = rot_points[0] ** 2
+    points = cv2.findNonZero(rot_img).squeeze(1)
+    err = (points - p)[:,0]**2
 
     # Compute the standard deviation
     return np.sqrt(np.einsum('i,i->', err, err) / len(points)), theta
@@ -48,6 +42,7 @@ def compute_error(points: np.ndarray, vx: float, vy: float, cx: float, cy: float
 
 def detect_card_edge(img: np.ndarray,
                      laplacian_threshold: float = 10.0,
+                     num_points_threshold: int = 100,
                      standard_deviation_threshold: float = 50.0,
                      vertical_rad_threshold: float = 0.1,
                      debug: bool = False) -> Optional[float]:
@@ -88,12 +83,17 @@ def detect_card_edge(img: np.ndarray,
     # Gather a list of potential points on the edge of the sensor card
     points = cv2.findNonZero(img)
 
+    if len(points) < num_points_threshold:
+        if debug:
+            log.info("Found only %d points, no edges", len(points))
+        return None
+
     # Perform an L2 norm linear regression to get the line of
     # best fit along the threshold edge
     vx_r, vy_r, cx_r, cy_r = cv2.fitLine(points, cv2.DIST_L2, 0, 0.01, 0.01)
     vx, vy, cx, cy = vx_r[0], vy_r[0], cx_r[0], cy_r[0]
 
-    err, theta = compute_error(points, vx, vy, cx, cy)
+    err, theta = compute_error(img, vx, vy, cx, cy)
 
     if debug:
         log.info("Edge detection error: %.2f, theta: %.2f", err, theta)

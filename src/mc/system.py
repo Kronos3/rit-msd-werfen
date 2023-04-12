@@ -47,6 +47,7 @@ class System:
               coarse_n: int = 400,
               coarse_size: StageStepSize = StageStepSize.QUARTER,
               laplacian_threshold: float = 10.0,
+              num_points_threshold: int = 100,
               standard_deviation_threshold: float = 50.0,
               vertical_rad_threshold: float = 0.1,
               debug: bool = False):
@@ -87,7 +88,9 @@ class System:
                     # Get the final stage position
                     img = self.hq_cam.acquire_array()
                     new_edge_position = processing.detect_card_edge(
-                        img, laplacian_threshold, standard_deviation_threshold,
+                        img, laplacian_threshold,
+                        num_points_threshold,
+                        standard_deviation_threshold,
                         vertical_rad_threshold, debug
                     )
 

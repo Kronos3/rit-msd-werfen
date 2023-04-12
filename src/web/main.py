@@ -288,12 +288,14 @@ def system_align(
         coarse_n: int = 400,
         coarse_size: StageStepSizes = "QUATER",
         laplacian_threshold: float = 10.0,
+        num_points_threshold: int = 100,
         standard_deviation_threshold: float = 50.0,
         vertical_rad_threshold: float = 0.1,
         debug: bool = False
 ):
     img, position = system.align(coarse_n, StageStepSizesMap[coarse_size],
-                                 laplacian_threshold, standard_deviation_threshold,
+                                 laplacian_threshold, num_points_threshold,
+                                 standard_deviation_threshold,
                                  vertical_rad_threshold, debug)
 
     if position is not None:
