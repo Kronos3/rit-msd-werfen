@@ -90,6 +90,8 @@ class System:
                     log.info("Performing %d steps for fine motion", int(fine_step))
                     self.approach_relative(int(fine_step), StageStepSize.EIGHTH)
 
+                    time.sleep(step_delay)
+
                     # Get the final stage position
                     img = self.hq_cam.acquire_array()
                     new_edge_position = processing.detect_card_edge(
