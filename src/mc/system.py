@@ -131,16 +131,10 @@ class System:
         output = pytesseract.image_to_boxes(
             img, lang='osd', config=tess_config)
         boxes = output.strip().split('\n') if output.strip() else []
-        h, w = img.shape
-
         output = ""
         for b in boxes:
             b = b.split(' ')
             output += b[0]
-            img = cv2.rectangle(img,
-                                (int(b[1]), h - int(b[2])),
-                                (int(b[3]), h - int(b[4])),
-                                (0, 255, 0), 2)
 
         return output, img
 
