@@ -110,7 +110,12 @@ class System:
             # Stop the camera, even on error
             self.hq_cam.stop()
 
-    def card_id(self) -> str:
+    def card_id(self,
+                start_row: int,
+                start_col: int,
+                height: int,
+                width: int
+                ) -> str:
         with self.aux_cam:
             img = self.aux_cam.acquire_array()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -119,7 +124,7 @@ class System:
         img = cv2.resize(img, (int(img.shape[1] * 0.2), int(img.shape[0] * 0.2)))
 
         # Crop image
-        img = img[165:165 + 120, 396:396+30]
+        img = img[start_row:start_row + height, start_col:start_col+width]
         img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         # Clean up noise using OTSU thresholding

@@ -312,13 +312,17 @@ def system_align(
 
 @app.post("/system/card_id", response_class=ImageResponse)
 def system_card_id(
+        start_row: int = 165,
+        start_col: int = 396,
+        height: int = 110,
+        width: int = 30,
         position: int = 8800,
-        light_level: float = 0.015
+        light_level: float = 0.015,
 ):
     system.stage.absolute(position, StageStepSize.EIGHTH)
     system.stage.wait()
     system.stage.led_pwm(light_level)
 
-    card_id, img = system.card_id()
+    card_id, img = system.card_id(start_row, start_col, height, width)
     print(card_id)
     return ImageResponse(img, scale=1)
