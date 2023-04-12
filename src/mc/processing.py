@@ -102,6 +102,7 @@ def detect_card_edge(img: np.ndarray,
     # This is not an actual edge
     # We just fit some garbage
     if err > standard_deviation_threshold:
+        log.info("Not a good line standard deviation: %.2f", err)
         return None
 
     # The line is not vertical enough
