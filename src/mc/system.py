@@ -84,7 +84,7 @@ class System:
 
                 if edge_position is not None:
                     log.info("Edge position @%.2f", edge_position)
-                    return edge_position
+                    return img, edge_position
 
                 if edge_position is not None:
                     # Found the edge of the card
