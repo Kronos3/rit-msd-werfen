@@ -303,4 +303,4 @@ def system_align(
                           1, (0, 255, 0), 2, cv2.LINE_AA)
         img = cv2.circle(img, center, 20, (0, 255, 0), 20)
 
-    return ImageResponse(img)
+    return ImageResponse(img, scale=1)
