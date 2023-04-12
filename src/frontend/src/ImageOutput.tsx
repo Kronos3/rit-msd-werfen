@@ -4,14 +4,14 @@ import { Image, VStack } from "@chakra-ui/react";
 import ApiForm from "./Form";
 
 
-export default function Align(props: { host: string, schema: any }) {
+export default function ImageOutput(props: { path: string, host: string, schema: any }) {
     const [image, setImage] = useState<Blob | undefined>();
 
     return (
         <>
             <ApiForm
+                path={props.path}
                 host={props.host}
-                path="/system/align"
                 schema={props.schema}
                 onReply={async (response) => {
                     setImage(await response.blob());

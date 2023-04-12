@@ -308,3 +308,16 @@ def system_align(
         img = cv2.circle(img, center, 20, (0, 255, 0), 20)
 
     return ImageResponse(img, scale=1)
+
+
+@app.post("/system/card_id", response_class=ImageResponse)
+def system_card_id(
+        position: int = 8800,
+        light_level: float = 0.015
+):
+    system.stage.absolute(position, StageStepSize.EIGHTH)
+    system.stage.wait()
+    system.stage.led_pwm(light_level)
+
+    img = system.card_id()
+    return ImageResponse(img, scale=1)

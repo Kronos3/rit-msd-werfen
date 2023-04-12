@@ -115,7 +115,12 @@ class System:
             img = self.aux_cam.acquire_array()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # TODO(tumbar) Crop
+        # Rescale image
+        img = cv2.resize(img, (int(img.shape[1] * 0.2), int(img.shape[0] * 0.2)))
+
+        # Crop image
+        img = img[165:165 + 100, 396:396+30]
+        img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         # Clean up noise using OTSU thresholding
         # Text is left black, background made white

@@ -20,7 +20,7 @@ import * as cookies from './cookie';
 import Status from './Status';
 import SingleCard from './SingleCard';
 import Camera from './Camera';
-import Align from './Align';
+import ImageOutput from './ImageOutput';
 
 
 function App() {
@@ -60,6 +60,7 @@ function App() {
                     <Tab>Stage</Tab>
                     <Tab>Camera</Tab>
                     <Tab>Align</Tab>
+                    <Tab>Card ID</Tab>
                 </TabList>
 
                 <TabPanels>
@@ -87,7 +88,10 @@ function App() {
                         <Camera host={host} />
                     </TabPanel>
                     <TabPanel>
-                        <Align host={host} schema={apiSchema} />
+                        <ImageOutput path="/system/align" host={host} schema={apiSchema} />
+                    </TabPanel>
+                    <TabPanel>
+                        <ImageOutput path="/system/card_id" host={host} schema={apiSchema} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
