@@ -82,10 +82,11 @@ def detect_card_edge(img: np.ndarray,
 
     # Gather a list of potential points on the edge of the sensor card
     points = cv2.findNonZero(img)
+    npoints = len(points) if points is not None else 0
 
-    if points is None or len(points) < num_points_threshold:
+    if npoints < num_points_threshold:
         if debug:
-            log.info("Found only %d points, no edges", len(points))
+            log.info("Found only %d points, no edges", npoints)
         return None
 
     # Perform an L2 norm linear regression to get the line of
@@ -96,7 +97,7 @@ def detect_card_edge(img: np.ndarray,
     err, theta = compute_error(img, vx, vy, cx, cy)
 
     if debug:
-        log.info("Edge detection error: %.2f, theta: %.2f, num: %d", err, theta, len(points) if points is not None else 0)
+        log.info("Edge detection error: %.2f, theta: %.2f, num: %d", err, theta, npoints)
 
     # This is not an actual edge
     # We just fit some garbage
