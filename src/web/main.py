@@ -283,7 +283,7 @@ async def single_card(
     return fids
 
 
-@app.get("/system/align", response_class=ImageResponse)
+@app.post("/system/align", response_class=ImageResponse)
 def system_align(
         coarse_n: int = 400,
         coarse_size: StageStepSize = StageStepSize.QUARTER,
