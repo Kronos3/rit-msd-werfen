@@ -140,7 +140,7 @@ class System:
             img = cv2.rectangle(img,
                                 (int(b[1]), h - int(b[2])),
                                 (int(b[3]), h - int(b[4])),
-                                (0, 255, 0), 2)
+                                (0, 255, 0), 0.1)
 
         return output, img
 

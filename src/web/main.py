@@ -320,4 +320,5 @@ def system_card_id(
     system.stage.led_pwm(light_level)
 
     card_id, img = system.card_id()
+    print(card_id)
     return ImageResponse(img, scale=1)
