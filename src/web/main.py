@@ -8,10 +8,11 @@ import cv2
 import serial
 
 from fastapi import FastAPI
-from fastapi.responses import Response
+from fastapi.responses import Response, PlainTextResponse
 
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.background import BackgroundTask
+from starlette.requests import Request
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
@@ -44,6 +45,11 @@ else:
 
 Encodings = Literal["jpeg", "png", "tiff", "raw"]
 Cameras = Literal["hq", "aux"]
+
+
+@app.exception_handler(Exception)
+def default_exception_handler(request: Request, exc: Exception):
+    return PlainTextResponse(str(exc), status_code=500)
 
 
 class ImageResponse(Response):
