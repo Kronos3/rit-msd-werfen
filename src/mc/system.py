@@ -83,15 +83,13 @@ class System:
                 )
 
                 if edge_position is not None:
-                    log.info("Edge position @%.2f", edge_position)
-                    return img, edge_position
-
-                if edge_position is not None:
                     # Found the edge of the card
                     # Perform the fine motion
-                    fine_step = (edge_position - 0.5) / IM_WIDTH_PER_EIGHTH_STEP
+                    fine_step = (0.5 - edge_position) / IM_WIDTH_PER_EIGHTH_STEP
                     log.info("Edge position @%.2f", edge_position)
                     log.info("Performing %d steps for fine motion", int(fine_step))
+
+                    print(fine_step)
                     self.approach_relative(int(fine_step), StageStepSize.EIGHTH)
 
                     time.sleep(step_delay)
