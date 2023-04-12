@@ -80,8 +80,8 @@ class System:
                     # Found the edge of the card
                     # Perform the fine motion
                     fine_step = (edge_position - 0.5) / IM_WIDTH_PER_EIGHTH_STEP
-                    log.info("Edge position @{}", round(edge_position, 2))
-                    log.info("Performing {} steps for fine motion", int(fine_step))
+                    log.info("Edge position @%.2f", edge_position)
+                    log.info("Performing %d steps for fine motion", int(fine_step))
                     self.approach_relative(int(fine_step), StageStepSize.EIGHTH)
 
                     # Get the final stage position
@@ -91,7 +91,7 @@ class System:
                         vertical_rad_threshold, debug
                     )
 
-                    log.info("Card position is now {}", round(new_edge_position, 2))
+                    log.info("Card position is now %.2f", new_edge_position)
                     self.stage.set_position(0)
                     return img, new_edge_position
         finally:
