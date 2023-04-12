@@ -111,6 +111,7 @@ class System:
             self.hq_cam.stop()
 
     def card_id(self,
+                scale: float,
                 start_row: int,
                 start_col: int,
                 height: int,
@@ -121,7 +122,7 @@ class System:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Rescale image
-        img = cv2.resize(img, (int(img.shape[1] * 0.2), int(img.shape[0] * 0.2)))
+        img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
 
         # Crop image
         img = img[start_row:start_row + height, start_col:start_col+width]
