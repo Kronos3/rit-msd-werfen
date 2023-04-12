@@ -83,6 +83,10 @@ class System:
                 )
 
                 if edge_position is not None:
+                    log.info("Edge position @%.2f", edge_position)
+                    return edge_position
+
+                if edge_position is not None:
                     # Found the edge of the card
                     # Perform the fine motion
                     fine_step = (edge_position - 0.5) / IM_WIDTH_PER_EIGHTH_STEP
@@ -101,7 +105,7 @@ class System:
                         vertical_rad_threshold, debug
                     )
 
-                    log.info("Card position is now %.2f", new_edge_position)
+                    log.info("Card position is now %.2f", new_edge_position if new_edge_position is not None else -1)
                     self.stage.set_position(0)
                     return img, new_edge_position
         finally:
