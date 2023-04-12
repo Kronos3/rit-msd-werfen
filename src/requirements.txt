@@ -3,7 +3,5 @@ opencv-python
 Pillow
 pytesseract
 coloredlogs
-picamera2
-pyserial
 fastapi[all]
 pydantic

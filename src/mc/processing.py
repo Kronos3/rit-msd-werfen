@@ -109,6 +109,8 @@ def detect_card_edge(img: np.ndarray,
     # to be the card edge since that will be vertical with respect to the
     # HQ Camera
     if abs(theta) > vertical_rad_threshold and abs(theta - np.pi) > vertical_rad_threshold:
+        if debug:
+            log.info("Line not vertical enough %2.f rad", theta)
         return None
 
     # Solve for center of the parametric line
@@ -125,6 +127,8 @@ def detect_card_edge(img: np.ndarray,
     pos = center_ts[1] / w
 
     if pos < 0.05 or pos > 0.95:
+        if debug:
+            log.info("Position too close to edge: %.2f", pos)
         return None
 
     return pos
