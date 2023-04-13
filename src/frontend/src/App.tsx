@@ -77,7 +77,7 @@ function App() {
 
                 <TabPanels>
                     <TabPanel>
-                        <Operate></Operate>
+                        <Operate status={status} host={host}></Operate>
                     </TabPanel>
                     <TabPanel>
                         <SingleCard host={host} schema={apiSchema} />

@@ -385,3 +385,9 @@ def linux_usb(
                 out.append(mount)
 
     return out
+
+
+@app.post("/linux/unmount")
+def linux_unmount(mountpoint: str):
+    out = os.system(f"umount {mountpoint}")
+    assert out == 0, "Umount call failed"

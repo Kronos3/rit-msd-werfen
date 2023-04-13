@@ -7,3 +7,12 @@ export interface StageStatus {
     calibrated: boolean;
     position: number;
 }
+
+export interface UsbDrive {
+    device: string;
+    mountpoint: string;
+    fs_type: string;
+    options: string;
+    dump_freq: number;
+    parallel_fsck: number;
+}
