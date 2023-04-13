@@ -5,3 +5,5 @@ pytesseract
 coloredlogs
 fastapi[all]
 pydantic
+pyserial
+picamera2

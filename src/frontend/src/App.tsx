@@ -61,6 +61,7 @@ function App() {
                     <Tab>Camera</Tab>
                     <Tab>Align</Tab>
                     <Tab>Card ID</Tab>
+                    <Tab>USB Mounts</Tab>
                 </TabList>
 
                 <TabPanels>
@@ -92,6 +93,9 @@ function App() {
                     </TabPanel>
                     <TabPanel>
                         <ImageOutput path="/system/card_id" host={host} schema={apiSchema} />
+                    </TabPanel>
+                    <TabPanel>
+                        <ApiForm path="/linux/mounts" host={host} schema={apiSchema} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>

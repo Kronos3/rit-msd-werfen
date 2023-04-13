@@ -1,7 +1,8 @@
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 import time
 
+import numpy as np
 import pytesseract
 import cv2
 
@@ -42,6 +43,20 @@ class System:
             self.stage.wait(granularity=0.05)
             self.stage.relative(-300, size)
             self.stage.wait(granularity=0.05)
+
+    def approach_absolute(self,
+                          pos: int,
+                          size: StageStepSize = StageStepSize.EIGHTH,
+                          from_negative: bool = True):
+        if from_negative:
+            self.stage.absolute(pos - 300, size)
+            self.stage.wait(granularity=0.05)
+        else:
+            self.stage.relative(pos + 300, size)
+            self.stage.wait(granularity=0.05)
+
+        self.stage.relative(pos, size)
+        self.stage.wait(granularity=0.05)
 
     def align(self,
               coarse_n: int = 400,
@@ -116,7 +131,7 @@ class System:
                 start_col: int,
                 height: int,
                 width: int
-                ) -> str:
+                ) -> Tuple[str, np.ndarray]:
         with self.aux_cam:
             img = self.aux_cam.acquire_array()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -125,7 +140,7 @@ class System:
         img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
 
         # Crop image
-        img = img[start_row:start_row + height, start_col:start_col+width]
+        img = img[start_row:start_row + height, start_col:start_col + width]
         img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         # Clean up noise using OTSU thresholding
@@ -133,7 +148,7 @@ class System:
         ret, img = cv2.threshold(
             img, 146, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-        tess_config = '--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789'
+        tess_config = '--psm 7 --oem 3 outputbase digits'
         output = pytesseract.image_to_boxes(
             img, lang='osd', config=tess_config)
         boxes = output.strip().split('\n') if output.strip() else []

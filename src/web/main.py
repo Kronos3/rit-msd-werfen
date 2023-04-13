@@ -319,17 +319,57 @@ def system_align(
 @app.post("/system/card_id", response_class=ImageResponse)
 def system_card_id(
         scale: float = 0.4,
-        start_row: int = 165,
-        start_col: int = 396,
-        height: int = 110,
-        width: int = 30,
+        start_row: int = 335,
+        start_col: int = 796,
+        height: int = 200,
+        width: int = 60,
         position: int = 8800,
-        light_level: float = 0.015,
+        light_level: float = 0.010,
 ):
-    system.stage.absolute(position, StageStepSize.EIGHTH)
-    system.stage.wait()
+    system.approach_absolute(position, StageStepSize.EIGHTH)
     system.stage.led_pwm(light_level)
 
     card_id, img = system.card_id(scale, start_row, start_col, height, width)
     print(card_id)
     return ImageResponse(img, scale=1)
+
+
+class Mount(BaseModel):
+    device: str
+    mountpoint: str
+    fs_type: str
+    options: str
+    dump_freq: int
+    parallel_fsck: int
+
+    def __init__(self, mtab_line: str):
+        super().__init__()
+        self.device, self.mountpoint, self.fs_type, self.options, dump_freq, parallel_fsck = mtab_line.split()
+        self.dump_freq = int(dump_freq)
+        self.parallel_fsck = int(parallel_fsck)
+
+
+@app.post("/linux/mounts")
+def linux_usb(
+        mount_point_filter: Optional[str] = None,
+        fs_type_filter: Optional[str] = None
+):
+    if mount_point_filter is None and fs_type_filter is None:
+        raise ValueError("mount_point and fs_type filters can not both be none")
+
+    # Check for USBs
+    out: typing.List[Mount] = []
+    with open("/proc/mounts") as mounts:
+        for line in mounts:
+            filter_is_good = True
+            mount = Mount(line)
+            if mount_point_filter is not None:
+                filter_is_good = filter_is_good and mount_point_filter in mount.mountpoint
+
+            if fs_type_filter is not None:
+                filter_is_good = filter_is_good and fs_type_filter in mount.fs_type
+
+            if filter_is_good:
+                out.append(mount)
+
+    return out

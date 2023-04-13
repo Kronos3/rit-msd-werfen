@@ -36,6 +36,7 @@ export default function ApiForm(props: { host: string, path: string, schema: any
     const [value, setValue] = useState();
 
     const [error, setError] = useState("");
+    const [output, setOutput] = useState("");
 
     useEffect(() => {
         setSchema(generateRjsfSchema(props.schema?.paths[props.path]?.post));
@@ -60,7 +61,11 @@ export default function ApiForm(props: { host: string, path: string, schema: any
                 return;
             }
 
-            props.onReply?.(response);
+            if (props.onReply) {
+                props.onReply(response);
+            } else {
+                setOutput(await response.text())
+            }
         })(data)
     }, [props]);
 
@@ -77,5 +82,6 @@ export default function ApiForm(props: { host: string, path: string, schema: any
             validator={validator}
             onSubmit={submit} />
         <Text>{error}</Text>
+        <Text>{output}</Text>
     </>
 }
