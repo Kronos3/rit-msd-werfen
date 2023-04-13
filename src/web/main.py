@@ -343,10 +343,15 @@ class Mount(BaseModel):
     parallel_fsck: int
 
     def __init__(self, mtab_line: str):
-        super().__init__()
-        self.device, self.mountpoint, self.fs_type, self.options, dump_freq, parallel_fsck = mtab_line.split()
-        self.dump_freq = int(dump_freq)
-        self.parallel_fsck = int(parallel_fsck)
+        device, mountpoint, fs_type, options, dump_freq, parallel_fsck = mtab_line.split()
+        super().__init__(
+            device=device,
+            mountpoint=mountpoint,
+            fs_type=fs_type,
+            options=options,
+            dump_freq=int(dump_freq),
+            parallel_fsck=int(parallel_fsck)
+        )
 
 
 @app.post("/linux/mounts")
