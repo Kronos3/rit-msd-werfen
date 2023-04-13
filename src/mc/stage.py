@@ -49,6 +49,7 @@ class StageFlags(enum.IntFlag):
     RUNNING = 1 << 3
     LED = 1 << 4
     FAILURE = 1 << 5
+    CALIBRATED = 1 << 6
 
 
 class StageStepSize(enum.IntEnum):
@@ -111,6 +112,7 @@ class Stage:
     running: bool
     led: bool
     failure: bool
+    calibrated: bool
 
     mutex: threading.Lock
 
@@ -123,6 +125,7 @@ class Stage:
         self.running = False
         self.led = False
         self.failure = False
+        self.calibrated = False
 
         self.mutex = threading.Lock()
 
@@ -159,6 +162,7 @@ class Stage:
         self.running = bool(StageFlags.RUNNING & reply.flags)
         self.led = bool(StageFlags.LED & reply.flags)
         self.failure = bool(StageFlags.FAILURE & reply.flags)
+        self.calibrated = bool(StageFlags.CALIBRATED & reply.flags)
 
         return reply
 

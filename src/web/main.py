@@ -291,6 +291,7 @@ async def single_card(
 
 @app.post("/system/align", response_class=ImageResponse)
 def system_align(
+        light_pwm: float = 0.2,
         coarse_n: int = 400,
         coarse_size: StageStepSizes = "QUATER",
         laplacian_threshold: float = 10.0,
@@ -300,11 +301,15 @@ def system_align(
         step_delay: float = 0.2,
         debug: bool = False
 ):
+    system.stage.led_pwm(light_pwm)
+
     img, position = system.align(coarse_n, StageStepSizesMap[coarse_size],
                                  laplacian_threshold, num_points_threshold,
                                  standard_deviation_threshold,
                                  vertical_rad_threshold, step_delay,
                                  debug)
+
+    system.stage.led_pwm(0)
 
     if position is not None:
         center = [int(position * img.shape[1]), img.shape[0] // 2]

@@ -7,15 +7,7 @@ import {
 } from '@chakra-ui/react'
 
 import { useCallback, useEffect, useState } from 'react';
-
-interface StageStatus {
-    limit1: boolean;
-    limit2: boolean;
-    estop: boolean;
-    running: boolean;
-    led: boolean;
-    position: number;
-}
+import { StageStatus } from './api';
 
 function offGreen(state: boolean): string {
     return state ? 'red' : 'green'
@@ -25,29 +17,20 @@ function onGreen(state: boolean): string {
     return state ? 'green' : 'red'
 }
 
-export default function Status(props: { host: string }) {
-    const [state, setState] = useState<StageStatus>({
-        limit1: false,
-        limit2: false,
-        estop: false,
-        running: false,
-        led: false,
-        position: 0
-    });
-
+export default function Status(props: { host: string, status: StageStatus, setStatus: (status: StageStatus) => void }) {
     const [disableEstop, setDisableEstop] = useState(false);
 
     const eStopPress = useCallback(() => {
         (async () => {
             setDisableEstop(true);
-            if (state.estop) {
+            if (props.status.estop) {
                 // Clear the estop signal
                 await fetch(`http://${props.host}/system/estop?stop=false`);
             } else {
                 await fetch(`http://${props.host}/system/estop?stop=true`);
             }
         })();
-    }, [props.host, state]);
+    }, [props.host, props.status]);
 
     const [ping, setPing] = useState<boolean>(true);
 
@@ -57,7 +40,7 @@ export default function Status(props: { host: string }) {
             const interval = setInterval(async () => {
                 const responseRaw = await fetch(`http://${props.host}/stage/status`);
                 const response: StageStatus = await responseRaw.json();
-                setState(response);
+                props.setStatus(response);
                 setDisableEstop(false);
             }, 500);
             return () => clearInterval(interval);
@@ -67,22 +50,22 @@ export default function Status(props: { host: string }) {
     return (
         <>
             <Stack paddingTop={4} direction='row' spacing={1} align='center' justify='center'>
-                <Badge colorScheme={offGreen(state.limit1)}>LIMIT-1</Badge>
-                <Badge colorScheme={offGreen(state.limit2)}>LIMIT-2</Badge>
-                <Badge colorScheme={offGreen(state.estop)}>ESTOP</Badge>
-                <Badge colorScheme={onGreen(state.led)}>RING</Badge>
-                <Badge colorScheme={state.running ? 'blue' : 'gray'}>{state.running ? 'RUNNING' : 'STOPPED'}</Badge>
-                <Badge colorScheme='blue'>{state.position}</Badge>
+                <Badge colorScheme={offGreen(props.status.limit1)}>LIMIT-1</Badge>
+                <Badge colorScheme={offGreen(props.status.limit2)}>LIMIT-2</Badge>
+                <Badge colorScheme={offGreen(props.status.estop)}>ESTOP</Badge>
+                <Badge colorScheme={onGreen(props.status.led)}>RING</Badge>
+                <Badge colorScheme={props.status.running ? 'blue' : 'gray'}>{props.status.running ? 'RUNNING' : 'STOPPED'}</Badge>
+                <Badge colorScheme='blue'>{props.status.position}</Badge>
                 <Switch alignSelf='right' isChecked={ping} onChange={(e) => setPing(e.target.checked)} />
             </Stack>
             <Center paddingTop={2}>
                 <Button
-                    colorScheme={state.estop ? "yellow" : "red"}
+                    colorScheme={props.status.estop ? "yellow" : "red"}
                     alignSelf='center'
                     onClick={eStopPress}
                     disabled={disableEstop}
                 >
-                    {state.estop ? "CLEAR E-STOP" : "E-STOP"}
+                    {props.status.estop ? "CLEAR E-STOP" : "E-STOP"}
                 </Button>
             </Center>
         </>

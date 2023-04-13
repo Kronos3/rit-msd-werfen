@@ -40,6 +40,7 @@ typedef enum
     FLAGS_RUNNING = 1 << 3, //!< Running motor request
     FLAGS_LED = 1 << 4,     //!< LED is on
     FLAGS_FAILURE = 1 << 5, //!< The last motor request hit a limit switch
+    FLAGS_CALIBRATED = 1 << 6, //!< Indicated whether a set_position() has get run yet
 } flags_t;
 
 typedef struct

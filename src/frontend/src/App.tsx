@@ -16,19 +16,30 @@ import {
 
 import ApiForm from './Form';
 
+import { StageStatus } from './api';
+
 import * as cookies from './cookie';
 import Status from './Status';
 import SingleCard from './SingleCard';
 import Camera from './Camera';
 import ImageOutput from './ImageOutput';
+import Operate from './Operate';
 
 
 function App() {
     const [host, setHost] = useState(cookies.get("host") || window.location.host);
-
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
-
     const [apiSchema, setApiSchema] = useState<any>();
+
+    const [status, setStatus] = useState<StageStatus>({
+        limit1: false,
+        limit2: false,
+        estop: false,
+        running: false,
+        led: false,
+        calibrated: false,
+        position: 0
+    });
 
     useEffect(() => {
         fetch(`http://${host}/openapi.json`)
@@ -51,7 +62,7 @@ function App() {
                 </InputGroup>
             </>
 
-            <Status host={host} />
+            <Status status={status} setStatus={setStatus} host={host} />
 
             <Tabs>
                 <TabList>
@@ -66,7 +77,7 @@ function App() {
 
                 <TabPanels>
                     <TabPanel>
-
+                        <Operate></Operate>
                     </TabPanel>
                     <TabPanel>
                         <SingleCard host={host} schema={apiSchema} />

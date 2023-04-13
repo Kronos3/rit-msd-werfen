@@ -18,6 +18,8 @@ static Packet rx_buffer = {0};
 static volatile Bool packet_ready = FALSE;
 static Packet packet = {0};
 
+static Bool has_been_calibrated = FALSE;
+
 static void packet_receive(UART_HandleTypeDef* huart)
 {
     HAL_UART_Receive_IT(huart, (U8*)&rx_buffer, sizeof(Packet));
@@ -86,6 +88,7 @@ static void reply(UART_HandleTypeDef* huart, U32 arg)
             | (motor_is_running() ? FLAGS_RUNNING : 0)
             | (led_is_on() ? FLAGS_LED : 0)
             | (motor_has_failure() ? FLAGS_FAILURE : 0)
+            | (has_been_calibrated ? FLAGS_CALIBRATED : 0)
     );
 
     reply_packet.checksum = packet_compute_checksum(&reply_packet);
@@ -146,6 +149,7 @@ static U32 packet_handler(void)
             break;
         case OPCODE_SET_POSITION:
             motor_set_position((I32)packet.arg);
+            has_been_calibrated = TRUE;
             break;
         case OPCODE_GET_POSITION:
             return motor_get_position();

@@ -74,11 +74,6 @@ class System:
         self.stage.home(StageDirection.BACKWARD, StageStepSize.QUARTER)
         self.stage.wait(fault_on_limit=False, granularity=0.05)
 
-        # We are at the start of the stage
-        # Reset the internal position to 0
-        # This will be overriden later
-        self.stage.set_position(0)
-
         try:
             # Start the camera in live stream mode
             self.hq_cam.start(still=False)
@@ -119,7 +114,11 @@ class System:
                     )
 
                     log.info("Card position is now %.2f", new_edge_position if new_edge_position is not None else -1)
+
+                    # Sets the initial calibration value
+                    # Sets the stage calibration flag
                     self.stage.set_position(0)
+
                     return img, new_edge_position
         finally:
             # Stop the camera, even on error
