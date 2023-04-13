@@ -1,6 +1,5 @@
 import {
     HStack,
-    Badge,
     Text,
     Button,
     Select,
@@ -9,6 +8,7 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 
 import { StageStatus, UsbDrive } from './api';
+import ApiForm from './Form';
 
 
 function Usb(props: { host: string, usbSelect?: string, setUsbSelect: (usb: string) => void }) {
@@ -21,9 +21,13 @@ function Usb(props: { host: string, usbSelect?: string, setUsbSelect: (usb: stri
             );
 
             const response = await responseRaw.json() as UsbDrive[];
+            if (!props.usbSelect && response.length > 0) {
+                props.setUsbSelect(response[0].mountpoint);
+            }
+
             setUsbDrives(response);
         })();
-    }, [props.host]);
+    }, [props.host, props.usbSelect, props.setUsbSelect]);
 
     const unmount = useCallback(() => {
         (async () => {
@@ -55,10 +59,37 @@ function Usb(props: { host: string, usbSelect?: string, setUsbSelect: (usb: stri
     );
 }
 
-export default function Operate(props: { status: StageStatus, host: string }) {
+const AlignmentDefaults = {
+
+}
+
+function OperateCalibrated(props: { host: string }) {
     const [usb, setUsb] = useState<string>();
 
+    return (
+        <>
+            <Usb usbSelect={usb} setUsbSelect={setUsb} host={props.host} />
+        </>
+    )
+}
+
+function OperateUncalibrated(props: { host: string, schema: any }) {
+
+
+    return (
+        <>
+            <Text>Stage must be aligned before continuing</Text>
+            <ApiForm path="/system/align" host={props.host} schema={props.schema} onReply={() => {}} />
+        </>
+    )
+}
+
+export default function Operate(props: { status: StageStatus, host: string, schema: any }) {
     return <>
-        <Usb usbSelect={usb} setUsbSelect={setUsb} host={props.host} />
+        {
+            props.status.calibrated ?
+                <OperateCalibrated host={props.host} />
+                : <OperateUncalibrated host={props.host} schema={props.schema} />
+        }
     </>
 }

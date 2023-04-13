@@ -294,8 +294,8 @@ async def single_card(
 @app.post("/system/align", response_class=ImageResponse)
 def system_align(
         light_pwm: float = 0.2,
-        coarse_n: int = 400,
-        coarse_size: StageStepSizes = "QUATER",
+        coarse_n: int = 300,
+        coarse_size: StageStepSizes = "QUARTER",
         laplacian_threshold: float = 10.0,
         num_points_threshold: int = 100,
         standard_deviation_threshold: float = 800.0,
