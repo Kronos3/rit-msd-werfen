@@ -159,6 +159,7 @@ class StageStatus(BaseModel):
     running: bool
     led: bool
     position: int
+    calibrated: bool
 
 
 @app.get("/stage/status", response_model=StageStatus)
@@ -170,7 +171,8 @@ def state_position():
         "estop": system.stage.estop,
         "running": system.stage.running,
         "led": system.stage.led,
-        "position": position
+        "position": position,
+        "calibrated": system.stage.calibrated
     }
 
 

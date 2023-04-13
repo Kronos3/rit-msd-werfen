@@ -50,6 +50,7 @@ export default function Status(props: { host: string, status: StageStatus, setSt
     return (
         <>
             <Stack paddingTop={4} direction='row' spacing={1} align='center' justify='center'>
+                <Badge colorScheme={onGreen(props.status.calibrated)}>CALIBRATED</Badge>
                 <Badge colorScheme={offGreen(props.status.limit1)}>LIMIT-1</Badge>
                 <Badge colorScheme={offGreen(props.status.limit2)}>LIMIT-2</Badge>
                 <Badge colorScheme={offGreen(props.status.estop)}>ESTOP</Badge>
