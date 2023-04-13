@@ -193,8 +193,8 @@ class Stage:
             time.sleep(granularity)
             self.idle()
 
-        if fault_on_limit:
-            assert not self.failure, "Motor request hit a limit switch"
+            if fault_on_limit:
+                assert not self.failure, "Motor request hit a limit switch"
 
     def relative(self, n: int, size: StageStepSize, ignore_limits: bool = False):
         """
