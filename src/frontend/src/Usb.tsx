@@ -128,7 +128,7 @@ export default function Usb(props: { host: string, usb?: string, setUsb: (usb?: 
                                 onChange={(e) => props.setUsb(e.target.value)}
                             >
                                 {
-                                    usbDrives.map(v => <option value={v.mountpoint}>{v.mountpoint} ({v.device})</option>)
+                                    usbDrives.map((v, i) => <option key={i} value={v.mountpoint}>{v.mountpoint} ({v.device})</option>)
                                 }
                             </Select>
                             {

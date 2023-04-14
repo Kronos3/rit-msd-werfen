@@ -246,7 +246,7 @@ async def get_future(fid: int):
 
 
 @app.post("/system/single_card")
-def single_card(
+async def single_card(
         encoding: Encodings = "jpeg",
         initial_position: int = 0,
         light_pwm: float = 0.2,
@@ -438,7 +438,7 @@ class RunParams(BaseModel):
 
 
 @app.post("/system/run")
-def run(request: RunParams):
+async def run(request: RunParams):
     mount_point_path = Path(request.path)
     assert mount_point_path.exists() and mount_point_path.is_dir()
 

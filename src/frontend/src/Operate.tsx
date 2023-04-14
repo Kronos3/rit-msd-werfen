@@ -66,7 +66,8 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
         (async () => {
             const body = {
                 "sensor": singleCardParams,
-                "card_id": cardIdParams
+                "card_id": cardIdParams,
+                "path": props.usb
             };
 
             const response = await fetch(`http://${props.host}/system/run`, {
@@ -83,7 +84,6 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
         });
     }, [cardIdParams, singleCardParams, props.host]);
 
-    console.log(props.usb)
     return (
         <VStack align="stretch">
             <Modal isOpen={unload.isOpen} onClose={unload.onClose}>
