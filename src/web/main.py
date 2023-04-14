@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 import os
 import threading
 import time
@@ -26,6 +27,8 @@ from rit.storage import Card, Storage
 from rit.system import System
 
 from pydantic import BaseModel
+
+log = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -475,6 +478,8 @@ async def run(request: RunParams):
                 img = system.hq_cam.acquire_array()
                 images.append(img)
 
+                log.info("Acquired %d/%d", i + 1, request.sensor.num_captures)
+
                 # No need to buffer since we are encoding with preview size
                 futures[i].set_result(ImageResponse(img, scale=request.sensor.scale))
 
@@ -484,6 +489,8 @@ async def run(request: RunParams):
                     StageStepSizesMap[request.sensor.step_size],
                 )
                 system.stage.wait(granularity=0.05)
+
+            log.info("Detecting card ID")
 
             system.approach_absolute(request.card_id.position)
             system.stage.led_pwm(request.card_id.light_level)

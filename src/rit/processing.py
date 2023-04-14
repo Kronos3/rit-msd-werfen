@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 import numpy as np
 import pytesseract
 import cv2
+from pytesseract import TesseractNotFoundError
 
 log = logging.getLogger(__name__)
 
@@ -158,12 +159,16 @@ def card_id(img: np.ndarray,
         img, 146, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     tess_config = '--psm 7 --oem 3 outputbase digits'
-    output = pytesseract.image_to_boxes(
-        img, lang='osd', config=tess_config)
-    boxes = output.strip().split('\n') if output.strip() else []
-    output = ""
-    for b in boxes:
-        b = b.split(' ')
-        output += b[0]
+    try:
+        output = pytesseract.image_to_boxes(
+            img, lang='osd', config=tess_config)
+        boxes = output.strip().split('\n') if output.strip() else []
+        output = ""
+        for b in boxes:
+            b = b.split(' ')
+            output += b[0]
+    except TesseractNotFoundError:
+        output = "0000000"
+        log.warning("Make sure tesseract-ocr is installed, continuing without")
 
     return output, img
