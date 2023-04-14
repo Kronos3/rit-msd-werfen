@@ -432,8 +432,8 @@ class CardIDParameters(BaseModel):
 
 
 class RunParams(BaseModel):
-    sensor: SingleCardParameters
-    card_id: CardIDParameters
+    sensor: Optional[SingleCardParameters]
+    card_id: Optional[CardIDParameters]
     path: str
 
 
@@ -441,6 +441,11 @@ class RunParams(BaseModel):
 async def run(request: RunParams):
     mount_point_path = Path(request.path)
     assert mount_point_path.exists() and mount_point_path.is_dir()
+
+    if request.sensor is None:
+        request.sensor = SingleCardParameters()
+    if request.card_id is None:
+        request.card_id = CardIDParameters()
 
     # Generate the futures for the frontend to request these images
     futures = []
