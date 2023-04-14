@@ -48,10 +48,10 @@ class System:
             self.stage.absolute(pos - 300, size)
             self.stage.wait(granularity=0.05)
         else:
-            self.stage.relative(pos + 300, size)
+            self.stage.absolute(pos + 300, size)
             self.stage.wait(granularity=0.05)
 
-        self.stage.relative(pos, size)
+        self.stage.absolute(pos, size)
         self.stage.wait(granularity=0.05)
 
     def align(self,
