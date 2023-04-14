@@ -25,16 +25,15 @@ export default function Status(props: { host: string, status: StageStatus, setSt
         if (JSON.stringify(response) !== JSON.stringify(props.status)) {
             props.setStatus(response);
         }
+
+        if (ping) {
+            setTimeout(refresh, 500);
+        }
     };
 
     useEffect(() => {
         if (ping) {
-            // Refresh state immediately on effect
             refresh();
-
-            // Keep polling state @2Hz
-            const interval = setInterval(refresh, 500);
-            return () => clearInterval(interval);
         }
     }, [props.host, props.status, ping]);
 
