@@ -16,9 +16,9 @@ from starlette.requests import Request
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
-from mc.cam import HqCamera, AuxCamera, Camera
-from mc.stage import StageStepSize, Stage
-from mc.system import System
+from rit.cam import HqCamera, AuxCamera, Camera
+from rit.stage import StageStepSize, Stage
+from rit.system import System
 
 from pydantic import BaseModel
 
@@ -194,11 +194,13 @@ StageStepSizesMap = {
 @app.post("/stage/relative")
 def stage_relative(n: int, size: StageStepSizes, ignore_limits: bool = False):
     system.stage.relative(n, StageStepSizesMap[size], ignore_limits)
+    system.stage.wait()
 
 
 @app.post("/stage/absolute")
 def stage_absolute(n: int, size: StageStepSizes = "EIGHTH", ignore_limits: bool = False):
     system.stage.absolute(n, StageStepSizesMap[size], ignore_limits)
+    system.stage.wait()
 
 
 @app.post("/stage/set_position")
@@ -241,7 +243,7 @@ async def get_future(fid: int):
 @app.post("/system/single_card")
 async def single_card(
         encoding: Encodings = "jpeg",
-        initial_position: Optional[int] = None,
+        initial_position: int = 0,
         scale: float = 0.2,
         delay: float = 0.2,
         speed: int = 1500,
@@ -262,7 +264,7 @@ async def single_card(
         if buffer:
             # First gather all the images
             images = []
-            for image in system.single_card_raw(
+            for image in system.single_card(
                     initial_position,
                     delay, speed, step, num_captures,
                     StageStepSizesMap[step_size]
@@ -275,7 +277,7 @@ async def single_card(
         else:
             # Reply to the futures as they come
             # This encodes in-between each step
-            for i, image in enumerate(system.single_card_raw(
+            for i, image in enumerate(system.single_card(
                     initial_position,
                     delay, speed, step, num_captures,
                     StageStepSizesMap[step_size]
@@ -332,13 +334,17 @@ def system_card_id(
         width: int = 60,
         position: int = 8800,
         light_level: float = 0.010,
+        return_img: bool = False
 ):
     system.approach_absolute(position, StageStepSize.EIGHTH)
     system.stage.led_pwm(light_level)
 
     card_id, img = system.card_id(scale, start_row, start_col, height, width)
-    print(card_id)
-    return ImageResponse(img, scale=1)
+
+    if return_img:
+        return ImageResponse(img, scale=1)
+    else:
+        return card_id
 
 
 class Mount(BaseModel):

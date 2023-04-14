@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, QtCore
 import threading
 import queue
 
-# from mc.cli import create_system
+# from rit.cli import create_system
 
 
 def qasync(func):

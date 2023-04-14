@@ -1,12 +1,10 @@
 import {
     Stack,
     Badge,
-    Switch,
-    Button,
-    Center
+    Switch
 } from '@chakra-ui/react'
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StageStatus } from './api';
 
 function offGreen(state: boolean): string {
@@ -18,34 +16,27 @@ function onGreen(state: boolean): string {
 }
 
 export default function Status(props: { host: string, status: StageStatus, setStatus: (status: StageStatus) => void }) {
-    const [disableEstop, setDisableEstop] = useState(false);
-
-    const eStopPress = useCallback(() => {
-        (async () => {
-            setDisableEstop(true);
-            if (props.status.estop) {
-                // Clear the estop signal
-                await fetch(`http://${props.host}/system/estop?stop=false`);
-            } else {
-                await fetch(`http://${props.host}/system/estop?stop=true`);
-            }
-        })();
-    }, [props.host, props.status]);
-
     const [ping, setPing] = useState<boolean>(true);
 
-    // Ping for status @10Hz
+    const refresh = async () => {
+        const responseRaw = await fetch(`http://${props.host}/stage/status`);
+        const response: StageStatus = await responseRaw.json();
+
+        if (JSON.stringify(response) !== JSON.stringify(props.status)) {
+            props.setStatus(response);
+        }
+    };
+
     useEffect(() => {
         if (ping) {
-            const interval = setInterval(async () => {
-                const responseRaw = await fetch(`http://${props.host}/stage/status`);
-                const response: StageStatus = await responseRaw.json();
-                props.setStatus(response);
-                setDisableEstop(false);
-            }, 500);
+            // Refresh state immediately on effect
+            refresh();
+
+            // Keep polling state @2Hz
+            const interval = setInterval(refresh, 500);
             return () => clearInterval(interval);
         }
-    }, [props.host, ping]);
+    }, [props.host, props.status, ping]);
 
     return (
         <>
@@ -59,16 +50,6 @@ export default function Status(props: { host: string, status: StageStatus, setSt
                 <Badge colorScheme='blue'>{props.status.position}</Badge>
                 <Switch alignSelf='right' isChecked={ping} onChange={(e) => setPing(e.target.checked)} />
             </Stack>
-            <Center paddingTop={2}>
-                <Button
-                    colorScheme={props.status.estop ? "yellow" : "red"}
-                    alignSelf='center'
-                    onClick={eStopPress}
-                    disabled={disableEstop}
-                >
-                    {props.status.estop ? "CLEAR E-STOP" : "E-STOP"}
-                </Button>
-            </Center>
         </>
     )
 }

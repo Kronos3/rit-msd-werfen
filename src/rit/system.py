@@ -6,9 +6,9 @@ import numpy as np
 import pytesseract
 import cv2
 
-from mc import processing
-from mc.cam import Camera
-from mc.stage import Stage, StageDirection, StageStepSize
+from rit import processing
+from rit.cam import Camera
+from rit.stage import Stage, StageDirection, StageStepSize
 
 log = logging.getLogger(__name__)
 
@@ -159,39 +159,20 @@ class System:
         return output, img
 
     def single_card(self,
-                    initial_position: Optional[str] = None,
-                    delay_s: str = "0.2", path: str = "test"):
-        i = 0
-        for image in self.single_card_raw(
-                int(initial_position) if initial_position is not None else None,
-                float(delay_s)):
-            # TODO(tumbar) Create a better naming scheme
-            cv2.imwrite(f"{path}-{i}.jpg", image)
-            i += 1
-
-    def single_card_raw(self,
-                        initial_position: Optional[int] = None,
-                        delay: float = 0.2,
-                        speed: int = 1500,
-                        step: int = 350,
-                        num_captures: int = 12,
-                        step_size: StageStepSize = StageStepSize.EIGHTH):
+                    initial_position: int,
+                    delay: float = 0.2,
+                    speed: int = 1500,
+                    step: int = 350,
+                    num_captures: int = 12,
+                    step_size: StageStepSize = StageStepSize.EIGHTH):
         self.stage.speed(speed)
-
-        if initial_position is not None:
-            # Move in from the same direction that we are iterating
-            # over the cards. This way the motor does not need to change
-            # direction causing a single Y-axis shift.
-            self.stage.absolute(initial_position - 300)
-            self.stage.wait(granularity=0.05)
-            self.stage.absolute(initial_position)
-            self.stage.wait(granularity=0.05)
+        self.approach_absolute(initial_position, step_size)
 
         with self.hq_cam:
             for i in range(num_captures):
                 # This delay is used to allow the system to
                 # stabilize before we acquire an image
-                if delay > 0 and i > 0:
+                if delay > 0:
                     time.sleep(delay)
 
                 yield self.hq_cam.acquire_array()

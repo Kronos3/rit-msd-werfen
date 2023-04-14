@@ -1,86 +1,100 @@
 import {
     HStack,
+    Heading,
+    Input,
     Text,
     Button,
     Select,
-    VStack
-} from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+    VStack,
+    IconButton,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
+    useDisclosure
+} from '@chakra-ui/react';
+
+import { useCallback, useEffect, useState } from 'react';
 
 import { StageStatus, UsbDrive } from './api';
-import ApiForm from './Form';
-
-
-function Usb(props: { host: string, usbSelect?: string, setUsbSelect: (usb: string) => void }) {
-    const [usbDrives, setUsbDrives] = useState<UsbDrive[]>([]);
-
-    const refreshUsb = useCallback(() => {
-        (async () => {
-            const responseRaw = await fetch(`http://${props.host}/linux/mounts?mount_point_filter=/media&fs_type_filter=vfat`,
-                { method: "POST" }
-            );
-
-            const response = await responseRaw.json() as UsbDrive[];
-            if (!props.usbSelect && response.length > 0) {
-                props.setUsbSelect(response[0].mountpoint);
-            }
-
-            setUsbDrives(response);
-        })();
-    }, [props.host, props.usbSelect, props.setUsbSelect]);
-
-    const unmount = useCallback(() => {
-        (async () => {
-            await fetch(`http://${props.host}/linux/unmount?mountpoint=${props.usbSelect}`,
-                { method: "POST" }
-            );
-
-            refreshUsb();
-        })();
-    }, [props.host, props.usbSelect]);
-
-    useEffect(() => {
-        refreshUsb();
-    }, []);
-
-    return (
-        <VStack>
-            <Text>USB Drives</Text>
-            <HStack>
-                <Select value={props.usbSelect} onChange={(e) => props.setUsbSelect(e.target.value)}>
-                    {
-                        usbDrives.map(v => <option value={v.mountpoint}>{v.mountpoint} ({v.device})</option>)
-                    }
-                </Select>
-                <Button onClick={refreshUsb}>Refresh</Button>
-                <Button onClick={unmount}>Unmount</Button>
-            </HStack>
-        </VStack>
-    );
-}
-
-const AlignmentDefaults = {
-
-}
+import * as cookies from './cookie';
+import { generateQuery } from './Form';
+import SettingsForm from './SettingsForm';
+import { MdSettings } from 'react-icons/md';
 
 function OperateCalibrated(props: { host: string }) {
-    const [usb, setUsb] = useState<string>();
-
     return (
         <>
-            <Usb usbSelect={usb} setUsbSelect={setUsb} host={props.host} />
         </>
     )
 }
 
 function OperateUncalibrated(props: { host: string, schema: any }) {
+    const [isDisabled, setDisabled] = useState<boolean>(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const alignmentParams = cookies.get("alignmentParams")
+    console.log(alignmentParams);
+    const [settings, setSettings] = useState(alignmentParams ? JSON.parse(alignmentParams) : undefined);
+
+    useEffect(() => {
+        if (settings) {
+            cookies.set("alignmentParams", JSON.stringify(settings));
+        }
+    }, [settings]);
+
+    const onAlign = useCallback(() => {
+        setDisabled(true);
+        (async () => {
+            const query = generateQuery(settings);
+            await fetch(`http://${props.host}/system/align?${query}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            setDisabled(false);
+        })();
+    }, [settings]);
 
     return (
-        <>
-            <Text>Stage must be aligned before continuing</Text>
-            <ApiForm path="/system/align" host={props.host} schema={props.schema} onReply={() => {}} />
-        </>
+        <VStack align="stretch">
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Alignment Parameters</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <SettingsForm value={settings} setValue={setSettings} path="/system/align" schema={props.schema} />
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={onClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <HStack>
+                <Text>Stage must be aligned before continuing</Text>
+                <IconButton
+                    disabled={isDisabled}
+                    onClick={onOpen}
+                    aria-label='Settings'
+                    fontSize='20px'
+                    icon={<MdSettings />}
+                />
+            </HStack>
+            <Button
+                disabled={isDisabled}
+                onClick={onAlign}
+                colorScheme='blue'
+            >
+                Align
+            </Button>
+        </VStack>
     )
 }
 

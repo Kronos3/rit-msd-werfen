@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { Text } from '@chakra-ui/react'
+import { VStack, Text } from '@chakra-ui/react'
 
 import schemaGenerator from 'openapi-schema-to-json-schema'
 
 import Form from '@rjsf/chakra-ui';
 import validator from '@rjsf/validator-ajv8';
 
-function generateRjsfSchema(schema?: any) {
+export function generateRjsfSchema(schema?: any) {
     if (!schema) {
         return;
     }
@@ -26,7 +26,7 @@ function generateRjsfSchema(schema?: any) {
     } as any
 }
 
-function generateQuery(params: any): string {
+export function generateQuery(params: any): string {
     return Object.keys(params).map(key => key + '=' + params[key]).join('&');
 }
 
@@ -69,19 +69,27 @@ export default function ApiForm(props: { host: string, path: string, schema: any
         })(data)
     }, [props]);
 
-    if (!schema) {
-        return <Text>Non-post requests are not supported</Text>
+    if (!props.schema) {
+        return <Text>Failed to fetch API schema from Middleware</Text>
+    }
+    else if (!props.schema?.paths[props.path]) {
+        return <Text>Middleware does not serve API for '{props.path}'</Text>
+    }
+    else if (!schema) {
+        return <Text>Non-post requests are not supported: {props.path}</Text>
     }
 
-    return <>
-        <Form
-            formData={value}
-            onChange={e => setValue(e.formData)}
-            disabled={disabled}
-            schema={schema}
-            validator={validator}
-            onSubmit={submit} />
-        <Text>{error}</Text>
-        <Text>{output}</Text>
-    </>
+    return (
+        <VStack align='stretch'>
+            <Form
+                formData={value}
+                onChange={e => setValue(e.formData)}
+                disabled={disabled}
+                schema={schema}
+                validator={validator}
+                onSubmit={submit} />
+            <Text>{error}</Text>
+            <Text>{output}</Text>
+        </VStack>
+    );
 }

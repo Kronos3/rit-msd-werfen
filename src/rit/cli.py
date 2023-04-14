@@ -6,9 +6,9 @@ from typing import List
 
 import serial
 
-from mc.cam import HqCamera, AuxCamera
-from mc.stage import Stage, StageStepSize, StageDirection
-from mc.system import System
+from rit.cam import HqCamera, AuxCamera
+from rit.stage import Stage, StageStepSize, StageDirection
+from rit.system import System
 
 
 class Cli:

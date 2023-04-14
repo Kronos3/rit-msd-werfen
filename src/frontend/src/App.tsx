@@ -1,35 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
-    Container,
     InputLeftAddon,
     InputGroup,
     Input,
-    Text,
-    Tabs,
-    Select,
-    TabList,
-    TabPanels,
-    Tab,
-    TabPanel,
+    Flex,
+    Box,
+    Spacer,
+    Checkbox,
+    Container,
+    VStack,
+    Button
 } from '@chakra-ui/react'
-
-import ApiForm from './Form';
 
 import { StageStatus } from './api';
 
 import * as cookies from './cookie';
 import Status from './Status';
-import SingleCard from './SingleCard';
-import Camera from './Camera';
-import ImageOutput from './ImageOutput';
-import Operate from './Operate';
+import AppTabs from './AppTabs';
+import Usb from './Usb';
 
 
 function App() {
     const [host, setHost] = useState(cookies.get("host") || window.location.host);
-    const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
-    const [apiSchema, setApiSchema] = useState<any>();
+    const [schema, setSchema] = useState<any>();
+    const [usb, setUsb] = useState<string>("");
+
+    const [devMode, setDevMode] = useState<boolean>(false);
 
     const [status, setStatus] = useState<StageStatus>({
         limit1: false,
@@ -44,7 +41,7 @@ function App() {
     useEffect(() => {
         fetch(`http://${host}/openapi.json`)
             .then(async value => {
-                setApiSchema(await value.json());
+                setSchema(await value.json());
             });
     }, [host]);
 
@@ -52,64 +49,50 @@ function App() {
         cookies.set("host", host)
     }, [host]);
 
+    const eStopPress = useCallback(() => {
+        (async () => {
+            if (status.estop) {
+                // Clear the estop signal
+                await fetch(`http://${host}/system/estop?stop=false`);
+            } else {
+                await fetch(`http://${host}/system/estop?stop=true`);
+            }
+        })();
+    }, [host, status]);
+
     return (
-        <Container>
-            <>
-                <Text mb='8px'>Middleware API Address</Text>
-                <InputGroup size='sm'>
-                    <InputLeftAddon children='http://' />
-                    <Input value={host} onChange={(e) => setHost(e.target.value)} />
-                </InputGroup>
-            </>
+        <Container maxW="container.md">
+            <VStack align="stretch">
+                <div>
+                    <Flex>
+                        <Box p='4'>
+                            Middleware API Address
+                        </Box>
+                        <Spacer />
+                        <Box p='2'>
+                            <Button
+                                colorScheme={status.estop ? "yellow" : "red"}
+                                alignSelf='center'
+                                onClick={eStopPress}
+                            >
+                                {status.estop ? "CLEAR E-STOP" : "E-STOP"}
+                            </Button>
+                        </Box>
+                        <Spacer />
+                        <Box p='4'>
+                            <Checkbox isChecked={devMode} onChange={(e) => setDevMode(e.target.checked)}>Dev Mode</Checkbox>
+                        </Box>
+                    </Flex>
+                    <InputGroup size='sm'>
+                        <InputLeftAddon children='http://' />
+                        <Input value={host} onChange={(e) => setHost(e.target.value)} />
+                    </InputGroup>
+                    <Status status={status} setStatus={setStatus} host={host} />
+                </div>
 
-            <Status status={status} setStatus={setStatus} host={host} />
-
-            <Tabs>
-                <TabList>
-                    <Tab>Operate</Tab>
-                    <Tab>Single Card</Tab>
-                    <Tab>Stage</Tab>
-                    <Tab>Camera</Tab>
-                    <Tab>Align</Tab>
-                    <Tab>Card ID</Tab>
-                    <Tab>USB Mounts</Tab>
-                </TabList>
-
-                <TabPanels>
-                    <TabPanel>
-                        <Operate status={status} host={host} schema={apiSchema}></Operate>
-                    </TabPanel>
-                    <TabPanel>
-                        <SingleCard host={host} schema={apiSchema} />
-                    </TabPanel>
-                    <TabPanel>
-                        <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)}>
-                            <option value='/stage/relative'>Relative Motion</option>
-                            <option value='/stage/absolute'>Absolute Motion</option>
-                            <option value='/stage/set_position'>Set Position</option>
-                            <option value='/stage/speed'>Stage Speed</option>
-                            <option value='/stage/led_pwm'>Ring Light PWM</option>
-                            <option value='/stage/step_off'>Limit Switch Step Off</option>
-                        </Select>
-                        <ApiForm
-                            host={host}
-                            path={stageSelect}
-                            schema={apiSchema} />
-                    </TabPanel>
-                    <TabPanel>
-                        <Camera host={host} />
-                    </TabPanel>
-                    <TabPanel>
-                        <ImageOutput path="/system/align" host={host} schema={apiSchema} />
-                    </TabPanel>
-                    <TabPanel>
-                        <ImageOutput path="/system/card_id" host={host} schema={apiSchema} />
-                    </TabPanel>
-                    <TabPanel>
-                        <ApiForm path="/linux/mounts" host={host} schema={apiSchema} />
-                    </TabPanel>
-                </TabPanels>
-            </Tabs>
+                <Usb host={host} setUsb={setUsb} usb={usb} />
+                <AppTabs devMode={devMode} status={status} host={host} schema={schema} />
+            </VStack>
         </Container>
     );
 }

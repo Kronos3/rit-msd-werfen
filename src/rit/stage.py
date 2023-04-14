@@ -7,7 +7,7 @@ from typing import Union
 
 import serial
 
-from mc.crc import crc8
+from rit.crc import crc8
 
 
 log = logging.getLogger(__name__)
@@ -149,7 +149,9 @@ class Stage:
                 self.serial.write(pkt.encode())
                 reply_bytes = self.serial.read(12)
             else:
-                reply_bytes = StagePacket(pkt.opcode, 0, 0).encode()
+                if pkt.opcode == StageOpcode.SET_POSITION:
+                    self.calibrated = True
+                reply_bytes = StagePacket(pkt.opcode, 0, StageFlags.CALIBRATED if self.calibrated else 0).encode()
 
         if len(reply_bytes) < 12:
             raise TimeoutError(f"Stage UART timed out while waiting for a reply to {pkt.opcode.name}")
