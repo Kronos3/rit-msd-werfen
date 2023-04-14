@@ -1,7 +1,10 @@
 import asyncio
+import datetime
 import os
 import threading
+import time
 import typing
+from pathlib import Path
 from typing import Literal, Dict, Tuple, Optional
 
 import cv2
@@ -16,8 +19,10 @@ from starlette.requests import Request
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
+from rit import processing
 from rit.cam import HqCamera, AuxCamera, Camera
 from rit.stage import StageStepSize, Stage
+from rit.storage import Card, Storage
 from rit.system import System
 
 from pydantic import BaseModel
@@ -241,9 +246,10 @@ async def get_future(fid: int):
 
 
 @app.post("/system/single_card")
-async def single_card(
+def single_card(
         encoding: Encodings = "jpeg",
         initial_position: int = 0,
+        light_pwm: float = 0.2,
         scale: float = 0.2,
         delay: float = 0.2,
         speed: int = 1500,
@@ -261,6 +267,7 @@ async def single_card(
         fids.append(fid)
 
     def execute():
+        system.stage.led_pwm(light_pwm)
         if buffer:
             # First gather all the images
             images = []
@@ -283,6 +290,7 @@ async def single_card(
                     StageStepSizesMap[step_size]
             )):
                 futures[i].set_result(ImageResponse(image, scale=scale, media_type=f"image/{encoding}"))
+        system.stage.led_pwm(0)
 
     # Actually execute the request
     # Do this asynchronously
@@ -339,7 +347,9 @@ def system_card_id(
     system.approach_absolute(position, StageStepSize.EIGHTH)
     system.stage.led_pwm(light_level)
 
-    card_id, img = system.card_id(scale, start_row, start_col, height, width)
+    with system.aux_cam:
+        img = system.aux_cam.acquire_array()
+        card_id, img = processing.card_id(img, scale, start_row, start_col, height, width)
 
     if return_img:
         return ImageResponse(img, scale=1)
@@ -397,3 +407,128 @@ def linux_usb(
 def linux_unmount(mountpoint: str):
     out = os.system(f"umount {mountpoint}")
     assert out == 0, "Umount call failed"
+
+
+class SingleCardParameters(BaseModel):
+    encoding: Encodings = "jpeg"
+    light_pwm: float = 0.2
+    initial_position: int = 0
+    scale: float = 0.2
+    delay: float = 0.2
+    speed: int = 1500
+    step: int = 350
+    num_captures: int = 12
+    step_size: StageStepSizes = "EIGHTH"
+
+
+class CardIDParameters(BaseModel):
+    scale: float = 0.4
+    start_row: int = 335
+    start_col: int = 796
+    height: int = 200
+    width: int = 60
+    position: int = 8800
+    light_level: float = 0.010
+
+
+class RunParams(BaseModel):
+    sensor: SingleCardParameters
+    card_id: CardIDParameters
+    path: str
+
+
+@app.post("/system/run")
+def run(request: RunParams):
+    mount_point_path = Path(request.path)
+    assert mount_point_path.exists() and mount_point_path.is_dir()
+
+    # Generate the futures for the frontend to request these images
+    futures = []
+    fids = []
+    for _ in range(request.sensor.num_captures + 2):
+        fid, future = future_manager.create()
+        futures.append(future)
+        fids.append(fid)
+
+    def execute():
+        # Run all the sensor captures
+        # Start up both cameras to reduce startup overhead
+        try:
+            system.hq_cam.start()
+            system.aux_cam.start()
+
+            system.stage.led_pwm(request.sensor.light_pwm)
+
+            system.stage.speed(request.sensor.speed)
+            system.approach_absolute(request.sensor.initial_position)
+
+            images = []
+            for i in range(request.sensor.num_captures):
+                if request.sensor.delay > 0:
+                    time.sleep(request.sensor.delay)
+
+                img = system.hq_cam.acquire_array()
+                images.append(img)
+
+                # No need to buffer since we are encoding with preview size
+                futures[i].set_result(ImageResponse(img, scale=request.sensor.scale))
+
+                # Move to the next image
+                system.stage.relative(
+                    request.sensor.step,
+                    StageStepSizesMap[request.sensor.step_size],
+                )
+                system.stage.wait(granularity=0.05)
+
+            system.approach_absolute(request.card_id.position)
+            system.stage.led_pwm(request.card_id.light_level)
+            card_id_img = system.aux_cam.acquire_array()
+
+            card_id, img = processing.card_id(
+                card_id_img,
+                request.card_id.scale,
+                request.card_id.start_row,
+                request.card_id.start_col,
+                request.card_id.height,
+                request.card_id.width
+            )
+
+            # Resolve the final futures
+            futures[-2].set_result(ImageResponse(img, scale=1))
+            futures[-1].set_result(card_id)
+
+            # Save images and files to disk
+            acquisition_time = datetime.datetime.now()
+            subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-{card_id}")
+            card = Card(
+                card_id=int(card_id),
+                num_images=int(request.sensor.num_captures),
+                acquisition_time=acquisition_time,
+                subdir_path=subdir,
+                image_format=request.sensor.encoding
+            )
+
+            output_path = mount_point_path / subdir
+            output_path.mkdir(parents=True)
+            for i, img in enumerate(images):
+                if request.sensor.encoding == "jpeg":
+                    cv2.imwrite(img, str(output_path / f"{i}.jpg"))
+                elif request.sensor.encoding == "image/png":
+                    cv2.imwrite(img, str(output_path / f"{i}.png"))
+                elif request.sensor.encoding == "image/tiff":
+                    cv2.imwrite(img, str(output_path / f"{i}.tiff"))
+
+            Storage.open(mount_point_path).add_card(card)
+
+        finally:
+            system.stage.led_pwm(0)
+            system.hq_cam.stop()
+            system.aux_cam.stop()
+
+    # Actually execute the request
+    # Do this asynchronously
+    thread = threading.Thread(target=execute)
+    thread.start()
+
+    # Get all the required futures
+    return fids

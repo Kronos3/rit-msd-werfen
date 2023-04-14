@@ -24,7 +24,7 @@ import Usb from './Usb';
 function App() {
     const [host, setHost] = useState(cookies.get("host") || window.location.host);
     const [schema, setSchema] = useState<any>();
-    const [usb, setUsb] = useState<string>("");
+    const [usb, setUsb] = useState<string | undefined>();
 
     const [devMode, setDevMode] = useState<boolean>(false);
 
@@ -91,7 +91,7 @@ function App() {
                 </div>
 
                 <Usb host={host} setUsb={setUsb} usb={usb} />
-                <AppTabs devMode={devMode} status={status} host={host} schema={schema} />
+                <AppTabs devMode={devMode} usb={usb} status={status} host={host} schema={schema} />
             </VStack>
         </Container>
     );

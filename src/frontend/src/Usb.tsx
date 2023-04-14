@@ -5,7 +5,6 @@ import {
     Heading,
     Input,
     Text,
-    Button,
     Select,
     VStack,
     IconButton,
@@ -24,7 +23,7 @@ import { UsbDrive } from './api';
 import * as cookies from './cookie';
 
 
-export default function Usb(props: { host: string, usb: string, setUsb: (usb: string) => void }) {
+export default function Usb(props: { host: string, usb?: string, setUsb: (usb?: string) => void }) {
     const [usbDrives, setUsbDrives] = useState<UsbDrive[]>([]);
     const [isDisabled, setDisabled] = useState<boolean>(false);
 
@@ -40,6 +39,12 @@ export default function Usb(props: { host: string, usb: string, setUsb: (usb: st
     useEffect(() => {
         cookies.set("filesystemTypeFilter", filesystemTypeFilter)
     }, [filesystemTypeFilter]);
+
+    useEffect(() => {
+        if (usbDrives.length === 0) {
+            props.setUsb(undefined);
+        }
+    }, [usbDrives])
 
 
     const refreshUsb = useCallback(() => {
@@ -93,25 +98,21 @@ export default function Usb(props: { host: string, usb: string, setUsb: (usb: st
                         <Input value={filesystemTypeFilter} onChange={(e) => setFilesystemTypeFilter(e.target.value)}></Input>
                     </ModalBody>
 
-                    <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                    </ModalFooter>
+                    <ModalFooter />
                 </ModalContent>
             </Modal>
             <VStack>
                 <HStack>
                     <Text>USB Drives</Text>
                     <IconButton
-                        disabled={isDisabled}
+                        isDisabled={isDisabled}
                         onClick={onOpen}
                         aria-label='Settings'
                         fontSize='20px'
                         icon={<MdSettings />}
                     />
                     <IconButton
-                        disabled={isDisabled}
+                        isDisabled={isDisabled}
                         onClick={refreshUsb}
                         aria-label='Refresh'
                         fontSize='20px'
@@ -122,7 +123,7 @@ export default function Usb(props: { host: string, usb: string, setUsb: (usb: st
                     usbDrives.length > 0 ? (
                         <HStack>
                             <Select
-                                disabled={isDisabled}
+                                isDisabled={isDisabled}
                                 value={props.usb}
                                 onChange={(e) => props.setUsb(e.target.value)}
                             >
@@ -132,7 +133,7 @@ export default function Usb(props: { host: string, usb: string, setUsb: (usb: st
                             </Select>
                             {
                                 <IconButton
-                                    disabled={isDisabled}
+                                    isDisabled={isDisabled}
                                     onClick={unmount}
                                     aria-label='Unmount'
                                     fontSize='20px'

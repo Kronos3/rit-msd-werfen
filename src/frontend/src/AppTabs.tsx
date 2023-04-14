@@ -20,7 +20,7 @@ import Operate from './Operate';
 import ViewMode from './ViewMode';
 
 
-export default function AppTabs(props: { devMode: boolean, status: StageStatus, host: string, schema: any }) {
+export default function AppTabs(props: { devMode: boolean, usb?: string, status: StageStatus, host: string, schema: any }) {
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
 
     return (
@@ -44,7 +44,7 @@ export default function AppTabs(props: { devMode: boolean, status: StageStatus, 
 
             <TabPanels>
                 <TabPanel>
-                    <Operate status={props.status} host={props.host} schema={props.schema} />
+                    <Operate status={props.status} usb={props.usb} host={props.host} schema={props.schema} />
                 </TabPanel>
                 <TabPanel>
                     <ViewMode host={props.host} />

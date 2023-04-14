@@ -1,10 +1,6 @@
 import logging
-from typing import Optional, Tuple
+from typing import Optional
 import time
-
-import numpy as np
-import pytesseract
-import cv2
 
 from rit import processing
 from rit.cam import Camera
@@ -123,40 +119,6 @@ class System:
         finally:
             # Stop the camera, even on error
             self.hq_cam.stop()
-
-    def card_id(self,
-                scale: float,
-                start_row: int,
-                start_col: int,
-                height: int,
-                width: int
-                ) -> Tuple[str, np.ndarray]:
-        with self.aux_cam:
-            img = self.aux_cam.acquire_array()
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        # Rescale image
-        img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
-
-        # Crop image
-        img = img[start_row:start_row + height, start_col:start_col + width]
-        img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
-
-        # Clean up noise using OTSU thresholding
-        # Text is left black, background made white
-        ret, img = cv2.threshold(
-            img, 146, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-        tess_config = '--psm 7 --oem 3 outputbase digits'
-        output = pytesseract.image_to_boxes(
-            img, lang='osd', config=tess_config)
-        boxes = output.strip().split('\n') if output.strip() else []
-        output = ""
-        for b in boxes:
-            b = b.split(' ')
-            output += b[0]
-
-        return output, img
 
     def single_card(self,
                     initial_position: int,

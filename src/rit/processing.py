@@ -1,9 +1,9 @@
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
+import pytesseract
 import cv2
-
 
 log = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ def compute_error(img: np.ndarray, vx: float, vy: float, cx: float, cy: float):
     """
     Compute the standard deviation of the point errors given
     a line of best fit
-    :param points: Points to compute standard deviation for
+    :param img: Image to compute standard deviation on
     :param vx: Delta X of regression.
     :param vy: Delta Y of regression.
     :param cx: Start X point of regression
@@ -34,7 +34,7 @@ def compute_error(img: np.ndarray, vx: float, vy: float, cx: float, cy: float):
     # Compute the error using only the X coordinate
     # This will be the norm distance of each point to the line
     points = cv2.findNonZero(rot_img).squeeze(1)
-    err = (points - p)[:,0]**2
+    err = (points - p)[:, 0] ** 2
 
     # Compute the standard deviation
     return np.sqrt(np.einsum('i,i->', err, err) / len(points)), theta
@@ -52,6 +52,7 @@ def detect_card_edge(img: np.ndarray,
     edges in an image.
     :param img: Image to find best fit for
     :param laplacian_threshold: Threshold of edge to use in regression
+    :param num_points_threshold: Drop this image if there is not enough derivative
     :param standard_deviation_threshold: Threshold for linear regression standard deviation
     :param vertical_rad_threshold: Threshold for how vertical the edge of the card should be
     :param debug: Print debug messages
@@ -133,3 +134,36 @@ def detect_card_edge(img: np.ndarray,
         return None
 
     return pos
+
+
+def card_id(img: np.ndarray,
+            scale: float,
+            start_row: int,
+            start_col: int,
+            height: int,
+            width: int
+            ) -> Tuple[str, np.ndarray]:
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Rescale image
+    img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
+
+    # Crop image
+    img = img[start_row:start_row + height, start_col:start_col + width]
+    img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+    # Clean up noise using OTSU thresholding
+    # Text is left black, background made white
+    ret, img = cv2.threshold(
+        img, 146, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    tess_config = '--psm 7 --oem 3 outputbase digits'
+    output = pytesseract.image_to_boxes(
+        img, lang='osd', config=tess_config)
+    boxes = output.strip().split('\n') if output.strip() else []
+    output = ""
+    for b in boxes:
+        b = b.split(' ')
+        output += b[0]
+
+    return output, img

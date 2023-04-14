@@ -7,12 +7,12 @@ import validator from '@rjsf/validator-ajv8';
 
 import { generateRjsfSchema } from './Form';
 
-export default function SettingsForm(props: { path: string, value: any, setValue: any, schema: any, }) {
+export default function SettingsForm(props: { path: string, value: any, setValue: any, schema: any, propertyFilterOut?: string[] }) {
     const [schema, setSchema] = useState();
 
     useEffect(() => {
-        setSchema(generateRjsfSchema(props.schema?.paths[props.path]?.post));
-    }, [props.path, props.schema]);
+        setSchema(generateRjsfSchema(props.schema?.paths[props.path]?.post, props.propertyFilterOut));
+    }, [props.path, props.schema, props.propertyFilterOut]);
 
     if (!props.schema) {
         return <Text>Failed to fetch API schema from Middleware</Text>

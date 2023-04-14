@@ -7,7 +7,7 @@ class Card(BaseModel):
     card_id: int
     num_images: int
     acquisition_time: datetime
-    subdir_path: DirectoryPath
+    subdir_path: str
     image_format: Literal["jpeg", "png", "tiff", "raw"]
 
 
@@ -17,7 +17,11 @@ class Storage(BaseModel):
 
     @classmethod
     def open(cls, root_filesystem: DirectoryPath):
-        cls.parse_file(root_filesystem / "listing.json")
+        listing_file = root_filesystem / "listing.json"
+        if listing_file.exists():
+            return cls.parse_file(listing_file)
+        else:
+            return Storage(root_filesystem=root_filesystem, cards=[])
 
     def save(self):
         with (self.root_filesystem / "listing.json").open("w+") as f:

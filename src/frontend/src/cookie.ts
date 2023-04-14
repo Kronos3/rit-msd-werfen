@@ -1,5 +1,10 @@
-export function set(name: string, val: string) {
+export function set(name: string, val?: string) {
     const date = new Date();
+
+    if (val === undefined) {
+        return;
+    }
+
     const value = val;
 
     // Set it expire in 7 days
@@ -15,5 +20,15 @@ export function get(name: string) {
 
     if (parts && parts.length === 2) {
         return parts.pop()!.split(";").shift();
+    }
+}
+
+export function getJson<T = unknown>(name: string) {
+    const out = get(name);
+    try {
+        return out === undefined ? undefined : JSON.parse(out) as T;
+    } catch(e) {
+        console.error("Failed to parse", name, out, e);
+        return undefined;
     }
 }

@@ -7,7 +7,7 @@ import schemaGenerator from 'openapi-schema-to-json-schema'
 import Form from '@rjsf/chakra-ui';
 import validator from '@rjsf/validator-ajv8';
 
-export function generateRjsfSchema(schema?: any) {
+export function generateRjsfSchema(schema?: any, propertyFilterOut?: string[]) {
     if (!schema) {
         return;
     }
@@ -15,6 +15,10 @@ export function generateRjsfSchema(schema?: any) {
     const properties: any = {};
     if (schema.parameters) {
         for (const param of schema.parameters) {
+            if (propertyFilterOut && propertyFilterOut.indexOf(param.name) !== -1) {
+                continue;
+            }
+
             properties[param.name] = schemaGenerator(param.schema);
         }
     }
