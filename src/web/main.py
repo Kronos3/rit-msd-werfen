@@ -496,7 +496,7 @@ async def run(request: RunParams):
             system.stage.led_pwm(request.card_id.light_level)
             card_id_img = system.aux_cam.acquire_array()
 
-            card_id, img = processing.card_id(
+            card_id, card_id_img_proc = processing.card_id(
                 card_id_img,
                 request.card_id.scale,
                 request.card_id.start_row,
@@ -506,7 +506,7 @@ async def run(request: RunParams):
             )
 
             # Resolve the final futures
-            futures[-2].set_result(ImageResponse(img, scale=1))
+            futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
             futures[-1].set_result(card_id)
 
             # Save images and files to disk
@@ -524,11 +524,15 @@ async def run(request: RunParams):
             output_path.mkdir(parents=True)
             for i, img in enumerate(images):
                 if request.sensor.encoding == "jpeg":
-                    cv2.imwrite(img, str(output_path / f"{i}.jpg"))
+                    cv2.imwrite(str(output_path / f"{i}.jpg"), img)
                 elif request.sensor.encoding == "image/png":
-                    cv2.imwrite(img, str(output_path / f"{i}.png"))
+                    cv2.imwrite(str(output_path / f"{i}.png"), img)
                 elif request.sensor.encoding == "image/tiff":
-                    cv2.imwrite(img, str(output_path / f"{i}.tiff"))
+                    cv2.imwrite(str(output_path / f"{i}.tiff"), img)
+
+            cv2.imwrite(str(output_path / f"card_id.png"), card_id_img_proc)
+            with (output_path / f"card_id.gt.txt").open("w+") as f:
+                f.write(card_id)
 
             Storage.open(mount_point_path).add_card(card)
 
