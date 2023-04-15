@@ -228,7 +228,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <ModalBody>
                         <Form
                             formData={cardIdResponse?.card_id}
-                            onChange={(e) => setCardIdResponse((cardIdResponse && e.formData) ? { ...cardIdResponse, card_id: e.formData } : undefined)}
+                            onChange={(e) => setCardIdResponse((cardIdResponse) ? { ...cardIdResponse, card_id: e.formData } : undefined)}
                             schema={{ type: "string" }}
                             validator={validator}
                             onSubmit={async (event) => {
