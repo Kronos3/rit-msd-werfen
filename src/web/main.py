@@ -595,4 +595,4 @@ def rename(
         subdir: str,
         to_id: str
 ):
-    rename_card_id(path, subdir, to_id)
+    return rename_card_id(path, subdir, to_id)
