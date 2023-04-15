@@ -46,7 +46,6 @@ export default function Usb(props: { host: string, usb?: string, setUsb: (usb?: 
         }
     }, [usbDrives])
 
-
     const refreshUsb = useCallback(() => {
         setDisabled(true);
 

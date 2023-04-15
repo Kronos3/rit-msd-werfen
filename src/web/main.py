@@ -548,3 +548,26 @@ async def run(request: RunParams):
 
     # Get all the required futures
     return fids
+
+
+@app.post("/system/rename")
+def rename(
+        path: str,
+        from_id: int,
+        to_id: int
+):
+    mount_point_path = Path(path)
+    assert mount_point_path.exists() and mount_point_path.is_dir()
+
+    stor = Storage.open(mount_point_path)
+    for card in stor.cards:
+        if card.card_id == from_id:
+            assert (mount_point_path / card.subdir_path).exists() and (mount_point_path / card.subdir_path).is_dir()
+
+            new_subdir_items = card.subdir_path.split("-")
+            new_subdir_items[-1] = str(to_id)
+            new_subdir = "-".join(new_subdir_items)
+            os.rename(
+                mount_point_path / card.subdir_path,
+                mount_point_path / new_subdir
+            )

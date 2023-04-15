@@ -13,7 +13,10 @@ import {
     ModalBody,
     ModalFooter,
     useDisclosure,
-    SimpleGrid
+    SimpleGrid,
+    useToast,
+    Center,
+    Input
 } from '@chakra-ui/react';
 import validator from '@rjsf/validator-ajv8';
 
@@ -21,7 +24,8 @@ import { useCallback, useEffect, useState } from 'react';
 import {
     MdSettings,
     MdOutlineQrCode,
-    MdPhotoCamera
+    MdPhotoCamera,
+    MdOutlineMode
 } from 'react-icons/md';
 import { Form } from '@rjsf/chakra-ui';
 
@@ -34,10 +38,14 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const unload = useDisclosure();
     const cardId = useDisclosure();
     const singleCard = useDisclosure();
+    const cardIdChange = useDisclosure();
+
+    const toast = useToast();
 
     const [disabled, setDisabled] = useState<boolean>(false);
 
     const [images, setImages] = useState<Blob[]>([]);
+    const [cardIdOutput, setCardIdOutput] = useState<number | undefined>();
 
     const [unloadPosition, setUnloadPosition] = useState<number>(cookies.getJson("unloadPosition") ?? -2000);
     useEffect(() => {
@@ -67,6 +75,9 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
         setDisabled(true);
 
         (async () => {
+            setImages([]);
+            setCardIdOutput(undefined);
+
             const body = {
                 "sensor": singleCardParams,
                 "card_id": cardIdParams,
@@ -79,17 +90,34 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 body: JSON.stringify(body)
             });
 
+            if (!response.ok) {
+                toast({
+                    title: "Failed to acquire single card",
+                    description: await response.text(),
+                    status: "error"
+                });
+                return;
+            }
+
             const fids: number[] = await response.json();
 
-            setImages([]);
-            const out = [];
+            // The final future id is the card ID string
+            // It is just plaintext not an image
+            const card_id_fid = fids[fids.length - 1];
+            fids.splice(fids.length - 1, 1);
 
+            const out = [];
             for (const fid of fids) {
                 const fidRes = await fetch(`http://${props.host}/future/${fid}`)
                 const imgBlob = await fidRes.blob();
                 out.push(imgBlob);
                 setImages([...out]);
             }
+
+            const fidRes = await fetch(`http://${props.host}/future/${card_id_fid}`);
+            const card_id = parseInt(await fidRes.text());
+            setCardIdOutput(card_id);
+            onLoadUnload();
 
         })().finally(() => {
             setDisabled(false);
@@ -178,13 +206,57 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 <Button colorScheme='blue' isDisabled={disabled} onClick={onLoadUnload}>Load/Unload</Button>
                 <Button colorScheme='blue' isDisabled={disabled || !props.usb} onClick={onImageCard}>Image Card</Button>
             </SimpleGrid>
-            <SimpleGrid columns={5} spacing={2}>
-                {
-                    images.map((img, i) => (
-                        <Image key={i} src={URL.createObjectURL(img)} />
-                    ))
-                }
+            <SimpleGrid columns={3} spacing={2}>
+                {images.map((img, i) => (
+                    <Image key={i} src={URL.createObjectURL(img)} />
+                ))}
             </SimpleGrid>
+            <Modal isOpen={cardIdChange.isOpen} onClose={cardIdChange.onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Unload position</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Form
+                            formData={cardIdOutput}
+                            schema={{ type: "number" }}
+                            validator={validator}
+                            onSubmit={async (event) => {
+                                const query = generateQuery({
+                                    fromId: cardIdOutput,
+                                    toId: event.formData
+                                });
+                                const response = await fetch(`http://${props.host}/system/rename?${query}`, {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                });
+
+                                setDisabled(false);
+
+                                if (!response.ok) {
+                                    return;
+                                }
+
+                                setCardIdOutput(event.formData);
+                            }}
+                        />
+                    </ModalBody>
+                    <ModalFooter />
+                </ModalContent>
+            </Modal>
+            {
+                (cardIdOutput !== undefined) ? (
+                    <HStack>
+                        <Text>{cardIdOutput}</Text>
+                        <IconButton
+                            onClick={cardIdChange.onOpen}
+                            aria-label='Change ID'
+                            fontSize='20px'
+                            icon={<MdOutlineMode />}
+                        />
+                    </HStack>
+                ) : <></>
+            }
         </VStack>
     );
 }
