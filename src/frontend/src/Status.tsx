@@ -36,7 +36,7 @@ export default function Status(props: { host: string, status: StageStatus, setSt
             const interval = setInterval(refresh, 500);
             return () => clearInterval(interval);
         }
-    }, [props.host, props.status, ping]);
+    }, [props.host, ping]);
 
     return (
         <>
