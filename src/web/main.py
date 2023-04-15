@@ -513,7 +513,7 @@ async def run(request: RunParams):
             acquisition_time = datetime.datetime.now()
             subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-{card_id}")
             card = Card(
-                card_id=int(card_id),
+                card_id=card_id,
                 num_images=int(request.sensor.num_captures),
                 acquisition_time=acquisition_time,
                 subdir_path=subdir,
@@ -553,8 +553,8 @@ async def run(request: RunParams):
 @app.post("/system/rename")
 def rename(
         path: str,
-        from_id: int,
-        to_id: int
+        from_id: str,
+        to_id: str
 ):
     mount_point_path = Path(path)
     assert mount_point_path.exists() and mount_point_path.is_dir()
@@ -565,8 +565,12 @@ def rename(
             assert (mount_point_path / card.subdir_path).exists() and (mount_point_path / card.subdir_path).is_dir()
 
             new_subdir_items = card.subdir_path.split("-")
-            new_subdir_items[-1] = str(to_id)
+            new_subdir_items[-1] = to_id
             new_subdir = "-".join(new_subdir_items)
+
+            with (mount_point_path / card.subdir_path / "card_id.gt.txt").open("w+") as f:
+                f.write(to_id)
+
             os.rename(
                 mount_point_path / card.subdir_path,
                 mount_point_path / new_subdir

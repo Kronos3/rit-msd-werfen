@@ -4,7 +4,7 @@ from pydantic import BaseModel, DirectoryPath
 
 
 class Card(BaseModel):
-    card_id: int
+    card_id: str
     num_images: int
     acquisition_time: datetime
     subdir_path: str

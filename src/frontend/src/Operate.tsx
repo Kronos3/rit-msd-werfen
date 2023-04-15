@@ -14,9 +14,7 @@ import {
     ModalFooter,
     useDisclosure,
     SimpleGrid,
-    useToast,
-    Center,
-    Input
+    useToast
 } from '@chakra-ui/react';
 import validator from '@rjsf/validator-ajv8';
 
@@ -45,7 +43,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const [disabled, setDisabled] = useState<boolean>(false);
 
     const [images, setImages] = useState<Blob[]>([]);
-    const [cardIdOutput, setCardIdOutput] = useState<number | undefined>();
+    const [cardIdOutput, setCardIdOutput] = useState<string | undefined>();
 
     const [unloadPosition, setUnloadPosition] = useState<number>(cookies.getJson("unloadPosition") ?? -2000);
     useEffect(() => {
@@ -115,8 +113,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
             }
 
             const fidRes = await fetch(`http://${props.host}/future/${card_id_fid}`);
-            const card_id = parseInt(await fidRes.text());
-            setCardIdOutput(card_id);
+            setCardIdOutput(await fidRes.text());
             onLoadUnload();
 
         })().finally(() => {
@@ -219,7 +216,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <ModalBody>
                         <Form
                             formData={cardIdOutput}
-                            schema={{ type: "number" }}
+                            schema={{ type: "string" }}
                             validator={validator}
                             onSubmit={async (event) => {
                                 const query = generateQuery({
@@ -231,13 +228,11 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                                     headers: { "Content-Type": "application/json" },
                                 });
 
-                                setDisabled(false);
-
-                                if (!response.ok) {
-                                    return;
+                                if (response.ok) {
+                                    setCardIdOutput(event.formData);
                                 }
 
-                                setCardIdOutput(event.formData);
+                                setDisabled(false);
                             }}
                         />
                     </ModalBody>
@@ -249,6 +244,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <HStack>
                         <Text>{cardIdOutput}</Text>
                         <IconButton
+                            isDisabled={disabled}
                             onClick={cardIdChange.onOpen}
                             aria-label='Change ID'
                             fontSize='20px'
