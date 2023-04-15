@@ -1,4 +1,5 @@
 import {
+    Image,
     HStack,
     Text,
     Button,
@@ -35,6 +36,8 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const singleCard = useDisclosure();
 
     const [disabled, setDisabled] = useState<boolean>(false);
+
+    const [images, setImages] = useState<Blob[]>([]);
 
     const [unloadPosition, setUnloadPosition] = useState<number>(cookies.getJson("unloadPosition") ?? -2000);
     useEffect(() => {
@@ -76,8 +79,17 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 body: JSON.stringify(body)
             });
 
-            const futures: number[] = await response.json();
+            const fids: number[] = await response.json();
 
+            setImages([]);
+            const out = [];
+
+            for (const fid of fids) {
+                const fidRes = await fetch(`http://${props.host}/future/${fid}`)
+                const imgBlob = await fidRes.blob();
+                out.push(imgBlob);
+                setImages([...out]);
+            }
 
         })().finally(() => {
             setDisabled(false);
@@ -165,6 +177,13 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 </HStack>
                 <Button colorScheme='blue' isDisabled={disabled} onClick={onLoadUnload}>Load/Unload</Button>
                 <Button colorScheme='blue' isDisabled={disabled || !props.usb} onClick={onImageCard}>Image Card</Button>
+            </SimpleGrid>
+            <SimpleGrid columns={5} spacing={2}>
+                {
+                    images.map((img, i) => (
+                        <Image key={i} src={URL.createObjectURL(img)} />
+                    ))
+                }
             </SimpleGrid>
         </VStack>
     );
