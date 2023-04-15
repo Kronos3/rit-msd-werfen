@@ -14,7 +14,9 @@ import {
     ModalFooter,
     useDisclosure,
     SimpleGrid,
-    useToast
+    useToast,
+    Center,
+    Stack
 } from '@chakra-ui/react';
 import validator from '@rjsf/validator-ajv8';
 
@@ -32,6 +34,11 @@ import * as cookies from './cookie';
 import { generateQuery } from './Form';
 import SettingsForm from './SettingsForm';
 
+interface CardIdResponse {
+    card_id: string;
+    subdir: string;
+}
+
 function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const unload = useDisclosure();
     const cardId = useDisclosure();
@@ -43,7 +50,8 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const [disabled, setDisabled] = useState<boolean>(false);
 
     const [images, setImages] = useState<Blob[]>([]);
-    const [cardIdOutput, setCardIdOutput] = useState<string | undefined>();
+    const [cardIdImg, setCardIdImg] = useState<Blob | undefined>();
+    const [cardIdResponse, setCardIdResponse] = useState<CardIdResponse | undefined>();
 
     const [unloadPosition, setUnloadPosition] = useState<number>(cookies.getJson("unloadPosition") ?? -2000);
     useEffect(() => {
@@ -74,7 +82,9 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
         (async () => {
             setImages([]);
-            setCardIdOutput(undefined);
+            setCardIdResponse(undefined);
+            setCardIdImg(undefined);
+            setCardIdResponse(undefined);
 
             const body = {
                 "sensor": singleCardParams,
@@ -101,8 +111,9 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
             // The final future id is the card ID string
             // It is just plaintext not an image
+            const card_id_img_fid = fids[fids.length - 2];
             const card_id_fid = fids[fids.length - 1];
-            fids.splice(fids.length - 1, 1);
+            fids.splice(fids.length - 2, 2);
 
             const out = [];
             for (const fid of fids) {
@@ -112,10 +123,12 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 setImages([...out]);
             }
 
-            const fidRes = await fetch(`http://${props.host}/future/${card_id_fid}`);
-            setCardIdOutput(await fidRes.text());
-            onLoadUnload();
+            const fidResImg = await fetch(`http://${props.host}/future/${card_id_img_fid}`);
+            setCardIdImg(await fidResImg.blob());
 
+            const fidResText = await fetch(`http://${props.host}/future/${card_id_fid}`);
+            setCardIdResponse(await fidResText.json());
+            onLoadUnload();
         })().finally(() => {
             setDisabled(false);
         });
@@ -203,7 +216,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 <Button colorScheme='blue' isDisabled={disabled} onClick={onLoadUnload}>Load/Unload</Button>
                 <Button colorScheme='blue' isDisabled={disabled || !props.usb} onClick={onImageCard}>Image Card</Button>
             </SimpleGrid>
-            <SimpleGrid columns={3} spacing={2}>
+            <SimpleGrid columns={4} spacing={2}>
                 {images.map((img, i) => (
                     <Image key={i} src={URL.createObjectURL(img)} />
                 ))}
@@ -211,17 +224,20 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
             <Modal isOpen={cardIdChange.isOpen} onClose={cardIdChange.onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Unload position</ModalHeader>
+                    <ModalHeader>Change Card ID</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Form
-                            formData={cardIdOutput}
+                            formData={cardIdResponse?.card_id}
                             schema={{ type: "string" }}
                             validator={validator}
                             onSubmit={async (event) => {
+                                cardIdChange.onClose();
+
                                 const query = generateQuery({
-                                    fromId: cardIdOutput,
-                                    toId: event.formData
+                                    to_id: event.formData,
+                                    subdir: cardIdResponse?.subdir,
+                                    path: props.usb
                                 });
                                 const response = await fetch(`http://${props.host}/system/rename?${query}`, {
                                     method: "POST",
@@ -229,7 +245,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                                 });
 
                                 if (response.ok) {
-                                    setCardIdOutput(event.formData);
+                                    setCardIdResponse(await response.json());
                                 }
 
                                 setDisabled(false);
@@ -240,17 +256,20 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 </ModalContent>
             </Modal>
             {
-                (cardIdOutput !== undefined) ? (
-                    <HStack>
-                        <Text>{cardIdOutput}</Text>
-                        <IconButton
-                            isDisabled={disabled}
-                            onClick={cardIdChange.onOpen}
-                            aria-label='Change ID'
-                            fontSize='20px'
-                            icon={<MdOutlineMode />}
-                        />
-                    </HStack>
+                (cardIdResponse !== undefined) ? (
+                    <Stack paddingTop={4} direction='row' spacing={1} align='center' justify='center'>
+                        {cardIdImg ? <Image src={URL.createObjectURL(cardIdImg)} /> : <></>}
+                        <VStack>
+                            <Text>{cardIdResponse.card_id}</Text>
+                            <IconButton
+                                isDisabled={disabled}
+                                onClick={cardIdChange.onOpen}
+                                aria-label='Change ID'
+                                fontSize='20px'
+                                icon={<MdOutlineMode />}
+                            />
+                        </VStack>
+                    </Stack>
                 ) : <></>
             }
         </VStack>

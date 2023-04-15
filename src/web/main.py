@@ -507,7 +507,6 @@ async def run(request: RunParams):
 
             # Resolve the final futures
             futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
-            futures[-1].set_result(card_id)
 
             # Save images and files to disk
             acquisition_time = datetime.datetime.now()
@@ -536,6 +535,11 @@ async def run(request: RunParams):
 
             Storage.open(mount_point_path).add_card(card)
 
+            futures[-1].set_result({
+                "card_id": card_id,
+                "subdir": subdir
+            })
+
         finally:
             system.stage.led_pwm(0)
             system.hq_cam.stop()
@@ -553,7 +557,7 @@ async def run(request: RunParams):
 @app.post("/system/rename")
 def rename(
         path: str,
-        from_id: str,
+        subdir: str,
         to_id: str
 ):
     mount_point_path = Path(path)
@@ -561,7 +565,7 @@ def rename(
 
     stor = Storage.open(mount_point_path)
     for card in stor.cards:
-        if card.card_id == from_id:
+        if subdir == card.subdir_path:
             assert (mount_point_path / card.subdir_path).exists() and (mount_point_path / card.subdir_path).is_dir()
 
             new_subdir_items = card.subdir_path.split("-")
@@ -575,3 +579,13 @@ def rename(
                 mount_point_path / card.subdir_path,
                 mount_point_path / new_subdir
             )
+
+            card.subdir_path = new_subdir
+            card.card_id = to_id
+            stor.save()
+            return {
+                "card_id": to_id,
+                "subdir": new_subdir
+            }
+
+    raise ValueError("No card acquisition found")
