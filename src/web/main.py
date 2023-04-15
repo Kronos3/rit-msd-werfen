@@ -492,23 +492,11 @@ async def run(request: RunParams):
 
             log.info("Detecting card ID")
 
-            system.approach_absolute(request.card_id.position)
+            system.stage.absolute(request.card_id.position)
             system.stage.led_pwm(request.card_id.light_level)
-            card_id_img = system.aux_cam.acquire_array()
-
-            card_id, card_id_img_proc = processing.card_id(
-                card_id_img,
-                request.card_id.scale,
-                request.card_id.start_row,
-                request.card_id.start_col,
-                request.card_id.height,
-                request.card_id.width
-            )
-
-            # Resolve the final futures
-            futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
 
             # Save images and files to disk
+            # Do this while we wait for 
             acquisition_time = datetime.datetime.now()
             subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-{card_id}")
             card = Card(
@@ -528,6 +516,20 @@ async def run(request: RunParams):
                     cv2.imwrite(str(output_path / f"{i}.png"), img)
                 elif request.sensor.encoding == "image/tiff":
                     cv2.imwrite(str(output_path / f"{i}.tiff"), img)
+
+            card_id_img = system.aux_cam.acquire_array()
+
+            card_id, card_id_img_proc = processing.card_id(
+                card_id_img,
+                request.card_id.scale,
+                request.card_id.start_row,
+                request.card_id.start_col,
+                request.card_id.height,
+                request.card_id.width
+            )
+
+            # Resolve the final futures
+            futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
 
             cv2.imwrite(str(output_path / f"card_id.png"), card_id_img_proc)
             with (output_path / f"card_id.gt.txt").open("w+") as f:

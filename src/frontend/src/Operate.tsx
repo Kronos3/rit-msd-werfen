@@ -84,7 +84,6 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
             setImages([]);
             setCardIdResponse(undefined);
             setCardIdImg(undefined);
-            setCardIdResponse(undefined);
 
             const body = {
                 "sensor": singleCardParams,
@@ -229,6 +228,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <ModalBody>
                         <Form
                             formData={cardIdResponse?.card_id}
+                            onChange={(e) => setCardIdResponse((cardIdResponse && e.formData) ? { ...cardIdResponse, card_id: e.formData } : undefined)}
                             schema={{ type: "string" }}
                             validator={validator}
                             onSubmit={async (event) => {
@@ -246,6 +246,12 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
                                 if (response.ok) {
                                     setCardIdResponse(await response.json());
+                                } else {
+                                    toast({
+                                        title: "Failed to rename card ID",
+                                        description: await response.text(),
+                                        status: "error"
+                                    });
                                 }
 
                                 setDisabled(false);
@@ -257,18 +263,16 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
             </Modal>
             {
                 (cardIdResponse !== undefined) ? (
-                    <Stack paddingTop={4} direction='row' spacing={1} align='center' justify='center'>
+                    <Stack paddingTop={8} direction='row' spacing={4} align='center' justify='center'>
                         {cardIdImg ? <Image src={URL.createObjectURL(cardIdImg)} /> : <></>}
-                        <VStack>
-                            <Text>{cardIdResponse.card_id}</Text>
-                            <IconButton
-                                isDisabled={disabled}
-                                onClick={cardIdChange.onOpen}
-                                aria-label='Change ID'
-                                fontSize='20px'
-                                icon={<MdOutlineMode />}
-                            />
-                        </VStack>
+                        <Text>{cardIdResponse.card_id}</Text>
+                        <IconButton
+                            isDisabled={disabled}
+                            onClick={cardIdChange.onOpen}
+                            aria-label='Change ID'
+                            fontSize='20px'
+                            icon={<MdOutlineMode />}
+                        />
                     </Stack>
                 ) : <></>
             }
