@@ -549,7 +549,7 @@ async def run(request: RunParams):
 
             # Move to where the out camera can take an image
             log.info("Detecting card ID")
-            system.approach_relative(request.card_id.position)
+            system.approach_absolute(request.card_id.position)
             system.stage.led_pwm(request.card_id.light_level)
 
             # Save images and files to disk
