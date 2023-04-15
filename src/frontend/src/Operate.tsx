@@ -15,7 +15,6 @@ import {
     useDisclosure,
     SimpleGrid,
     useToast,
-    Center,
     Stack
 } from '@chakra-ui/react';
 import validator from '@rjsf/validator-ajv8';
@@ -131,7 +130,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
         })().finally(() => {
             setDisabled(false);
         });
-    }, [cardIdParams, singleCardParams, props.host]);
+    }, [cardIdParams, singleCardParams, props.usb, props.host]);
 
     return (
         <VStack align="stretch">
@@ -231,11 +230,11 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                             onChange={(e) => setCardIdResponse((cardIdResponse) ? { ...cardIdResponse, card_id: e.formData } : undefined)}
                             schema={{ type: "string" }}
                             validator={validator}
-                            onSubmit={async (event) => {
+                            onSubmit={async (e) => {
                                 cardIdChange.onClose();
 
                                 const query = generateQuery({
-                                    to_id: event.formData,
+                                    to_id: e.formData,
                                     subdir: cardIdResponse?.subdir,
                                     path: props.usb
                                 });
@@ -245,6 +244,11 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                                 });
 
                                 if (response.ok) {
+                                    toast({
+                                        title: `Successfully renameed card ID to ${e.formData}`,
+                                        description: await response.text(),
+                                        status: "error"
+                                    });
                                     setCardIdResponse(await response.json());
                                 } else {
                                     toast({

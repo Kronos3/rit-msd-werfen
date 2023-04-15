@@ -16,3 +16,11 @@ export interface UsbDrive {
     dump_freq: number;
     parallel_fsck: number;
 }
+
+export interface SensorCard {
+    card_id: string;
+    num_images: number;
+    acquisition_time: number;
+    subdir_path: string;
+    image_format: "jpeg" | "png" | "tiff" | "raw";
+}

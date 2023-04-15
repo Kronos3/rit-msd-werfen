@@ -6,9 +6,11 @@ import threading
 import time
 import typing
 from pathlib import Path
+from queue import Queue
 from typing import Literal, Dict, Tuple, Optional
 
 import cv2
+import numpy as np
 import serial
 
 from fastapi import FastAPI
@@ -490,6 +492,29 @@ async def run(request: RunParams):
         futures.append(future)
         fids.append(fid)
 
+    encoding_queue = Queue[Tuple[int, np.ndarray]]()
+
+    acquisition_time = datetime.datetime.now()
+    subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-tmp")
+    output_path = mount_point_path / subdir
+    output_path.mkdir(parents=True)
+
+    def encode_worker():
+        while True:
+            i, img = encoding_queue.get()
+
+            if request.sensor.encoding == "jpeg":
+                cv2.imwrite(str(output_path / f"{i}.jpg"), img)
+            elif request.sensor.encoding == "png":
+                cv2.imwrite(str(output_path / f"{i}.png"), img)
+            elif request.sensor.encoding == "tiff":
+                cv2.imwrite(str(output_path / f"{i}.tiff"), img)
+
+            encoding_queue.task_done()
+
+    # Boot up the encoder worker
+    threading.Thread(target=encode_worker, daemon=True).start()
+
     def execute():
         # Run all the sensor captures
         # Start up both cameras to reduce startup overhead
@@ -501,14 +526,14 @@ async def run(request: RunParams):
 
             system.stage.speed(request.sensor.speed)
             system.approach_absolute(request.sensor.initial_position)
-
-            images = []
             for i in range(request.sensor.num_captures):
                 if request.sensor.delay > 0:
                     time.sleep(request.sensor.delay)
 
                 img = system.hq_cam.acquire_array()
-                images.append(img)
+
+                # Queue the image to be encoded and written to disk
+                encoding_queue.put((i, img))
 
                 log.info("Acquired %d/%d", i + 1, request.sensor.num_captures)
 
@@ -522,15 +547,13 @@ async def run(request: RunParams):
                 )
                 system.stage.wait(granularity=0.05)
 
+            # Move to where the out camera can take an image
             log.info("Detecting card ID")
-
-            system.stage.absolute(request.card_id.position)
+            system.approach_relative(request.card_id.position)
             system.stage.led_pwm(request.card_id.light_level)
 
             # Save images and files to disk
             # Do this while we wait for the card to move to Aux position
-            acquisition_time = datetime.datetime.now()
-            subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-tmp")
             card = Card(
                 card_id="tmp",
                 num_images=int(request.sensor.num_captures),
@@ -538,20 +561,6 @@ async def run(request: RunParams):
                 subdir_path=subdir,
                 image_format=request.sensor.encoding
             )
-
-            output_path = mount_point_path / subdir
-            output_path.mkdir(parents=True)
-            for i, img in enumerate(images):
-                if request.sensor.encoding == "jpeg":
-                    cv2.imwrite(str(output_path / f"{i}.jpg"), img)
-                elif request.sensor.encoding == "image/png":
-                    cv2.imwrite(str(output_path / f"{i}.png"), img)
-                elif request.sensor.encoding == "image/tiff":
-                    cv2.imwrite(str(output_path / f"{i}.tiff"), img)
-
-            # Wait for move under aux motion to finish
-            system.stage.wait(granularity=0.05)
-            system.approach_relative(0)
 
             # Grab an aux image and process it
             card_id_img = system.aux_cam.acquire_array()
@@ -564,6 +573,7 @@ async def run(request: RunParams):
                 request.card_id.width
             )
 
+            # This encoding should be pretty fast since the image is tiny
             cv2.imwrite(str(output_path / f"card_id.png"), card_id_img_proc)
             with (output_path / f"card_id.gt.txt").open("w+") as f:
                 f.write(card_id)
@@ -573,6 +583,9 @@ async def run(request: RunParams):
 
             # Resolve the final future
             futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
+
+            encoding_queue.join()
+
             futures[-1].set_result(rename_card_id(request.path, subdir, card_id))
 
         finally:
@@ -596,3 +609,9 @@ def rename(
         to_id: str
 ):
     return rename_card_id(path, subdir, to_id)
+
+
+@app.get("/system/cards")
+def get_cards(path: str):
+    stor = Storage().open(Path(path))
+    return stor.cards
