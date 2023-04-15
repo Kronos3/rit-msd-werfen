@@ -440,6 +440,38 @@ class RunParams(BaseModel):
     path: str
 
 
+def rename_card_id(path: str, subdir: str, to_id: str):
+    mount_point_path = Path(path)
+    assert mount_point_path.exists() and mount_point_path.is_dir()
+
+    stor = Storage.open(mount_point_path)
+    for card in stor.cards:
+        if subdir == card.subdir_path:
+            assert (mount_point_path / card.subdir_path).exists() and (mount_point_path / card.subdir_path).is_dir()
+
+            new_subdir_items = card.subdir_path.split("-")
+            new_subdir_items[-1] = to_id
+            new_subdir = "-".join(new_subdir_items)
+
+            with (mount_point_path / card.subdir_path / "card_id.gt.txt").open("w+") as f:
+                f.write(to_id)
+
+            os.rename(
+                mount_point_path / card.subdir_path,
+                mount_point_path / new_subdir
+            )
+
+            card.subdir_path = new_subdir
+            card.card_id = to_id
+            stor.save()
+            return {
+                "card_id": to_id,
+                "subdir": new_subdir
+            }
+
+    raise ValueError("No card acquisition found")
+
+
 @app.post("/system/run")
 async def run(request: RunParams):
     mount_point_path = Path(request.path)
@@ -496,11 +528,11 @@ async def run(request: RunParams):
             system.stage.led_pwm(request.card_id.light_level)
 
             # Save images and files to disk
-            # Do this while we wait for 
+            # Do this while we wait for the card to move to Aux position
             acquisition_time = datetime.datetime.now()
-            subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-{card_id}")
+            subdir = acquisition_time.strftime(f"%Y-%m-%d-%H-%M-%S-tmp")
             card = Card(
-                card_id=card_id,
+                card_id="tmp",
                 num_images=int(request.sensor.num_captures),
                 acquisition_time=acquisition_time,
                 subdir_path=subdir,
@@ -517,8 +549,12 @@ async def run(request: RunParams):
                 elif request.sensor.encoding == "image/tiff":
                     cv2.imwrite(str(output_path / f"{i}.tiff"), img)
 
-            card_id_img = system.aux_cam.acquire_array()
+            # Wait for move under aux motion to finish
+            system.stage.wait(granularity=0.05)
+            system.approach_relative(0)
 
+            # Grab an aux image and process it
+            card_id_img = system.aux_cam.acquire_array()
             card_id, card_id_img_proc = processing.card_id(
                 card_id_img,
                 request.card_id.scale,
@@ -528,19 +564,16 @@ async def run(request: RunParams):
                 request.card_id.width
             )
 
-            # Resolve the final futures
-            futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
-
             cv2.imwrite(str(output_path / f"card_id.png"), card_id_img_proc)
             with (output_path / f"card_id.gt.txt").open("w+") as f:
                 f.write(card_id)
 
+            # Write to the listings file
             Storage.open(mount_point_path).add_card(card)
 
-            futures[-1].set_result({
-                "card_id": card_id,
-                "subdir": subdir
-            })
+            # Resolve the final future
+            futures[-2].set_result(ImageResponse(card_id_img_proc, scale=1))
+            futures[-1].set_result(rename_card_id(request.path, subdir, card_id))
 
         finally:
             system.stage.led_pwm(0)
@@ -562,32 +595,4 @@ def rename(
         subdir: str,
         to_id: str
 ):
-    mount_point_path = Path(path)
-    assert mount_point_path.exists() and mount_point_path.is_dir()
-
-    stor = Storage.open(mount_point_path)
-    for card in stor.cards:
-        if subdir == card.subdir_path:
-            assert (mount_point_path / card.subdir_path).exists() and (mount_point_path / card.subdir_path).is_dir()
-
-            new_subdir_items = card.subdir_path.split("-")
-            new_subdir_items[-1] = to_id
-            new_subdir = "-".join(new_subdir_items)
-
-            with (mount_point_path / card.subdir_path / "card_id.gt.txt").open("w+") as f:
-                f.write(to_id)
-
-            os.rename(
-                mount_point_path / card.subdir_path,
-                mount_point_path / new_subdir
-            )
-
-            card.subdir_path = new_subdir
-            card.card_id = to_id
-            stor.save()
-            return {
-                "card_id": to_id,
-                "subdir": new_subdir
-            }
-
-    raise ValueError("No card acquisition found")
+    rename_card_id(path, subdir, to_id)
