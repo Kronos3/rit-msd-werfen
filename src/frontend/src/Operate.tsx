@@ -52,10 +52,10 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const [cardIdImg, setCardIdImg] = useState<string | undefined>();
     const [cardIdResponse, setCardIdResponse] = useState<CardIdResponse | undefined>();
 
-    const [unloadPosition, setUnloadPosition] = useState<number>(cookies.getJson("unloadPosition") ?? -2000);
+    const [unloadParams, setUnloadParams] = useState(cookies.getJson("unloadParams") ?? { n: -2000, size: "QUARTER" });
     useEffect(() => {
-        cookies.set("unloadPosition", JSON.stringify(unloadPosition));
-    }, [unloadPosition]);
+        cookies.set("unloadParams", JSON.stringify(unloadParams));
+    }, [unloadParams]);
 
     const [cardIdParams, setCardIdParams] = useState(cookies.getJson("cardIdParams"));
     useEffect(() => {
@@ -69,12 +69,12 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
     const onLoadUnload = useCallback(() => {
         setDisabled(true);
-        fetch(`http://${props.host}/stage/absolute?n=${unloadPosition}`,
+        fetch(`http://${props.host}/stage/absolute?n=${generateQuery(unloadParams)}`,
             { method: "POST" }
         ).finally(() => {
             setDisabled(false);
         });
-    }, [unloadPosition, props.host]);
+    }, [unloadParams, props.host]);
 
     const onImageCard = useCallback(() => {
         setDisabled(true);
@@ -130,7 +130,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
         })().finally(() => {
             setDisabled(false);
         });
-    }, [cardIdParams, singleCardParams, props.usb, props.host]);
+    }, [cardIdParams, onLoadUnload, singleCardParams, props.usb, props.host]);
 
     return (
         <VStack align="stretch">
@@ -140,11 +140,12 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <ModalHeader>Unload position</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Form
-                            formData={unloadPosition}
-                            onChange={e => setUnloadPosition(e.formData)}
-                            schema={{ type: "number" }}
-                            validator={validator}><div></div></Form>
+                        <SettingsForm
+                            value={unloadParams}
+                            setValue={setUnloadParams}
+                            path="/stage/absolute"
+                            schema={props.schema}
+                            propertyFilterOut={["ignore_limits"]} />
                     </ModalBody>
                     <ModalFooter />
                 </ModalContent>

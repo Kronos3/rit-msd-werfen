@@ -51,10 +51,10 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
                 </TabPanel>
                 {
                     props.devMode ? ([
-                        <TabPanel>
+                        <TabPanel key={1}>
                             <SingleCard host={props.host} schema={props.schema} />
                         </TabPanel>,
-                        <TabPanel>
+                        <TabPanel key={2}>
                             <Select value={stageSelect} onChange={(e) => setStageSelect(e.target.value)}>
                                 <option value='/stage/relative'>Relative Motion</option>
                                 <option value='/stage/absolute'>Absolute Motion</option>
@@ -68,16 +68,16 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
                                 path={stageSelect}
                                 schema={props.schema} />
                         </TabPanel>,
-                        <TabPanel>
+                        <TabPanel key={3}>
                             <Camera host={props.host} />
                         </TabPanel>,
-                        <TabPanel>
+                        <TabPanel key={4}>
                             <ImageOutput path="/system/align" host={props.host} schema={props.schema} />
                         </TabPanel>,
-                        <TabPanel>
+                        <TabPanel key={5}>
                             <ImageOutput path="/system/card_id" host={props.host} schema={props.schema} />
                         </TabPanel>,
-                        <TabPanel>
+                        <TabPanel key={6}>
                             <ApiForm path="/linux/mounts" host={props.host} schema={props.schema} />
                         </TabPanel>
                     ]) : <></>
