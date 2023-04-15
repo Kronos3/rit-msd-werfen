@@ -49,8 +49,8 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
     const [disabled, setDisabled] = useState<boolean>(false);
 
-    const [images, setImages] = useState<Blob[]>([]);
-    const [cardIdImg, setCardIdImg] = useState<Blob | undefined>();
+    const [images, setImages] = useState<string[]>([]);
+    const [cardIdImg, setCardIdImg] = useState<string | undefined>();
     const [cardIdResponse, setCardIdResponse] = useState<CardIdResponse | undefined>();
 
     const [unloadPosition, setUnloadPosition] = useState<number>(cookies.getJson("unloadPosition") ?? -2000);
@@ -119,11 +119,11 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                 const fidRes = await fetch(`http://${props.host}/future/${fid}`)
                 const imgBlob = await fidRes.blob();
                 out.push(imgBlob);
-                setImages([...out]);
+                setImages(out.map(v => URL.createObjectURL(v)));
             }
 
             const fidResImg = await fetch(`http://${props.host}/future/${card_id_img_fid}`);
-            setCardIdImg(await fidResImg.blob());
+            setCardIdImg(URL.createObjectURL(await fidResImg.blob()));
 
             const fidResText = await fetch(`http://${props.host}/future/${card_id_fid}`);
             setCardIdResponse(await fidResText.json());
@@ -217,7 +217,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
             </SimpleGrid>
             <SimpleGrid columns={4} spacing={2}>
                 {images.map((img, i) => (
-                    <Image key={i} src={URL.createObjectURL(img)} />
+                    <Image key={i} src={img} />
                 ))}
             </SimpleGrid>
             <Modal isOpen={cardIdChange.isOpen} onClose={cardIdChange.onClose}>
@@ -264,7 +264,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
             {
                 (cardIdResponse !== undefined) ? (
                     <Stack paddingTop={8} direction='row' spacing={4} align='center' justify='center'>
-                        {cardIdImg ? <Image src={URL.createObjectURL(cardIdImg)} /> : <></>}
+                        {cardIdImg ? <Image src={cardIdImg} /> : <></>}
                         <Text>{cardIdResponse.card_id}</Text>
                         <IconButton
                             isDisabled={disabled}

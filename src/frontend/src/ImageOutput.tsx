@@ -5,7 +5,7 @@ import ApiForm from "./Form";
 
 
 export default function ImageOutput(props: { path: string, host: string, schema: any }) {
-    const [image, setImage] = useState<Blob | undefined>();
+    const [image, setImage] = useState<string | undefined>();
 
     return (
         <>
@@ -14,11 +14,11 @@ export default function ImageOutput(props: { path: string, host: string, schema:
                 host={props.host}
                 schema={props.schema}
                 onReply={async (response) => {
-                    setImage(await response.blob());
+                    setImage(URL.createObjectURL(await response.blob()));
                 }} />
             <VStack>
                 {
-                    image ? <Image src={URL.createObjectURL(image)} /> : <></>
+                    image ? <Image src={image} /> : <></>
                 }
             </VStack>
         </>

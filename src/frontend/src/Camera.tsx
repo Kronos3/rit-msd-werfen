@@ -9,7 +9,7 @@ import {
 
 export default function Camera(props: { host: string }) {
     const [camera, setCamera] = useState("hq");
-    const [image, setImage] = useState<Blob | undefined>();
+    const [image, setImage] = useState<string | undefined>();
     const [disabled, setDisabled] = useState(false);
 
     const onAcquire = useCallback(() => {
@@ -18,7 +18,7 @@ export default function Camera(props: { host: string }) {
         (async () => {
             setDisabled(true);
             const response = await fetch(`http://${props.host}/cam/acquire/${camera}`);
-            setImage(await response.blob());
+            setImage(URL.createObjectURL(await response.blob()));
             setDisabled(false);
         })();
     }, [camera, props.host]);
@@ -37,7 +37,7 @@ export default function Camera(props: { host: string }) {
                     onClick={onAcquire}>Acquire</Button>
             </Center>
             {
-                image ? <Image src={URL.createObjectURL(image)} /> : <></>
+                image ? <Image src={image} /> : <></>
             }
         </>
     )

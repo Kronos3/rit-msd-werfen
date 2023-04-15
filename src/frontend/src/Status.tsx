@@ -4,7 +4,7 @@ import {
     Switch
 } from '@chakra-ui/react'
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StageStatus } from './api';
 
 function offGreen(state: boolean): string {
@@ -18,14 +18,14 @@ function onGreen(state: boolean): string {
 export default function Status(props: { host: string, status: StageStatus, setStatus: (status: StageStatus) => void }) {
     const [ping, setPing] = useState<boolean>(true);
 
-    const refresh = async () => {
+    const refresh = useCallback(async () => {
         const responseRaw = await fetch(`http://${props.host}/stage/status`);
         const response: StageStatus = await responseRaw.json();
 
         if (JSON.stringify(response) !== JSON.stringify(props.status)) {
             props.setStatus(response);
         }
-    };
+    }, [props.host, props.status]);
 
     useEffect(() => {
         if (ping) {

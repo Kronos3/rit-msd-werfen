@@ -5,7 +5,7 @@ import ApiForm from "./Form";
 
 
 export default function SingleCard(props: { host: string, schema: any }) {
-    const [images, setImages] = useState<Blob[]>([]);
+    const [images, setImages] = useState<string[]>([]);
 
     return (
         <>
@@ -21,12 +21,12 @@ export default function SingleCard(props: { host: string, schema: any }) {
                         const fidRes = await fetch(`http://${props.host}/future/${fid}`)
                         const imgBlob = await fidRes.blob();
                         out.push(imgBlob);
-                        setImages([...out]);
+                        setImages(out.map(v => URL.createObjectURL(v)));
                     }
                 }} />
             <VStack>
                 {
-                    images.map((v, idx) => <Image key={idx} src={URL.createObjectURL(v)} />)
+                    images.map((v, idx) => <Image key={idx} src={v} />)
                 }
             </VStack>
         </>
