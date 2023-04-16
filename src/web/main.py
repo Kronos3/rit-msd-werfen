@@ -28,7 +28,7 @@ from rit.stage import StageStepSize, Stage
 from rit.storage import Card, Storage
 from rit.system import System
 
-from pydantic import BaseModel, DirectoryPath
+from pydantic import BaseModel
 
 log = logging.getLogger(__name__)
 
@@ -614,7 +614,10 @@ def rename(
 
 @app.get("/system/cards")
 def get_cards(path: str):
-    stor = Storage().open(DirectoryPath(path))
+    p_path = Path(path)
+    assert p_path.exists() and p_path.is_dir()
+
+    stor = Storage.open(p_path)
     return stor.cards
 
 
