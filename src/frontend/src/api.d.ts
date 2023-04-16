@@ -24,3 +24,9 @@ export interface SensorCard {
     subdir_path: string;
     image_format: "jpeg" | "png" | "tiff";
 }
+
+export interface CardIdResponse {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    card_id: string;
+    subdir: string;
+}

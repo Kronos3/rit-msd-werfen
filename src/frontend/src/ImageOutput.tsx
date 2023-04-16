@@ -15,7 +15,7 @@ export default function ImageOutput(props: { path: string, host: string, schema:
     }, []);
 
     return (
-        <VStack>
+        <VStack align={"stretch"}>
             <ApiForm
                 path={props.path}
                 host={props.host}

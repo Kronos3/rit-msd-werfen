@@ -17,30 +17,22 @@ import {
     useToast,
     Stack
 } from '@chakra-ui/react';
-import validator from '@rjsf/validator-ajv8';
 
 import { useCallback, useEffect, useState } from 'react';
 import {
     MdSettings,
     MdOutlineQrCode,
     MdPhotoCamera,
-    MdOutlineMode
+    MdDriveFileRenameOutline
 } from 'react-icons/md';
-import { Form } from '@rjsf/chakra-ui';
 
-import { StageStatus } from './api';
+import { CardIdResponse, StageStatus } from './api';
 import * as cookies from './cookie';
-import { generateQuery } from './Form';
+import { generateQuery, RenameCardForm } from './Form';
 import SettingsForm from './SettingsForm';
 
-interface CardIdResponse {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    card_id: string;
-    subdir: string;
-}
-
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
+function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: string, schema: any }) {
     const unload = useDisclosure();
     const cardId = useDisclosure();
     const singleCard = useDisclosure();
@@ -130,11 +122,14 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
             const fidResText = await fetch(`http://${props.host}/future/${cardIdFid}`);
             setCardIdResponse(await fidResText.json());
+
+            props.onRefresh();
+
             onLoadUnload();
         })().finally(() => {
             setDisabled(false);
         });
-    }, [cardIdParams, onLoadUnload, singleCardParams, props.usb, props.host]);
+    }, [cardIdParams, onLoadUnload, props.onRefresh, singleCardParams, props.usb, props.host]);
 
     return (
         <VStack align="stretch">
@@ -230,45 +225,18 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <ModalHeader>Change Card ID</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Form
-                            formData={cardIdResponse?.card_id}
-                            // eslint-disable-next-line @typescript-eslint/naming-convention
-                            onChange={(e) => setCardIdResponse((cardIdResponse) ? { ...cardIdResponse, card_id: e.formData } : undefined)}
-                            schema={{ type: "string" }}
-                            validator={validator}
-                            onSubmit={async (e) => {
-                                cardIdChange.onClose();
-
-                                const query = generateQuery({
-                                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                                    to_id: e.formData,
-                                    subdir: cardIdResponse?.subdir,
-                                    path: props.usb
-                                });
-                                const response = await fetch(`http://${props.host}/system/rename?${query}`, {
-                                    method: "POST",
-                                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                                    headers: { "Content-Type": "application/json" },
-                                });
-
-                                if (response.ok) {
-                                    toast({
-                                        title: `Successfully renameed card ID to ${e.formData}`,
-                                        description: await response.text(),
-                                        status: "error"
-                                    });
-                                    setCardIdResponse(await response.json());
-                                } else {
-                                    toast({
-                                        title: "Failed to rename card ID",
-                                        description: await response.text(),
-                                        status: "error"
-                                    });
-                                }
-
-                                setDisabled(false);
-                            }}
-                        />
+                        {
+                            cardIdResponse ?
+                                <RenameCardForm
+                                    onClose={cardIdChange.onClose}
+                                    onReply={setCardIdResponse}
+                                    onFinally={props.onRefresh}
+                                    host={props.host}
+                                    subdir={cardIdResponse.subdir}
+                                    usb={props.usb}
+                                    cardId={cardIdResponse.card_id}
+                                /> : <></>
+                        }
                     </ModalBody>
                     <ModalFooter />
                 </ModalContent>
@@ -283,7 +251,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                             onClick={cardIdChange.onOpen}
                             aria-label='Change ID'
                             fontSize='20px'
-                            icon={<MdOutlineMode />}
+                            icon={<MdDriveFileRenameOutline />}
                         />
                     </Stack>
                 ) : <></>
@@ -356,11 +324,11 @@ function OperateUncalibrated(props: { host: string, schema: any }) {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export default function Operate(props: { status: StageStatus, usb?: string, host: string, schema: any }) {
+export default function Operate(props: { onRefresh: () => void, status: StageStatus, usb?: string, host: string, schema: any }) {
     return <>
         {
             props.status.calibrated ?
-                <OperateCalibrated host={props.host} usb={props.usb} schema={props.schema} />
+                <OperateCalibrated onRefresh={props.onRefresh} host={props.host} usb={props.usb} schema={props.schema} />
                 : <OperateUncalibrated host={props.host} schema={props.schema} />
         }
     </>;

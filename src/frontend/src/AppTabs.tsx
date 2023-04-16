@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
     Tabs,
@@ -23,6 +23,11 @@ import ViewMode from './View';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function AppTabs(props: { devMode: boolean, usb?: string, status: StageStatus, host: string, schema: any }) {
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
+    const [cardRefresh, setCardRefresh] = useState<number>(0);
+
+    const refreshCards = useCallback(() => {
+        setCardRefresh(cardRefresh + 1);
+    }, [cardRefresh]);
 
     return (
         <Tabs>
@@ -45,10 +50,10 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
 
             <TabPanels>
                 <TabPanel>
-                    <Operate status={props.status} usb={props.usb} host={props.host} schema={props.schema} />
+                    <Operate status={props.status} onRefresh={refreshCards} usb={props.usb} host={props.host} schema={props.schema} />
                 </TabPanel>
                 <TabPanel>
-                    <ViewMode host={props.host} usb={props.usb} />
+                    <ViewMode host={props.host} refresh={cardRefresh} usb={props.usb} />
                 </TabPanel>
                 {
                     props.devMode ? ([
