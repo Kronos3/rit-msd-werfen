@@ -184,16 +184,7 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
                 </ModalContent>
             </Modal>
             <SimpleGrid columns={2} spacing={2}>
-                <HStack>
-                    <Text>Move to load / unload sensor card</Text>
-                    <IconButton
-                        isDisabled={disabled}
-                        onClick={unload.onOpen}
-                        aria-label='Settings'
-                        fontSize='20px'
-                        icon={<MdSettings />}
-                    />
-                </HStack>
+                
                 <HStack>
                     <Text>Image a loaded card</Text>
                     <IconButton
@@ -211,8 +202,18 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
                         icon={<MdPhotoCamera />}
                     />
                 </HStack>
-                <Button colorScheme='blue' isDisabled={disabled} onClick={onLoadUnload}>Load/Unload</Button>
+                <HStack>
+                    <Text>Move to load / unload sensor card</Text>
+                    <IconButton
+                        isDisabled={disabled}
+                        onClick={unload.onOpen}
+                        aria-label='Settings'
+                        fontSize='20px'
+                        icon={<MdSettings />}
+                    />
+                </HStack>
                 <Button colorScheme='blue' isDisabled={disabled || !props.usb} onClick={onImageCard}>Image Card</Button>
+                <Button colorScheme='blue' isDisabled={disabled} onClick={onLoadUnload}>Load/Unload</Button>
             </SimpleGrid>
             <SimpleGrid columns={4} spacing={2}>
                 {images.map((img, i) => (

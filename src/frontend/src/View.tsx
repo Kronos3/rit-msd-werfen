@@ -123,6 +123,11 @@ function SensorCardElement(props: {
     }, [props.usb, props.onRefresh, props.host, props.subdir_path, props.card_id]);
 
     const onDownload = useCallback(() => {
+        toast({
+            title: `Zipping ${props.card_id}`,
+            status: "info"
+        });
+
         fetch(`http://${props.host}/system/card/download?${generateQuery({
             path: props.usb,
             subdir: props.subdir_path
