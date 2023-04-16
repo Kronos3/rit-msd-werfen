@@ -58,8 +58,7 @@ cmake-build-*/*
 mnt
 dict/
 logs/
-rpi-kernel/*
-venv/*
+venv
 
 __pycache__
 *.zip
