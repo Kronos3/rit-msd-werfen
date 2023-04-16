@@ -325,11 +325,9 @@ function OperateUncalibrated(props: { host: string, schema: any }) {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function Operate(props: { onRefresh: () => void, status: StageStatus, usb?: string, host: string, schema: any }) {
-    return <>
-        {
-            props.status.calibrated ?
-                <OperateCalibrated onRefresh={props.onRefresh} host={props.host} usb={props.usb} schema={props.schema} />
-                : <OperateUncalibrated host={props.host} schema={props.schema} />
-        }
-    </>;
+    if (props.status.calibrated) {
+        return <OperateCalibrated onRefresh={props.onRefresh} host={props.host} usb={props.usb} schema={props.schema} />;
+    } else {
+        return <OperateUncalibrated host={props.host} schema={props.schema} />;
+    }
 }

@@ -11,7 +11,7 @@ import {
     Container,
     VStack,
     Button
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
 import { StageStatus } from './api';
 
@@ -21,6 +21,7 @@ import AppTabs from './AppTabs';
 import Usb from './Usb';
 
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 function App() {
     const [host, setHost] = useState(cookies.get("host") || window.location.host);
     const [schema, setSchema] = useState<any>();
@@ -46,7 +47,7 @@ function App() {
     }, [host]);
 
     useEffect(() => {
-        cookies.set("host", host)
+        cookies.set("host", host);
     }, [host]);
 
     const eStopPress = useCallback(() => {

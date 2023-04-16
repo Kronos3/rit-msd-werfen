@@ -122,6 +122,10 @@ function SensorCardElement(props: {
         deleteDisclosure.onClose();
     }, [props.usb, props.onRefresh, props.host, props.subdir_path, props.card_id]);
 
+    const onDownload = useCallback(() => {
+
+    }, []);
+
     return (
         <Card>
             <AlertDialog
@@ -208,7 +212,7 @@ function SensorCardElement(props: {
                             <MenuItem icon={<MdOutlineImage />} onClick={previewDisclosure.onOpen}>
                                 View
                             </MenuItem>
-                            <MenuItem icon={<MdOutlineFileDownload />}>
+                            <MenuItem icon={<MdOutlineFileDownload />} onClick={onDownload}>
                                 Download ZIP
                             </MenuItem>
                             <MenuDivider />

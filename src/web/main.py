@@ -3,6 +3,7 @@ import datetime
 import logging
 import os
 import shutil
+import tempfile
 import threading
 import time
 import typing
@@ -656,3 +657,16 @@ def delete_card(path: str, subdir: str):
     del_path = Path(path) / subdir
     assert del_path.is_dir()
     shutil.rmtree(del_path)
+
+
+@app.get("/system/card/download")
+def card_download(path: str, subdir: str):
+    fd, zip_path = tempfile.mkstemp(".zip")
+
+    try:
+        out = os.system(f"zip -rj {zip_path} {path}/{subdir}/")
+        assert out == 0, "Zip call failed"
+
+        yield FileResponse(zip_path)
+    finally:
+        os.remove(zip_path)

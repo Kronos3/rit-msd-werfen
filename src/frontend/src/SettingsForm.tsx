@@ -7,6 +7,7 @@ import validator from '@rjsf/validator-ajv8';
 
 import { generateRjsfSchema } from './Form';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function SettingsForm(props: { path: string, value: any, setValue: any, schema: any, propertyFilterOut?: string[] }) {
     const [schema, setSchema] = useState();
 
@@ -15,13 +16,13 @@ export default function SettingsForm(props: { path: string, value: any, setValue
     }, [props.path, props.schema, props.propertyFilterOut]);
 
     if (!props.schema) {
-        return <Text>Failed to fetch API schema from Middleware</Text>
+        return <Text>Failed to fetch API schema from Middleware</Text>;
     }
     else if (!props.schema?.paths[props.path]) {
-        return <Text>Middleware does not serve API for '{props.path}'</Text>
+        return <Text>Middleware does not serve API for '{props.path}'</Text>;
     }
     else if (!schema) {
-        return <Text>Non-post requests are not supported: {props.path}</Text>
+        return <Text>Non-post requests are not supported: {props.path}</Text>;
     }
 
     return (
