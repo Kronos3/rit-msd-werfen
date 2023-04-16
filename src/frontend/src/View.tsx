@@ -123,8 +123,30 @@ function SensorCardElement(props: {
     }, [props.usb, props.onRefresh, props.host, props.subdir_path, props.card_id]);
 
     const onDownload = useCallback(() => {
+        fetch(`http://${props.host}/system/card/download?${generateQuery({
+            path: props.usb,
+            subdir: props.subdir_path
+        })}`)
+            .then((response) => response.blob())
+            .then((blob) => {
+                // Create blob link to download
+                const url = window.URL.createObjectURL(
+                    new Blob([blob]),
+                );
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `${props.subdir_path}.zip`);
 
-    }, []);
+                // Append to html link element page
+                document.body.appendChild(link);
+
+                // Start download
+                link.click();
+
+                // Clean up and remove the link
+                link.parentNode!.removeChild(link);
+            });
+    }, [props.usb, props.host, props.subdir_path]);
 
     return (
         <Card>
