@@ -127,12 +127,16 @@ function SensorCardElement(props: {
             path: props.usb,
             subdir: props.subdir_path
         })}`)
-            .then((response) => response.blob())
+            .then(async (response) => {
+                if (response.ok) {
+                    return await response.blob();
+                } else {
+                    throw new Error(await response.text());
+                }
+            })
             .then((blob) => {
                 // Create blob link to download
-                const url = window.URL.createObjectURL(
-                    new Blob([blob]),
-                );
+                const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
                 link.setAttribute('download', `${props.subdir_path}.zip`);
@@ -145,8 +149,15 @@ function SensorCardElement(props: {
 
                 // Clean up and remove the link
                 link.parentNode!.removeChild(link);
+            })
+            .catch(async (err) => {
+                toast({
+                    title: `Failed to download ${props.card_id}`,
+                    description: `${err}`,
+                    status: "error"
+                });
             });
-    }, [props.usb, props.host, props.subdir_path]);
+    }, [props.usb, props.host, props.subdir_path, props.card_id]);
 
     return (
         <Card>
