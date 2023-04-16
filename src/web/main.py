@@ -663,12 +663,12 @@ def delete_card(path: str, subdir: str):
 def card_download(path: str, subdir: str):
     fd, zip_path = tempfile.mkstemp(".zip")
 
-    try:
-        log.info("Zipping %s into %s", subdir, zip_path)
+    def cleanup():
         os.remove(zip_path)
-        out = os.system(f"zip -FSrj {zip_path} {path}/{subdir}/")
-        assert out == 0, "Zip call failed"
 
-        yield FileResponse(zip_path)
-    finally:
-        os.remove(zip_path)
+    log.info("Zipping %s into %s", subdir, zip_path)
+    cleanup()
+    out = os.system(f"zip -rj {zip_path} {path}/{subdir}/")
+    assert out == 0, "Zip call failed"
+
+    return FileResponse(zip_path, background=BackgroundTask(cleanup))
