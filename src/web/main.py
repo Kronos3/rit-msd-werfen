@@ -665,6 +665,7 @@ def card_download(path: str, subdir: str):
 
     try:
         log.info("Zipping %s into %s", subdir, zip_path)
+        os.remove(zip_path)
         out = os.system(f"zip -FSrj {zip_path} {path}/{subdir}/")
         assert out == 0, "Zip call failed"
 
