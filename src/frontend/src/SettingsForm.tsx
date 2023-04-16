@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Text } from '@chakra-ui/react';
 
@@ -9,10 +9,8 @@ import { generateRjsfSchema } from './Form';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function SettingsForm(props: { path: string, value: any, setValue: any, schema: any, propertyFilterOut?: string[] }) {
-    const [schema, setSchema] = useState();
-
-    useEffect(() => {
-        setSchema(generateRjsfSchema(props.schema?.paths[props.path]?.post, props.propertyFilterOut));
+    const schema = useMemo(() => {
+        return generateRjsfSchema(props.schema?.paths[props.path]?.post, props.propertyFilterOut);
     }, [props.path, props.schema, props.propertyFilterOut]);
 
     if (!props.schema) {

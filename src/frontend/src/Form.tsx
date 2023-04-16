@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VStack, Text, useToast } from '@chakra-ui/react';
-
 import schemaGenerator from 'openapi-schema-to-json-schema';
 
 import Form from '@rjsf/chakra-ui';
@@ -37,16 +35,16 @@ export function generateQuery(params: any): string {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function ApiForm(props: { host: string, path: string, schema: any, onReply?: (response: Response) => void }) {
-    const [schema, setSchema] = useState();
     const [disabled, setDisabled] = useState(false);
     const [value, setValue] = useState();
 
     const [error, setError] = useState("");
     const [output, setOutput] = useState("");
 
-    useEffect(() => {
-        setSchema(generateRjsfSchema(props.schema?.paths[props.path]?.post));
-    }, [props.path, props.schema]);
+    const schema = useMemo(
+        () => generateRjsfSchema(props.schema?.paths[props.path]?.post),
+        [props.schema, props.path]
+    );
 
     const submit = useCallback((data: { formData?: any }) => {
         (async (formProp) => {
