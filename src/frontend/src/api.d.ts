@@ -22,5 +22,5 @@ export interface SensorCard {
     num_images: number;
     acquisition_time: string;
     subdir_path: string;
-    image_format: "jpeg" | "png" | "tiff" | "raw";
+    image_format: "jpeg" | "png" | "tiff";
 }

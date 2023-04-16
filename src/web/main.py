@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 import os
+import shutil
 import threading
 import time
 import typing
@@ -636,3 +637,22 @@ def get_card(path: str, subdir: str, img: int, encoding: Encodings):
         assert False, f"Invalid Encoding {encoding}"
 
     return ImageResponse(img)
+
+
+@app.get("/system/card/delete")
+def delete_card(path: str, subdir: str):
+    # Search for this card in the listings
+    stor = Storage.open(Path(path))
+    del_idx = -1
+    for i, card in enumerate(stor.cards):
+        if card.subdir_path == subdir:
+            del_idx = i
+            break
+
+    assert del_idx != -1, f"Subdir {subdir} not found in {path}"
+    del stor.cards[del_idx]
+    stor.save()
+
+    del_path = Path(path) / subdir
+    assert del_path.is_dir()
+    shutil.rmtree(del_path)

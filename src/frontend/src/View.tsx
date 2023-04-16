@@ -12,7 +12,9 @@ import {
     CardFooter,
     ButtonGroup,
     Button,
-    useToast
+    useToast,
+    Badge,
+    Spinner
 } from '@chakra-ui/react';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -34,7 +36,8 @@ function SensorCardElement(props: { usb?: string, host: string, sensor: SensorCa
             fetch(`http://${props.host}/system/card/view?${generateQuery({
                 path: props.usb,
                 subdir: props.sensor.subdir_path,
-                img: 0
+                img: 0,
+                encoding: props.sensor.image_format
             })}`).then(async (res) => {
                 setPreview(URL.createObjectURL(await res.blob()));
             });
@@ -48,7 +51,7 @@ function SensorCardElement(props: { usb?: string, host: string, sensor: SensorCa
                     preview ? <Image
                         src={preview}
                         borderRadius='lg'
-                    /> : <></>
+                    /> : <Spinner />
                 }
                 <Heading size='md'>{props.sensor.card_id}</Heading>
                 <Text color='blue.600' fontSize='sm'>
@@ -98,7 +101,7 @@ export default function View(props: { usb?: string; host: string }) {
     return (
         <VStack align="stretch">
             <Stack direction='row' spacing={4} align='center' justify='center'>
-                <Text>Imaged Sensor Cards</Text>
+                <Text>Imaged Sensor Cards <Badge colorScheme='purple'>{cards.length}</Badge></Text>
                 <IconButton
                     onClick={onRefresh}
                     isDisabled={props.usb === undefined}
@@ -109,8 +112,8 @@ export default function View(props: { usb?: string; host: string }) {
             </Stack>
             <SimpleGrid columns={3} spacing={2}>
                 {
-                    cards.map(c => (
-                        <SensorCardElement usb={props.usb} host={props.host} sensor={c} />
+                    cards.map((c, i) => (
+                        <SensorCardElement key={i} usb={props.usb} host={props.host} sensor={c} />
                     ))
                 }
             </SimpleGrid>
