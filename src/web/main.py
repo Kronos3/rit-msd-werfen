@@ -28,7 +28,7 @@ from rit.stage import StageStepSize, Stage
 from rit.storage import Card, Storage
 from rit.system import System
 
-from pydantic import BaseModel
+from pydantic import BaseModel, DirectoryPath
 
 log = logging.getLogger(__name__)
 
@@ -614,5 +614,13 @@ def rename(
 
 @app.get("/system/cards")
 def get_cards(path: str):
-    stor = Storage().open(Path(path))
+    stor = Storage().open(DirectoryPath(path))
     return stor.cards
+
+
+@app.get("/system/card/preview/{subdir}")
+def get_card(subdir: str):
+    # return ImageResponse(
+    #     cv2.imread()
+    # )
+    pass

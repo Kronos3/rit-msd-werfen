@@ -34,10 +34,12 @@ import { generateQuery } from './Form';
 import SettingsForm from './SettingsForm';
 
 interface CardIdResponse {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     card_id: string;
     subdir: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     const unload = useDisclosure();
     const cardId = useDisclosure();
@@ -86,12 +88,14 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
             const body = {
                 "sensor": singleCardParams,
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 "card_id": cardIdParams,
                 "path": props.usb
             };
 
             const response = await fetch(`http://${props.host}/system/run`, {
                 method: "POST",
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
@@ -109,22 +113,22 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
 
             // The final future id is the card ID string
             // It is just plaintext not an image
-            const card_id_img_fid = fids[fids.length - 2];
-            const card_id_fid = fids[fids.length - 1];
+            const cardIdImgFid = fids[fids.length - 2];
+            const cardIdFid = fids[fids.length - 1];
             fids.splice(fids.length - 2, 2);
 
             const out = [];
             for (const fid of fids) {
-                const fidRes = await fetch(`http://${props.host}/future/${fid}`)
+                const fidRes = await fetch(`http://${props.host}/future/${fid}`);
                 const imgBlob = await fidRes.blob();
                 out.push(imgBlob);
                 setImages(out.map(v => URL.createObjectURL(v)));
             }
 
-            const fidResImg = await fetch(`http://${props.host}/future/${card_id_img_fid}`);
+            const fidResImg = await fetch(`http://${props.host}/future/${cardIdImgFid}`);
             setCardIdImg(URL.createObjectURL(await fidResImg.blob()));
 
-            const fidResText = await fetch(`http://${props.host}/future/${card_id_fid}`);
+            const fidResText = await fetch(`http://${props.host}/future/${cardIdFid}`);
             setCardIdResponse(await fidResText.json());
             onLoadUnload();
         })().finally(() => {
@@ -228,6 +232,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                     <ModalBody>
                         <Form
                             formData={cardIdResponse?.card_id}
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             onChange={(e) => setCardIdResponse((cardIdResponse) ? { ...cardIdResponse, card_id: e.formData } : undefined)}
                             schema={{ type: "string" }}
                             validator={validator}
@@ -235,12 +240,14 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
                                 cardIdChange.onClose();
 
                                 const query = generateQuery({
+                                    // eslint-disable-next-line @typescript-eslint/naming-convention
                                     to_id: e.formData,
                                     subdir: cardIdResponse?.subdir,
                                     path: props.usb
                                 });
                                 const response = await fetch(`http://${props.host}/system/rename?${query}`, {
                                     method: "POST",
+                                    // eslint-disable-next-line @typescript-eslint/naming-convention
                                     headers: { "Content-Type": "application/json" },
                                 });
 
@@ -285,6 +292,7 @@ function OperateCalibrated(props: { host: string, usb?: string, schema: any }) {
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 function OperateUncalibrated(props: { host: string, schema: any }) {
     const [isDisabled, setDisabled] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -302,6 +310,7 @@ function OperateUncalibrated(props: { host: string, schema: any }) {
             const query = generateQuery(settings);
             await fetch(`http://${props.host}/system/align?${query}`, {
                 method: "POST",
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -343,9 +352,10 @@ function OperateUncalibrated(props: { host: string, schema: any }) {
                 Align
             </Button>
         </VStack>
-    )
+    );
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function Operate(props: { status: StageStatus, usb?: string, host: string, schema: any }) {
     return <>
         {
@@ -353,5 +363,5 @@ export default function Operate(props: { status: StageStatus, usb?: string, host
                 <OperateCalibrated host={props.host} usb={props.usb} schema={props.schema} />
                 : <OperateUncalibrated host={props.host} schema={props.schema} />
         }
-    </>
+    </>;
 }

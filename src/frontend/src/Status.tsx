@@ -2,19 +2,20 @@ import {
     Stack,
     Badge,
     Switch
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
 import { useCallback, useEffect, useState } from 'react';
 import { StageStatus } from './api';
 
 function offGreen(state: boolean): string {
-    return state ? 'red' : 'green'
+    return state ? 'red' : 'green';
 }
 
 function onGreen(state: boolean): string {
-    return state ? 'green' : 'red'
+    return state ? 'green' : 'red';
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function Status(props: { host: string, status: StageStatus, setStatus: (status: StageStatus) => void }) {
     const [ping, setPing] = useState<boolean>(true);
 
@@ -51,5 +52,5 @@ export default function Status(props: { host: string, status: StageStatus, setSt
                 <Switch alignSelf='right' isChecked={ping} onChange={(e) => setPing(e.target.checked)} />
             </Stack>
         </>
-    )
+    );
 }

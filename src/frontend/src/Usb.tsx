@@ -23,6 +23,7 @@ import { UsbDrive } from './api';
 import * as cookies from './cookie';
 
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function Usb(props: { host: string, usb?: string, setUsb: (usb?: string) => void }) {
     const [usbDrives, setUsbDrives] = useState<UsbDrive[]>([]);
     const [isDisabled, setDisabled] = useState<boolean>(false);
@@ -33,18 +34,18 @@ export default function Usb(props: { host: string, usb?: string, setUsb: (usb?: 
     const [filesystemTypeFilter, setFilesystemTypeFilter] = useState<string>(cookies.get("filesystemTypeFilter") || "vfat");
 
     useEffect(() => {
-        cookies.set("mountPointFilter", mountPointFilter)
+        cookies.set("mountPointFilter", mountPointFilter);
     }, [mountPointFilter]);
 
     useEffect(() => {
-        cookies.set("filesystemTypeFilter", filesystemTypeFilter)
+        cookies.set("filesystemTypeFilter", filesystemTypeFilter);
     }, [filesystemTypeFilter]);
 
     useEffect(() => {
         if (usbDrives.length === 0) {
             props.setUsb(undefined);
         }
-    }, [usbDrives])
+    }, [usbDrives]);
 
     const refreshUsb = useCallback(() => {
         setDisabled(true);

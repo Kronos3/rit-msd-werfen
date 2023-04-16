@@ -7,7 +7,7 @@ import {
     TabPanels,
     Tab,
     TabPanel,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
 import ApiForm from './Form';
 
@@ -17,9 +17,10 @@ import SingleCard from './SingleCard';
 import Camera from './Camera';
 import ImageOutput from './ImageOutput';
 import Operate from './Operate';
-import ViewMode from './ViewMode';
+import ViewMode from './View';
 
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function AppTabs(props: { devMode: boolean, usb?: string, status: StageStatus, host: string, schema: any }) {
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
 
@@ -47,7 +48,7 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
                     <Operate status={props.status} usb={props.usb} host={props.host} schema={props.schema} />
                 </TabPanel>
                 <TabPanel>
-                    <ViewMode host={props.host} />
+                    <ViewMode host={props.host} usb={props.usb} />
                 </TabPanel>
                 {
                     props.devMode ? ([

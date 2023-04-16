@@ -4,6 +4,7 @@ import { Image, VStack } from "@chakra-ui/react";
 import ApiForm from "./Form";
 
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function ImageOutput(props: { path: string, host: string, schema: any }) {
     const [image, setImage] = useState<string | undefined>();
 
@@ -22,5 +23,5 @@ export default function ImageOutput(props: { path: string, host: string, schema:
                 onReply={onReply} />
             {image ? <Image src={image} /> : <></>}
         </VStack>
-    )
+    );
 }

@@ -5,8 +5,9 @@ import {
     Select,
     Button,
     Center,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function Camera(props: { host: string }) {
     const [camera, setCamera] = useState("hq");
     const [image, setImage] = useState<string | undefined>();
@@ -40,5 +41,5 @@ export default function Camera(props: { host: string }) {
                 image ? <Image src={image} /> : <></>
             }
         </>
-    )
+    );
 }
