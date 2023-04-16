@@ -18,28 +18,48 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { MdRefresh } from 'react-icons/md';
 import { SensorCard } from './api';
+import { generateQuery } from './Form';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function SensorCardElement(props: { sensor: SensorCard }) {
-    useEffect(() => {
+function SensorCardElement(props: { usb?: string, host: string, sensor: SensorCard }) {
+    const [date, setDate] = useState<string>();
+    const [preview, setPreview] = useState<string>();
 
-    }, [props.sensor]);
+    useEffect(() => {
+        const d = new Date(Date.parse(props.sensor.acquisition_time));
+        setDate(d.toLocaleString());
+
+        if (props.usb) {
+            // Fetch a single preview node
+            fetch(`http://${props.host}/system/card/view?${generateQuery({
+                path: props.usb,
+                subdir: props.sensor.subdir_path,
+                img: 0
+            })}`).then(async (res) => {
+                setPreview(URL.createObjectURL(await res.blob()));
+            });
+        }
+    }, [props.sensor, props.usb, props.host]);
 
     return (
         <Card maxW='sm'>
             <CardBody>
-                <Image
-                    src='https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
-                    alt='Green double couch with wooden legs'
-                    borderRadius='lg'
-                />
+                {
+                    preview ? <Image
+                        src={preview}
+                        borderRadius='lg'
+                    /> : <></>
+                }
                 <Heading size='md'>{props.sensor.card_id}</Heading>
+                <Text color='blue.600' fontSize='sm'>
+                    {date}
+                </Text>
             </CardBody>
             <Divider />
             <CardFooter>
                 <ButtonGroup spacing='2'>
                     <Button variant='solid' colorScheme='blue'>
-                        Download Zip
+                        View
                     </Button>
                     <Button variant='ghost' colorScheme='blue'>
                         Delete
@@ -87,10 +107,10 @@ export default function View(props: { usb?: string; host: string }) {
                     icon={<MdRefresh />}
                 />
             </Stack>
-            <SimpleGrid columns={4} spacing={2}>
+            <SimpleGrid columns={3} spacing={2}>
                 {
                     cards.map(c => (
-                        <SensorCardElement sensor={c} />
+                        <SensorCardElement usb={props.usb} host={props.host} sensor={c} />
                     ))
                 }
             </SimpleGrid>

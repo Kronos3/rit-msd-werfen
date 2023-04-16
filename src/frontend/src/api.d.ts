@@ -20,7 +20,7 @@ export interface UsbDrive {
 export interface SensorCard {
     card_id: string;
     num_images: number;
-    acquisition_time: number;
+    acquisition_time: string;
     subdir_path: string;
     image_format: "jpeg" | "png" | "tiff" | "raw";
 }

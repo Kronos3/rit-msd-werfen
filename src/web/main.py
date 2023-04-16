@@ -53,7 +53,7 @@ else:
         ser = serial.Serial("/dev/ttyAMA0", 115200, timeout=1.0)
     system = System(Stage(ser), HqCamera(1), AuxCamera(0))
 
-Encodings = Literal["jpeg", "png", "tiff", "raw"]
+Encodings = Literal["jpeg", "png", "tiff"]
 Cameras = Literal["hq", "aux"]
 
 
@@ -621,9 +621,18 @@ def get_cards(path: str):
     return stor.cards
 
 
-@app.get("/system/card/preview/{subdir}")
-def get_card(subdir: str):
-    # return ImageResponse(
-    #     cv2.imread()
-    # )
-    pass
+@app.get("/system/card/view")
+def get_card(path: str, subdir: str, img: int, encoding: Encodings):
+    read_path = Path(path) / subdir
+    assert read_path.is_dir()
+
+    if encoding == "jpeg":
+        img = cv2.imread(str(read_path / f"{img}.jpg"))
+    elif encoding == "png":
+        img = cv2.imread(str(read_path / f"{img}.png"))
+    elif encoding == "tiff":
+        img = cv2.imread(str(read_path / f"{img}.tiff"))
+    else:
+        assert False, f"Invalid Encoding {encoding}"
+
+    return ImageResponse(img)
