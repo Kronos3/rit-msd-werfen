@@ -1,46 +1,37 @@
-# Rpi Werfen project
+# RIT-Werfen Inspection
 
 ## Overview
 
 Layout for this project:
-  - /Rpi - Raspberry Pi FPrime modules
-    - /Top - Main extry point with main()
-  - /seq - Sequences written for camera calibration and testing
-
+  - /pcb - KiCAD Design file for the PCB
+  - /mc - Microcontroller firmware for STM32L476RG
+  - /prototyping - Test images and Jupyter Notebooks used to prototype code
+  - /src - Code running on the Raspberry Pi and in the browser
+    - frontend/ - ReactJS (Typescript) program for frontend browser code
+    - rit/ - Middleware that abstract the behavior of cameras and MC packet interface
+    - web/ - FastAPI that exposes webendpoints for the frontend to submit requests to
+    - camera_focusing.py - Script that boots up a QT Program to view the camera live
 
 ## Building
-To actually build the Rpi binary, you will need to clone:
-```
-git clone --recursive git@github.com:at1777/msd-gem-5000.git
-cd msd-gem-5000
 
-# Now build
-mkdir build
-cd build
-cmake ..
-make -j5
-```
+The microcontroller code can be built using CMake + GCC Arm toolchain.
+You should use a relatively recent GCC Arm toolchain (`arm-none-eabi-gcc`)
 
-The binary should now live in `build/bin/Linux/rpi`
 
-> Note: The `gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf` compiler toolchain needs to be used for the compilation to work
+### Dependency installation (Ubuntu)
 
-## Sequencing
-Sequences should placed in `/seqs/` with the `.seq` suffix. Sequences may be compiled to
-their binary form with the `seqs` make target:
+On Ubuntu, run the following to install the dependencies:
 
 ```
-$ make
-# Or
-$ make seqs
+sudo apt install gcc-arm-none-eabi cmake make
 ```
 
-## Interfacing with the Rpi
-You can update the software on the Rpi as well as the sequences by running
+### Building PCB code
 
 ```
-$ make sync
+mkdir -p mc/build
+cd mc/build
+cmake -DCMAKE_C_COMPILER=arm-none-eabi-gcc -DCMAKE_CXX_COMPILER=arm-none-eabi-g++ ../
 ```
 
-This will only upload the Rpi binary if it has updated since the last
-sync. All sequences will always be uploaded.
+Now that the code is built, you can flash the PCB using an ST-Link or the ST-Link found on a STM32 Nucleo board using SWD via OpenOCD. I'd recommend using a Nucleo board for flashing along with an IDE like CLion that can set up, build and flash firmware for you.
