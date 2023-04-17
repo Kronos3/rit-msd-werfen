@@ -340,7 +340,7 @@ def system_align(
     return ImageResponse(img, scale=1)
 
 
-@app.post("/system/card_id", response_class=ImageResponse)
+@app.post("/system/card_id")
 def system_card_id(
         scale: float = 0.4,
         start_row: int = 335,
@@ -349,9 +349,10 @@ def system_card_id(
         width: int = 60,
         position: int = 8800,
         light_level: float = 0.010,
+        step_size: StageStepSizes = "EIGHTH",
         return_img: bool = False
 ):
-    system.approach_absolute(position, StageStepSize.EIGHTH)
+    system.approach_absolute(position, size=StageStepSizes[step_size])
     system.stage.led_pwm(light_level)
 
     with system.aux_cam:
