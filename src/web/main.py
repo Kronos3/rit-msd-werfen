@@ -422,7 +422,7 @@ class SingleCardParameters(BaseModel):
     scale: float = 0.2
     delay: float = 0.2
     speed: int = 1500
-    stage_offsets: typing.List[int]
+    stage_offsets: typing.List[int] = (350, 350, 350, 350, 350)
     step_size: StageStepSizes = "EIGHTH"
 
 
