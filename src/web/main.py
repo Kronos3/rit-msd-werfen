@@ -311,9 +311,9 @@ def system_align(
         light_pwm: float = 0.2,
         coarse_n: int = 300,
         coarse_size: StageStepSizes = "QUARTER",
-        laplacian_threshold: float = 10.0,
+        laplacian_threshold: float = 12.0,
         num_points_threshold: int = 100,
-        standard_deviation_threshold: float = 800.0,
+        standard_deviation_threshold: float = 8000.0,
         vertical_rad_threshold: float = 0.5,
         step_delay: float = 0.2,
         debug: bool = False
