@@ -46,7 +46,7 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
     const [cardIdImg, setCardIdImg] = useState<string | undefined>();
     const [cardIdResponse, setCardIdResponse] = useState<CardIdResponse | undefined>();
 
-    const [unloadParams, setUnloadParams] = useState(cookies.getJson("unloadParams") ?? { n: -2000, size: "QUARTER" });
+    const [unloadParams, setUnloadParams] = useState(cookies.getJson("unloadParams") ?? { n: 12000, size: "QUARTER" });
     useEffect(() => {
         cookies.set("unloadParams", JSON.stringify(unloadParams));
     }, [unloadParams]);
