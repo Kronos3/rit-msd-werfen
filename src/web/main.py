@@ -524,7 +524,6 @@ async def run(request: RunParams):
         # Start up both cameras to reduce startup overhead
         try:
             system.hq_cam.start()
-            system.aux_cam.start()
 
             system.stage.led_pwm(request.sensor.light_pwm)
 
@@ -568,7 +567,8 @@ async def run(request: RunParams):
             )
 
             # Grab an aux image and process it
-            card_id_img = system.aux_cam.acquire_array()
+            with system.aux_cam:
+                card_id_img = system.aux_cam.acquire_array()
             card_id, card_id_img_proc = processing.card_id(
                 card_id_img,
                 request.card_id.scale,
@@ -596,7 +596,6 @@ async def run(request: RunParams):
         finally:
             system.stage.led_pwm(0)
             system.hq_cam.stop()
-            system.aux_cam.stop()
 
     # Actually execute the request
     # Do this asynchronously
