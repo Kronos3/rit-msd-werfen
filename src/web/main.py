@@ -527,7 +527,7 @@ async def run(request: RunParams):
             system.stage.led_pwm(request.sensor.light_pwm)
 
             system.stage.speed(request.sensor.speed)
-            system.approach_absolute(request.sensor.initial_position)
+            system.approach_absolute(request.sensor.initial_position, size=StageStepSizesMap[request.sensor.step_size])
             for i in range(request.sensor.num_captures):
                 if request.sensor.delay > 0:
                     time.sleep(request.sensor.delay)
