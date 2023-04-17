@@ -63,7 +63,7 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
 
     const onLoadUnload = useCallback(() => {
         setDisabled(true);
-        fetch(`http://${props.host}/stage/absolute?n=${generateQuery(unloadParams)}`,
+        fetch(`http://${props.host}/stage/absolute?${generateQuery(unloadParams)}`,
             { method: "POST" }
         ).finally(() => {
             setDisabled(false);
