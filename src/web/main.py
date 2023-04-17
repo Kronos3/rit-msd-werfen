@@ -15,7 +15,7 @@ import cv2
 import numpy as np
 import serial
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.responses import Response, PlainTextResponse
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -260,7 +260,7 @@ async def single_card(
         scale: float = 0.2,
         delay: float = 0.2,
         speed: int = 1500,
-        stage_offsets: typing.List[int] = (350, 350, 350, 350, 350, 350),
+        stage_offsets: typing.Annotated[typing.List[int], Query()] = (350, 350, 350, 350, 350, 350),
         step_size: StageStepSizes = "EIGHTH",
         buffer: bool = False
 ):
