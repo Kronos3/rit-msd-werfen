@@ -424,8 +424,7 @@ class SingleCardParameters(BaseModel):
     scale: float = 0.2
     delay: float = 0.2
     speed: int = 1500
-    step: int = 350
-    num_captures: int = 12
+    image_positions: typing.List[int]
     step_size: StageStepSizes = "EIGHTH"
 
 
@@ -491,7 +490,7 @@ async def run(request: RunParams):
     # Generate the futures for the frontend to request these images
     futures = []
     fids = []
-    for _ in range(request.sensor.num_captures + 2):
+    for _ in range(len(request.sensor.image_positions) + 2):
         fid, future = future_manager.create()
         futures.append(future)
         fids.append(fid)
@@ -529,7 +528,7 @@ async def run(request: RunParams):
 
             system.stage.speed(request.sensor.speed)
             system.approach_absolute(request.sensor.initial_position, size=StageStepSizesMap[request.sensor.step_size])
-            for i in range(request.sensor.num_captures):
+            for i, pos in enumerate(request.sensor.image_positions):
                 if request.sensor.delay > 0:
                     time.sleep(request.sensor.delay)
 
@@ -538,14 +537,14 @@ async def run(request: RunParams):
                 # Queue the image to be encoded and written to disk
                 encoding_queue.put((i, img))
 
-                log.info("Acquired %d/%d", i + 1, request.sensor.num_captures)
+                log.info("Acquired %d/%d", i + 1, len(request.sensor.image_positions))
 
                 # No need to buffer since we are encoding with preview size
                 futures[i].set_result(ImageResponse(img, scale=request.sensor.scale))
 
                 # Move to the next image
-                system.stage.relative(
-                    request.sensor.step,
+                system.stage.absolute(
+                    pos,
                     StageStepSizesMap[request.sensor.step_size],
                 )
                 system.stage.wait(granularity=0.05)
@@ -560,7 +559,7 @@ async def run(request: RunParams):
             # Do this while we wait for the card to move to Aux position
             card = Card(
                 card_id="tmp",
-                num_images=int(request.sensor.num_captures),
+                images=request.sensor.image_positions,
                 acquisition_time=acquisition_time,
                 subdir_path=subdir,
                 image_format=request.sensor.encoding
