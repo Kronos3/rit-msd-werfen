@@ -418,12 +418,12 @@ def linux_unmount(mountpoint: str):
 class SingleCardParameters(BaseModel):
     encoding: Encodings = "jpeg"
     light_pwm: float = 0.2
-    initial_position: int = 0
+    initial_position: int = 2500
     scale: float = 0.2
     delay: float = 0.2
-    speed: int = 1500
+    speed: int = 2000
     stage_offsets: typing.List[int] = (350, 350, 350, 350, 350)
-    step_size: StageStepSizes = "EIGHTH"
+    step_size: StageStepSizes = "QUARTER"
 
 
 class CardIDParameters(BaseModel):
