@@ -78,6 +78,22 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
             setCardIdResponse(undefined);
             setCardIdImg(undefined);
 
+            if (singleCardParams === undefined) {
+                singleCard.onOpen();
+                await new Promise<void>((resolve) => setTimeout(() => {
+                    singleCard.onClose();
+                    resolve();
+                }, 5));
+            }
+
+            if (cardIdParams === undefined) {
+                cardId.onOpen();
+                await new Promise<void>((resolve) => setTimeout(() => {
+                    cardId.onClose();
+                    resolve();
+                }, 5));
+            }
+
             const body = {
                 "sensor": singleCardParams,
                 // eslint-disable-next-line @typescript-eslint/naming-convention
