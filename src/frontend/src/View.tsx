@@ -52,7 +52,7 @@ function SensorCardElement(props: {
 
     const previewImageSrcs = useMemo(() => {
         const out = [];
-        for (let i = 0; i < props.num_images; i++) {
+        for (let i = 0; i < props.stage_offsets.length; i++) {
             out.push(`http://${props.host}/system/card/view?${generateQuery({
                 path: props.usb,
                 subdir: props.subdir_path,
@@ -62,7 +62,7 @@ function SensorCardElement(props: {
         }
 
         return out;
-    }, [props.num_images, props.subdir_path, props.usb, props.image_format]);
+    }, [props.stage_offsets.length, props.subdir_path, props.usb, props.image_format]);
 
     const [preview, setPreview] = useState<string>();
 
