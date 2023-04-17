@@ -344,13 +344,13 @@ def system_align(
 def system_card_id(
         scale: float = 0.4,
         start_row: int = 335,
-        start_col: int = 796,
-        height: int = 200,
-        width: int = 60,
+        start_col: int = 795,
+        height: int = 190,
+        width: int = 45,
         position: int = 8800,
-        light_level: float = 0.010,
-        step_size: StageStepSizes = "EIGHTH",
-        return_img: bool = False
+        light_level: float = 0,
+        step_size: StageStepSizes = "QUARTER",
+        return_img: bool = True
 ):
     system.approach_absolute(position, size=StageStepSizesMap[step_size])
     system.stage.led_pwm(light_level)
@@ -432,11 +432,12 @@ class SingleCardParameters(BaseModel):
 class CardIDParameters(BaseModel):
     scale: float = 0.4
     start_row: int = 335
-    start_col: int = 796
-    height: int = 200
-    width: int = 60
+    start_col: int = 795
+    height: int = 190
+    width: int = 45
     position: int = 8800
-    light_level: float = 0.010
+    light_level: float = 0
+    step_size: StageStepSizes = "QUARTER"
 
 
 class RunParams(BaseModel):
@@ -553,7 +554,7 @@ async def run(request: RunParams):
             # Move to where the out camera can take an image
             # (Move quickly)
             log.info("Detecting card ID")
-            system.approach_absolute(request.card_id.position, size=StageStepSize.QUARTER)
+            system.approach_absolute(request.card_id.position, size=request.card_id.step_size)
             system.stage.led_pwm(request.card_id.light_level)
 
             # Save images and files to disk
