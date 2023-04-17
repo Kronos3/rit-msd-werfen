@@ -313,7 +313,7 @@ def system_align(
         coarse_size: StageStepSizes = "QUARTER",
         laplacian_threshold: float = 12.0,
         num_points_threshold: int = 100,
-        standard_deviation_threshold: float = 8000.0,
+        standard_deviation_threshold: float = 10000.0,
         vertical_rad_threshold: float = 0.5,
         step_delay: float = 0.2,
         debug: bool = False
@@ -341,12 +341,12 @@ def system_align(
 @app.post("/system/card_id")
 def system_card_id(
         scale: float = 0.4,
-        start_row: int = 335,
-        start_col: int = 795,
+        start_row: int = 305,
+        start_col: int = 800,
         height: int = 190,
         width: int = 45,
-        position: int = 8800,
-        light_level: float = 0,
+        position: int = 8200,
+        light_level: float = 0.02,
         step_size: StageStepSizes = "QUARTER",
         return_img: bool = True
 ):
@@ -428,12 +428,12 @@ class SingleCardParameters(BaseModel):
 
 class CardIDParameters(BaseModel):
     scale: float = 0.4
-    start_row: int = 335
-    start_col: int = 795
+    start_row: int = 305
+    start_col: int = 800
     height: int = 190
     width: int = 45
-    position: int = 8800
-    light_level: float = 0
+    position: int = 8200
+    light_level: float = 0.02
     step_size: StageStepSizes = "QUARTER"
 
 

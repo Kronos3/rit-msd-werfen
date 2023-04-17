@@ -51,12 +51,12 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
         cookies.set("unloadParams", JSON.stringify(unloadParams));
     }, [unloadParams]);
 
-    const [cardIdParams, setCardIdParams] = useState(cookies.getJson("cardIdParams"));
+    const [cardIdParams, setCardIdParams] = useState(cookies.getJson("cardIdParams") ?? {});
     useEffect(() => {
         cookies.set("cardIdParams", JSON.stringify(cardIdParams));
     }, [cardIdParams]);
 
-    const [singleCardParams, setSingleCardParams] = useState(cookies.getJson("singleCardParams"));
+    const [singleCardParams, setSingleCardParams] = useState(cookies.getJson("singleCardParams") ?? {});
     useEffect(() => {
         cookies.set("singleCardParams", JSON.stringify(singleCardParams));
     }, [singleCardParams]);
