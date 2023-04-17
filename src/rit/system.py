@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, List
 import time
 
 from rit import processing
@@ -124,22 +124,21 @@ class System:
                     initial_position: int,
                     delay: float = 0.2,
                     speed: int = 1500,
-                    step: int = 350,
-                    num_captures: int = 12,
+                    stage_offsets: List[int] = (),
                     step_size: StageStepSize = StageStepSize.EIGHTH):
         self.stage.speed(speed)
         self.approach_absolute(initial_position, step_size)
 
         with self.hq_cam:
-            for i in range(num_captures):
+            for i, offset in enumerate(stage_offsets):
                 # This delay is used to allow the system to
                 # stabilize before we acquire an image
                 if delay > 0:
                     time.sleep(delay)
 
                 yield self.hq_cam.acquire_array()
-                log.info("Captured %s / %s images", i + 1, num_captures)
+                log.info("Captured %s / %s images", i + 1, len(stage_offsets))
 
                 # Move to the next sensor and wait for the motion to finish
-                self.stage.relative(step, step_size)
+                self.stage.relative(offset, step_size)
                 self.stage.wait(granularity=0.05)

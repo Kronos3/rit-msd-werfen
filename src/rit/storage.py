@@ -5,7 +5,7 @@ from pydantic import BaseModel, DirectoryPath
 
 class Card(BaseModel):
     card_id: str
-    images: List[int]
+    stage_offsets: List[int]
     acquisition_time: datetime
     subdir_path: str
     image_format: Literal["jpeg", "png", "tiff", "raw"]

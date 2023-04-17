@@ -255,20 +255,19 @@ async def get_future(fid: int):
 @app.post("/system/single_card")
 async def single_card(
         encoding: Encodings = "jpeg",
-        initial_position: int = 0,
+        initial_position: int = 2500,
         light_pwm: float = 0.2,
         scale: float = 0.2,
         delay: float = 0.2,
         speed: int = 1500,
-        step: int = 350,
-        num_captures: int = 12,
+        stage_offsets: typing.List[int] = (350, 350, 350, 350, 350, 350),
         step_size: StageStepSizes = "EIGHTH",
         buffer: bool = False
 ):
     # Generate the futures for the frontend to request these images
     futures = []
     fids = []
-    for _ in range(num_captures):
+    for _ in stage_offsets:
         fid, future = future_manager.create()
         futures.append(future)
         fids.append(fid)
@@ -280,7 +279,7 @@ async def single_card(
             images = []
             for image in system.single_card(
                     initial_position,
-                    delay, speed, step, num_captures,
+                    delay, speed, stage_offsets,
                     StageStepSizesMap[step_size]
             ):
                 images.append(image)
@@ -293,7 +292,7 @@ async def single_card(
             # This encodes in-between each step
             for i, image in enumerate(system.single_card(
                     initial_position,
-                    delay, speed, step, num_captures,
+                    delay, speed, stage_offsets,
                     StageStepSizesMap[step_size]
             )):
                 futures[i].set_result(ImageResponse(image, scale=scale, media_type=f"image/{encoding}"))
@@ -424,7 +423,7 @@ class SingleCardParameters(BaseModel):
     scale: float = 0.2
     delay: float = 0.2
     speed: int = 1500
-    image_positions: typing.List[int]
+    stage_offsets: typing.List[int]
     step_size: StageStepSizes = "EIGHTH"
 
 
@@ -490,7 +489,7 @@ async def run(request: RunParams):
     # Generate the futures for the frontend to request these images
     futures = []
     fids = []
-    for _ in range(len(request.sensor.image_positions) + 2):
+    for _ in range(len(request.sensor.stage_offsets) + 2):
         fid, future = future_manager.create()
         futures.append(future)
         fids.append(fid)
@@ -528,7 +527,7 @@ async def run(request: RunParams):
 
             system.stage.speed(request.sensor.speed)
             system.approach_absolute(request.sensor.initial_position, size=StageStepSizesMap[request.sensor.step_size])
-            for i, pos in enumerate(request.sensor.image_positions):
+            for i, pos in enumerate(request.sensor.stage_offsets):
                 if request.sensor.delay > 0:
                     time.sleep(request.sensor.delay)
 
@@ -537,13 +536,13 @@ async def run(request: RunParams):
                 # Queue the image to be encoded and written to disk
                 encoding_queue.put((i, img))
 
-                log.info("Acquired %d/%d", i + 1, len(request.sensor.image_positions))
+                log.info("Acquired %d/%d", i + 1, len(request.sensor.stage_offsets))
 
                 # No need to buffer since we are encoding with preview size
                 futures[i].set_result(ImageResponse(img, scale=request.sensor.scale))
 
                 # Move to the next image
-                system.stage.absolute(
+                system.stage.relative(
                     pos,
                     StageStepSizesMap[request.sensor.step_size],
                 )
@@ -559,7 +558,7 @@ async def run(request: RunParams):
             # Do this while we wait for the card to move to Aux position
             card = Card(
                 card_id="tmp",
-                images=request.sensor.image_positions,
+                stage_offsets=request.sensor.stage_offsets,
                 acquisition_time=acquisition_time,
                 subdir_path=subdir,
                 image_format=request.sensor.encoding
