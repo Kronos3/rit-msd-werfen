@@ -428,12 +428,12 @@ class SingleCardParameters(BaseModel):
 
 class CardIDParameters(BaseModel):
     scale: float = 0.4
-    start_row: int = 305
+    start_row: int = 260
     start_col: int = 800
-    height: int = 190
+    height: int = 170
     width: int = 45
-    position: int = 8200
-    light_level: float = 0.02
+    position: int = 7000
+    light_level: float = 0.015
     step_size: StageStepSizes = "QUARTER"
 
 
