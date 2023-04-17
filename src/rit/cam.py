@@ -1,6 +1,7 @@
 import abc
 import threading
 
+import cv2
 import numpy as np
 import logging
 import coloredlogs as coloredlogs
@@ -51,7 +52,8 @@ class Camera(abc.ABC):
 
     def acquire_array(self) -> np.ndarray:
         if self.is_hardware:
-            return self.camera.capture_array()
+            img = self.camera.capture_array()
+            return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 
 class HqCamera(Camera):

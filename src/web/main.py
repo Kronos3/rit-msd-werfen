@@ -78,7 +78,6 @@ class ImageResponse(Response):
 
     def render(self, content) -> bytes:
         content = cv2.resize(content, (int(content.shape[1] * self.scale), int(content.shape[0] * self.scale)))
-        content = cv2.cvtColor(content, cv2.COLOR_BGR2RGB)
 
         if self.media_type == "image/jpeg":
             img = cv2.imencode(".jpg", content)[1]
