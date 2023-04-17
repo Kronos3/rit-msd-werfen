@@ -352,7 +352,7 @@ def system_card_id(
         step_size: StageStepSizes = "EIGHTH",
         return_img: bool = False
 ):
-    system.approach_absolute(position, size=StageStepSizes[step_size])
+    system.approach_absolute(position, size=StageStepSizesMap[step_size])
     system.stage.led_pwm(light_level)
 
     with system.aux_cam:
