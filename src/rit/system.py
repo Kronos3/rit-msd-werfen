@@ -9,7 +9,7 @@ from rit.stage import Stage, StageDirection, StageStepSize
 log = logging.getLogger(__name__)
 
 # Calibrated using GIMP :)
-IM_WIDTH_PER_EIGHTH_STEP = 0.0015
+IM_WIDTH_PER_EIGHTH_STEP = 0.0010059171597633137
 
 
 class System:
