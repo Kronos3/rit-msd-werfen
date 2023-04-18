@@ -65,7 +65,7 @@ def detect_card_edge(img: np.ndarray,
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     scale = 0.2
     img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
-    orig_img = img
+    orig_img = img.copy()
 
     h, w = img.shape
 

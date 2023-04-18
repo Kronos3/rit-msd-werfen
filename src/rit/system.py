@@ -107,7 +107,7 @@ class System:
 
                     # Get the final stage position
                     img = self.hq_cam.acquire_array()
-                    new_edge_position = processing.detect_card_edge(
+                    new_edge_position, img = processing.detect_card_edge(
                         img, laplacian_threshold,
                         num_points_threshold,
                         standard_deviation_threshold,
