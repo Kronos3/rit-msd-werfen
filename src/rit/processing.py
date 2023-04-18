@@ -65,6 +65,7 @@ def detect_card_edge(img: np.ndarray,
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     scale = 0.2
     img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
+    orig_img = img
 
     h, w = img.shape
 
@@ -90,7 +91,7 @@ def detect_card_edge(img: np.ndarray,
     if npoints < num_points_threshold:
         if debug:
             log.info("Found only %d points, no edges", npoints)
-        return None, img
+        return None, orig_img
 
     # Perform an L2 norm linear regression to get the line of
     # best fit along the threshold edge
