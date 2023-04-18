@@ -117,7 +117,7 @@ class FutureManager:
 
 class SequencedFutureManager:
     _current_id: int
-    _futures: Dict[int, asyncio.Queue]
+    _futures: Dict[int, Queue]
 
     def __init__(self):
         self._futures = {}
@@ -127,14 +127,14 @@ class SequencedFutureManager:
         fid = self._current_id
         self._current_id += 1
 
-        self._futures[fid] = asyncio.Queue()
+        self._futures[fid] = Queue()
         return fid
 
     def put(self, fid: int, response):
         self._futures[fid].put(response)
 
-    async def get(self, fid: int):
-        return await self._futures[fid].get()
+    def get(self, fid: int):
+        return self._futures[fid].get()
 
     def finish(self, fid: int):
         self._futures[fid].put(None)
@@ -279,8 +279,8 @@ async def get_future(fid: int):
 
 
 @app.get("/sfuture/{fid}")
-async def get_sequenced_future(fid: int):
-    res = await sequenced_future_manager.get(fid)
+def get_sequenced_future(fid: int):
+    res = sequenced_future_manager.get(fid)
     if res is None:
         raise HTTPException(status_code=204, detail="No more content")
     return res

@@ -21,6 +21,7 @@ export default function ImageOutput(props: { path: string, host: string, schema:
     }, [props.sequenced]);
 
     const requestNewImg = useCallback(() => {
+        console.log(seqFid);
         fetch(`http://${props.host}/sfuture/${seqFid}`)
                 .then((res) => {
                     if (res.status === 204) {
