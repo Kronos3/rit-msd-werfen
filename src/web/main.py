@@ -353,13 +353,12 @@ def system_align(
         step_delay: float = 0.2
 ):
     system.stage.led_pwm(light_pwm)
-    img = system.align(coarse_n, StageStepSizesMap[coarse_size],
-                       laplacian_threshold, num_points_threshold,
-                       standard_deviation_threshold,
-                       vertical_rad_threshold, step_delay,
-                       debug=False)
+    system.align(coarse_n, StageStepSizesMap[coarse_size],
+                 laplacian_threshold, num_points_threshold,
+                 standard_deviation_threshold,
+                 vertical_rad_threshold, step_delay,
+                 debug=False)
     system.stage.led_pwm(0)
-    return ImageResponse(img, scale=1)
 
 
 @app.post("/system/debug_align")
