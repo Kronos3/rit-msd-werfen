@@ -79,6 +79,8 @@ def detect_card_edge(img: np.ndarray,
     # Get image back into 8-bit grayscale
     img = cv2.convertScaleAbs(img)
 
+    img = img[:, 0:-40]
+
     # Select the best points
     _, img = cv2.threshold(img, laplacian_threshold, 255, cv2.THRESH_BINARY)
 
@@ -129,10 +131,10 @@ def detect_card_edge(img: np.ndarray,
     # Scale this solution to the width
     pos = center_ts[1] / w
 
-    if pos < 0.05 or pos > 0.95:
-        if debug:
-            log.info("Position too close to edge: %.2f", pos)
-        return None, img
+    # if pos < 0.05 or pos > 0.95:
+    #     if debug:
+    #         log.info("Position too close to edge: %.2f", pos)
+    #     return None, img
 
     return pos, img
 
