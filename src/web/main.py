@@ -117,7 +117,7 @@ class FutureManager:
 
 class SequencedFutureManager:
     _current_id: int
-    _futures: Dict[int, asyncio.Future]
+    _futures: Dict[int, asyncio.Queue]
 
     def __init__(self):
         self._futures = {}
@@ -127,21 +127,17 @@ class SequencedFutureManager:
         fid = self._current_id
         self._current_id += 1
 
-        self._futures[fid] = asyncio.Future()
+        self._futures[fid] = asyncio.Queue()
         return fid
 
-    async def _recreate(self, fid: int):
-        self._futures[fid] = asyncio.Future()
+    def put(self, fid: int, response):
+        self._futures[fid].put(response)
 
-    def set(self, fid: int, response):
-        self._futures[fid].set_result(response)
-        asyncio.run(self._recreate(fid))
-
-    def get(self, fid: int) -> asyncio.Future:
-        return self._futures[fid]
+    async def get(self, fid: int):
+        return await self._futures[fid].get()
 
     def finish(self, fid: int):
-        self._futures[fid].set_result(None)
+        self._futures[fid].put(None)
         del self._futures[fid]
 
 
@@ -386,7 +382,7 @@ async def system_debug_align(
                                 standard_deviation_threshold,
                                 vertical_rad_threshold, step_delay,
                                 debug=True):
-            sequenced_future_manager.set(fid, ImageResponse(img, scale=1))
+            sequenced_future_manager.put(fid, ImageResponse(img, scale=1))
         system.stage.led_pwm(0)
         sequenced_future_manager.finish(fid)
 

@@ -21,12 +21,14 @@ export default function ImageOutput(props: { path: string, host: string, schema:
     }, [props.sequenced]);
 
     const requestNewImg = useCallback(() => {
-        fetch(`http://${props.host}/sfuture/${seqFid}`, { method: "POST" })
+        fetch(`http://${props.host}/sfuture/${seqFid}`)
                 .then((res) => {
                     if (res.status === 204) {
+                        console.log("Done");
                         // No more content
                     } else if (res.ok && res.status === 200) {
                         res.blob().then((blob) => {
+                            console.log("img");
                             setImage(URL.createObjectURL(blob));
                             requestNewImg();
                         });
