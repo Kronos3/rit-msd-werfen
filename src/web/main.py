@@ -130,9 +130,12 @@ class SequencedFutureManager:
         self._futures[fid] = asyncio.Future()
         return fid
 
+    async def _recreate(self, fid: int):
+        self._futures[fid] = asyncio.Future()
+
     def set(self, fid: int, response):
         self._futures[fid].set_result(response)
-        self._futures[fid] = asyncio.Future()
+        asyncio.run(self._recreate(fid))
 
     def get(self, fid: int) -> asyncio.Future:
         return self._futures[fid]
@@ -364,7 +367,7 @@ def system_align(
 
 
 @app.post("/system/debug_align")
-def system_debug_align(
+async def system_debug_align(
         light_pwm: float = 0.2,
         coarse_n: int = 300,
         coarse_size: StageStepSizes = "QUARTER",
