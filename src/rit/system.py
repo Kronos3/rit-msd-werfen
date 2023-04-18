@@ -2,8 +2,6 @@ import logging
 from typing import Optional, List
 import time
 
-import cv2
-
 from rit import processing
 from rit.cam import Camera
 from rit.stage import Stage, StageDirection, StageStepSize
@@ -11,7 +9,7 @@ from rit.stage import Stage, StageDirection, StageStepSize
 log = logging.getLogger(__name__)
 
 # Calibrated using GIMP :)
-IM_WIDTH_PER_EIGHTH_STEP = 0.0010059171597633137
+IM_WIDTH_PER_EIGHTH_STEP = 0.0015
 
 
 class System:
@@ -98,7 +96,7 @@ class System:
                     # Perform the fine motion
                     fine_step = (0.5 - edge_position) / IM_WIDTH_PER_EIGHTH_STEP
                     log.info("Edge position @%.2f", edge_position)
-                    log.info("Performing %d steps for fine motion", int(fine_step))
+                    log.info("Performing %d steps for fine motion", int(round(fine_step)))
 
                     print(fine_step)
                     self.approach_relative(int(fine_step), StageStepSize.EIGHTH)
