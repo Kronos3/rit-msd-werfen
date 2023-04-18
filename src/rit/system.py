@@ -2,6 +2,8 @@ import logging
 from typing import Optional, List
 import time
 
+import cv2
+
 from rit import processing
 from rit.cam import Camera
 from rit.stage import Stage, StageDirection, StageStepSize
@@ -88,6 +90,15 @@ class System:
                     vertical_rad_threshold, debug
                 )
 
+                if debug:
+                    if edge_position is not None:
+                        img = cv2.putText(img, str(round(edge_position, 2)), (50, 50),
+                                          cv2.FONT_HERSHEY_SIMPLEX,
+                                          1, (0, 255, 0), 2, cv2.LINE_AA)
+                        img = cv2.circle(img, edge_position, 20, (0, 255, 0), 20)
+
+                    yield img
+
                 if edge_position is not None:
                     # Found the edge of the card
                     # Perform the fine motion
@@ -115,7 +126,7 @@ class System:
                     # Sets the stage calibration flag
                     self.stage.set_position(0)
 
-                    return img, new_edge_position
+                    return img
         finally:
             # Stop the camera, even on error
             self.hq_cam.stop()

@@ -78,7 +78,7 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
                             <Camera host={props.host} />
                         </TabPanel>,
                         <TabPanel key={4}>
-                            <ImageOutput path="/system/align" host={props.host} schema={props.schema} />
+                            <ImageOutput path="/system/debug_align" host={props.host} schema={props.schema} sequenced={true} />
                         </TabPanel>,
                         <TabPanel key={5}>
                             <ImageOutput path="/system/card_id" host={props.host} schema={props.schema} />

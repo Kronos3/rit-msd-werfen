@@ -15,7 +15,7 @@ import cv2
 import numpy as np
 import serial
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import Response, PlainTextResponse
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -115,7 +115,35 @@ class FutureManager:
         del self._futures[fid]
 
 
+class SequencedFutureManager:
+    _current_id: int
+    _futures: Dict[int, asyncio.Future]
+
+    def __init__(self):
+        self._futures = {}
+        self._current_id = 0
+
+    def create(self) -> int:
+        fid = self._current_id
+        self._current_id += 1
+
+        self._futures[fid] = asyncio.Future()
+        return fid
+
+    def set(self, fid: int, response):
+        self._futures[fid].set_result(response)
+        self._futures[fid] = asyncio.Future()
+
+    def get(self, fid: int) -> asyncio.Future:
+        return self._futures[fid]
+
+    def finish(self, fid: int):
+        self._futures[fid].set_result(None)
+        del self._futures[fid]
+
+
 future_manager = FutureManager()
+sequenced_future_manager = SequencedFutureManager()
 
 app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
@@ -251,6 +279,14 @@ async def get_future(fid: int):
     return img
 
 
+@app.get("/sfuture/{fid}")
+async def get_sequenced_future(fid: int):
+    res = await sequenced_future_manager.get(fid)
+    if res is None:
+        raise HTTPException(status_code=204, detail="No more content")
+    return res
+
+
 @app.post("/system/single_card")
 async def single_card(
         encoding: Encodings = "jpeg",
@@ -313,29 +349,46 @@ def system_align(
         coarse_size: StageStepSizes = "QUARTER",
         laplacian_threshold: float = 12.0,
         num_points_threshold: int = 100,
-        standard_deviation_threshold: float = 10000.0,
+        standard_deviation_threshold: float = 100.0,
         vertical_rad_threshold: float = 0.5,
-        step_delay: float = 0.2,
-        debug: bool = False
+        step_delay: float = 0.2
 ):
     system.stage.led_pwm(light_pwm)
-
-    img, position = system.align(coarse_n, StageStepSizesMap[coarse_size],
-                                 laplacian_threshold, num_points_threshold,
-                                 standard_deviation_threshold,
-                                 vertical_rad_threshold, step_delay,
-                                 debug)
-
+    img = system.align(coarse_n, StageStepSizesMap[coarse_size],
+                       laplacian_threshold, num_points_threshold,
+                       standard_deviation_threshold,
+                       vertical_rad_threshold, step_delay,
+                       debug=False)
     system.stage.led_pwm(0)
-
-    if position is not None:
-        center = [int(position * img.shape[1]), img.shape[0] // 2]
-        img = cv2.putText(img, str(round(position, 2)), (50, 50),
-                          cv2.FONT_HERSHEY_SIMPLEX,
-                          1, (0, 255, 0), 2, cv2.LINE_AA)
-        img = cv2.circle(img, center, 20, (0, 255, 0), 20)
-
     return ImageResponse(img, scale=1)
+
+
+@app.post("/system/debug_align")
+def system_debug_align(
+        light_pwm: float = 0.2,
+        coarse_n: int = 300,
+        coarse_size: StageStepSizes = "QUARTER",
+        laplacian_threshold: float = 12.0,
+        num_points_threshold: int = 100,
+        standard_deviation_threshold: float = 100.0,
+        vertical_rad_threshold: float = 0.5,
+        step_delay: float = 0.2
+):
+    fid = sequenced_future_manager.create()
+
+    def run_alignment():
+        system.stage.led_pwm(light_pwm)
+        for img in system.align(coarse_n, StageStepSizesMap[coarse_size],
+                                laplacian_threshold, num_points_threshold,
+                                standard_deviation_threshold,
+                                vertical_rad_threshold, step_delay,
+                                debug=True):
+            sequenced_future_manager.set(fid, ImageResponse(img, scale=1))
+        system.stage.led_pwm(0)
+        sequenced_future_manager.finish(fid)
+
+    threading.Thread(target=run_alignment, daemon=True).start()
+    return fid
 
 
 @app.post("/system/card_id")
