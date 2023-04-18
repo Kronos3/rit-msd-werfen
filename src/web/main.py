@@ -341,7 +341,7 @@ async def single_card(
     return fids
 
 
-@app.post("/system/align", response_class=ImageResponse)
+@app.post("/system/align")
 def system_align(
         light_pwm: float = 0.2,
         coarse_n: int = 300,
