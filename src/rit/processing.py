@@ -63,7 +63,8 @@ def detect_card_edge(img: np.ndarray,
     """
     # Compress the data to a manageable size
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    img = cv2.resize(img, (img.shape[1] * 0.4, img.shape[0]))
+    scale = 0.2
+    img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
 
     h, w = img.shape
 
@@ -75,8 +76,6 @@ def detect_card_edge(img: np.ndarray,
     # across the image to detect edges.
     # We are looking for the edge of the card
     img = cv2.Laplacian(img, cv2.CV_16S, ksize=3)
-
-    img_lap = img
 
     # Get image back into 8-bit grayscale
     img = cv2.convertScaleAbs(img)
@@ -91,7 +90,7 @@ def detect_card_edge(img: np.ndarray,
     if npoints < num_points_threshold:
         if debug:
             log.info("Found only %d points, no edges", npoints)
-        return None, img_lap
+        return None, img
 
     # Perform an L2 norm linear regression to get the line of
     # best fit along the threshold edge
@@ -107,7 +106,7 @@ def detect_card_edge(img: np.ndarray,
     # We just fit some garbage
     if err > standard_deviation_threshold:
         log.info("Not a good line standard deviation: %.2f", err)
-        return None, img_lap
+        return None, img
 
     # The line is not vertical enough
     # There are some edges in the image, but they are unlikely
@@ -116,7 +115,7 @@ def detect_card_edge(img: np.ndarray,
     if abs(theta) > vertical_rad_threshold and abs(theta - np.pi) > vertical_rad_threshold:
         if debug:
             log.info("Line not vertical enough %2.f rad", theta)
-        return None, img_lap
+        return None, img
 
     # Solve for center of the parametric line
     # Solve a simple system of equations
@@ -136,7 +135,7 @@ def detect_card_edge(img: np.ndarray,
     #         log.info("Position too close to edge: %.2f", pos)
     #     return None, img
 
-    return pos, img_lap
+    return pos, img
 
 
 def card_id(img: np.ndarray,
