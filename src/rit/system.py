@@ -83,7 +83,7 @@ class System:
                 time.sleep(step_delay)
 
                 img = self.hq_cam.acquire_array()
-                edge_position = processing.detect_card_edge(
+                edge_position, img = processing.detect_card_edge(
                     img, laplacian_threshold,
                     num_points_threshold,
                     standard_deviation_threshold,
@@ -91,12 +91,6 @@ class System:
                 )
 
                 if debug:
-                    if edge_position is not None:
-                        img = cv2.putText(img, str(round(edge_position, 2)), (50, 50),
-                                          cv2.FONT_HERSHEY_SIMPLEX,
-                                          1, (0, 255, 0), 2, cv2.LINE_AA)
-                        img = cv2.circle(img, edge_position, 20, (0, 255, 0), 20)
-
                     yield img
 
                 if edge_position is not None:

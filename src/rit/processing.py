@@ -46,7 +46,7 @@ def detect_card_edge(img: np.ndarray,
                      num_points_threshold: int = 100,
                      standard_deviation_threshold: float = 50.0,
                      vertical_rad_threshold: float = 0.1,
-                     debug: bool = False) -> Optional[float]:
+                     debug: bool = False) -> Tuple[Optional[float], np.ndarray]:
     """
     Find the line of best fit for the derivative of an image
     This is essentially like applying a linear regression to
@@ -89,7 +89,7 @@ def detect_card_edge(img: np.ndarray,
     if npoints < num_points_threshold:
         if debug:
             log.info("Found only %d points, no edges", npoints)
-        return None
+        return None, img
 
     # Perform an L2 norm linear regression to get the line of
     # best fit along the threshold edge
@@ -105,7 +105,7 @@ def detect_card_edge(img: np.ndarray,
     # We just fit some garbage
     if err > standard_deviation_threshold:
         log.info("Not a good line standard deviation: %.2f", err)
-        return None
+        return None, img
 
     # The line is not vertical enough
     # There are some edges in the image, but they are unlikely
@@ -114,7 +114,7 @@ def detect_card_edge(img: np.ndarray,
     if abs(theta) > vertical_rad_threshold and abs(theta - np.pi) > vertical_rad_threshold:
         if debug:
             log.info("Line not vertical enough %2.f rad", theta)
-        return None
+        return None, img
 
     # Solve for center of the parametric line
     # Solve a simple system of equations
@@ -132,9 +132,9 @@ def detect_card_edge(img: np.ndarray,
     if pos < 0.05 or pos > 0.95:
         if debug:
             log.info("Position too close to edge: %.2f", pos)
-        return None
+        return None, img
 
-    return pos
+    return pos, img
 
 
 def card_id(img: np.ndarray,
