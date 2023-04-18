@@ -63,7 +63,7 @@ def detect_card_edge(img: np.ndarray,
     """
     # Compress the data to a manageable size
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    scale = 0.2
+    scale = 0.4
     img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
     orig_img = img.copy()
 
@@ -130,12 +130,6 @@ def detect_card_edge(img: np.ndarray,
     # This will yield the center point along X axis
     # Scale this solution to the width
     pos = center_ts[1] / w
-
-    # if pos < 0.05 or pos > 0.95:
-    #     if debug:
-    #         log.info("Position too close to edge: %.2f", pos)
-    #     return None, img
-
     return pos, img
 
 
