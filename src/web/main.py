@@ -180,6 +180,18 @@ def cam_acquire(cam_name: Cameras, encoding: Encodings = "jpeg", start_stop: boo
     return ImageResponse(img, media_type=f"image/{encoding}")
 
 
+@app.get("/cam/preview/start/{cam_name}")
+def preview_start(cam_name: Cameras):
+    camera = get_camera(cam_name)
+    camera.start_preview()
+
+
+@app.get("/cam/preview/stop/{cam_name}")
+def preview_stop(cam_name: Cameras):
+    camera = get_camera(cam_name)
+    camera.stop_preview()
+
+
 @app.get("/cam/start/{cam_name}")
 def cam_start(cam_name: Cameras):
     get_camera(cam_name).start()

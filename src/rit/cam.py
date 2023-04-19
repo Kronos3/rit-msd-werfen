@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import logging
 import coloredlogs as coloredlogs
-import picamera2.configuration
+from picamera2 import Preview
 
 coloredlogs.install(fmt='%(asctime)s,%(msecs)03d %(levelname)s %(message)s')
 log = logging.getLogger(__name__)
@@ -34,6 +34,14 @@ class Camera(abc.ABC):
             self.camera.configure(self.still_config if still else self.stream_config)
             self.camera.set_controls({"AwbMode": 4})
             self.camera.start()
+
+    def start_preview(self):
+        self.camera.start_preview(Preview.QTGL, x=100, y=200, width=800, height=600)
+        self.start()
+
+    def stop_preview(self):
+        self.camera.stop_preview()
+        self.stop()
 
     def stop(self):
         if self.is_hardware:
