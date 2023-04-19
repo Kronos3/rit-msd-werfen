@@ -37,11 +37,9 @@ class Camera(abc.ABC):
 
     def start_preview(self):
         self.camera.start_preview(Preview.DRM, x=100, y=200, width=800, height=600)
-        self.start()
 
     def stop_preview(self):
         self.camera.stop_preview()
-        self.stop()
 
     def stop(self):
         if self.is_hardware:
