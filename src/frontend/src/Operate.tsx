@@ -184,7 +184,7 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
                 </ModalContent>
             </Modal>
             <SimpleGrid columns={2} spacing={2}>
-                
+
                 <HStack>
                     <Text>Image a loaded card</Text>
                     <IconButton
@@ -265,7 +265,7 @@ function OperateCalibrated(props: { onRefresh: () => void, host: string, usb?: s
 function OperateUncalibrated(props: { host: string, schema: any }) {
     const [isDisabled, setDisabled] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [settings, setSettings] = useState(cookies.getJson("alignmentParams"));
+    const [settings, setSettings] = useState(cookies.getJson("alignmentParams") ?? {});
 
     useEffect(() => {
         if (settings) {

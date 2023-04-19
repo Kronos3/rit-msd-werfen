@@ -31,7 +31,7 @@ class Camera(abc.ABC):
     def start(self, still=True):
         if self.is_hardware:
             self.camera.configure(self.still_config if still else self.stream_config)
-            self.camera.set_controls({"AwbEnable": False})
+            self.camera.set_controls({"AwbMode": "Indoor"})
             self.camera.start()
 
     def stop(self):
