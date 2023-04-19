@@ -201,7 +201,7 @@ function SensorCardElement(props: {
                     <ModalBody>
                         <SimpleGrid columns={3} spacing={2}>
                             {
-                                previewDisclosure.isOpen && previewImageSrcs.map(v => <Image src={v} />)
+                                previewDisclosure.isOpen && previewImageSrcs.map((v, i) => <Image key={i} src={v} />)
                             }
                         </SimpleGrid>
                     </ModalBody>
