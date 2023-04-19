@@ -63,6 +63,7 @@ class HqCamera(Camera):
             self.still_config = self.camera.create_still_configuration(
                 main={"size": (4056, 3040)},
             )
+            self.video_config = self.camera.create_video_configuration()
 
             self.stream_config = self.camera.create_preview_configuration()
 
@@ -74,4 +75,5 @@ class AuxCamera(Camera):
             self.still_config = self.camera.create_still_configuration(
                 main={"size": (3280, 2464)},
             )
+            self.video_config = self.camera.create_video_configuration()
             self.stream_config = self.camera.create_preview_configuration()

@@ -295,7 +295,7 @@ async def single_card(
         delay: float = 0.2,
         speed: int = 1500,
         stage_offsets: typing.Annotated[typing.List[int], Query()] = (350, 350, 350, 350, 350, 350),
-        step_size: StageStepSizes = "EIGHTH",
+        step_size: StageStepSizes = "QUARTER",
         buffer: bool = False
 ):
     # Generate the futures for the frontend to request these images
