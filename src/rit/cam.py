@@ -36,7 +36,8 @@ class Camera(abc.ABC):
             self.camera.start()
 
     def start_preview(self):
-        self.camera.start_preview(Preview.DRM, x=100, y=200, width=800, height=600)
+        self.camera.configure(self.camera.create_preview_configuration())
+        self.camera.start(show_preview=True)
 
     def stop_preview(self):
         self.camera.stop_preview()
