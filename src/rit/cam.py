@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import logging
 import coloredlogs as coloredlogs
+import picamera2.configuration
 
 coloredlogs.install(fmt='%(asctime)s,%(msecs)03d %(levelname)s %(message)s')
 log = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ class Camera(abc.ABC):
     def start(self, still=True):
         if self.is_hardware:
             self.camera.configure(self.still_config if still else self.stream_config)
-            self.camera.set_controls({"AwbMode": "Indoor"})
+            self.camera.set_controls({"AwbMode": 4})
             self.camera.start()
 
     def stop(self):
