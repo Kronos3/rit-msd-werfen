@@ -26,7 +26,7 @@ import {
     MdDriveFileRenameOutline
 } from 'react-icons/md';
 
-import { CardIdResponse, StageStatus } from './api';
+import { CardIdResponse, SystemStatus } from './api';
 import * as cookies from './cookie';
 import { generateQuery, RenameCardForm } from './Form';
 import SettingsForm from './SettingsForm';
@@ -321,7 +321,7 @@ function OperateUncalibrated(props: { host: string, schema: any }) {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export default function Operate(props: { onRefresh: () => void, status: StageStatus, usb?: string, host: string, schema: any }) {
+export default function Operate(props: { onRefresh: () => void, status: SystemStatus, usb?: string, host: string, schema: any }) {
     if (props.status.calibrated) {
         return <OperateCalibrated onRefresh={props.onRefresh} host={props.host} usb={props.usb} schema={props.schema} />;
     } else {

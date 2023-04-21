@@ -13,7 +13,7 @@ import {
     Button
 } from '@chakra-ui/react';
 
-import { StageStatus } from './api';
+import { SystemStatus } from './api';
 
 import * as cookies from './cookie';
 import Status from './Status';
@@ -29,14 +29,16 @@ function App() {
 
     const [devMode, setDevMode] = useState<boolean>(false);
 
-    const [status, setStatus] = useState<StageStatus>({
+    const [status, setStatus] = useState<SystemStatus>({
         limit1: false,
         limit2: false,
         estop: false,
         running: false,
         led: false,
         calibrated: false,
-        position: 0
+        position: 0,
+        hq_preview: false,
+        aux_preview: false
     });
 
     useEffect(() => {

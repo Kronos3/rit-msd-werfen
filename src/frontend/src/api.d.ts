@@ -1,4 +1,4 @@
-export interface StageStatus {
+export interface SystemStatus {
     limit1: boolean;
     limit2: boolean;
     estop: boolean;
@@ -6,6 +6,8 @@ export interface StageStatus {
     led: boolean;
     calibrated: boolean;
     position: number;
+    hq_preview: boolean;
+    aux_preview: boolean;
 }
 
 export interface UsbDrive {

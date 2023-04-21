@@ -17,9 +17,12 @@ class Camera(abc.ABC):
     stream_config: dict
     _lock: threading.Lock
 
+    preview: bool
+
     def __init__(self, cam: int, name: str):
         self.cam = cam
         self.name = name
+        self.preview = False
         self._lock = threading.Lock()
         if self.is_hardware:
             from picamera2 import Picamera2
@@ -39,9 +42,11 @@ class Camera(abc.ABC):
         self.camera.configure(self.camera.create_preview_configuration())
         self.camera.start_preview(Preview.QTGL)
         self.camera.start()
+        self.preview = True
 
     def stop_preview(self):
         self.camera.stop_preview()
+        self.preview = False
 
     def stop(self):
         if self.is_hardware:

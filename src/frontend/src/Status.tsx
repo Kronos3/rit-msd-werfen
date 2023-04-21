@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 
 import { useCallback, useEffect, useState } from 'react';
-import { StageStatus } from './api';
+import { SystemStatus } from './api';
 
 function offGreen(state: boolean): string {
     return state ? 'red' : 'green';
@@ -16,12 +16,12 @@ function onGreen(state: boolean): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export default function Status(props: { host: string, status: StageStatus, setStatus: (status: StageStatus) => void }) {
+export default function Status(props: { host: string, status: SystemStatus, setStatus: (status: SystemStatus) => void }) {
     const [ping, setPing] = useState<boolean>(true);
 
     const refresh = useCallback(async () => {
-        const responseRaw = await fetch(`http://${props.host}/stage/status`);
-        const response: StageStatus = await responseRaw.json();
+        const responseRaw = await fetch(`http://${props.host}/status`);
+        const response: SystemStatus = await responseRaw.json();
 
         if (JSON.stringify(response) !== JSON.stringify(props.status)) {
             props.setStatus(response);

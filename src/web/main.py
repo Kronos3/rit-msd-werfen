@@ -202,7 +202,7 @@ def cam_start(cam_name: Cameras):
     get_camera(cam_name).stop()
 
 
-class StageStatus(BaseModel):
+class Status(BaseModel):
     limit1: bool
     limit2: bool
     estop: bool
@@ -212,7 +212,7 @@ class StageStatus(BaseModel):
     calibrated: bool
 
 
-@app.get("/stage/status", response_model=StageStatus)
+@app.get("/status", response_model=Status)
 def state_position():
     position = system.stage.get_position()
     return {
@@ -222,7 +222,9 @@ def state_position():
         "running": system.stage.running,
         "led": system.stage.led,
         "position": position,
-        "calibrated": system.stage.calibrated
+        "calibrated": system.stage.calibrated,
+        "hq_preview": system.hq_cam.preview,
+        "aux_preview": system.aux_cam.preview,
     }
 
 

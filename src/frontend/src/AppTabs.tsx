@@ -11,17 +11,18 @@ import {
 
 import ApiForm from './Form';
 
-import { StageStatus } from './api';
+import { SystemStatus } from './api';
 
 import SingleCard from './SingleCard';
 import Camera from './Camera';
 import ImageOutput from './ImageOutput';
 import Operate from './Operate';
 import ViewMode from './View';
+import Focus from './Focus';
 
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export default function AppTabs(props: { devMode: boolean, usb?: string, status: StageStatus, host: string, schema: any }) {
+export default function AppTabs(props: { devMode: boolean, usb?: string, status: SystemStatus, host: string, schema: any }) {
     const [stageSelect, setStageSelect] = useState<string>("/stage/relative");
     const [cardRefresh, setCardRefresh] = useState<number>(0);
 
@@ -34,6 +35,7 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
             <TabList>
                 <Tab>Operate</Tab>
                 <Tab>View</Tab>
+                <Tab>Focus</Tab>
                 {
                     props.devMode ?
                         <>
@@ -54,6 +56,9 @@ export default function AppTabs(props: { devMode: boolean, usb?: string, status:
                 </TabPanel>
                 <TabPanel>
                     <ViewMode host={props.host} refresh={cardRefresh} usb={props.usb} />
+                </TabPanel>
+                <TabPanel>
+                    <Focus status={props.status} host={props.host} />
                 </TabPanel>
                 {
                     props.devMode ? ([
