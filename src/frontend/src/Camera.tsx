@@ -16,12 +16,11 @@ export default function Camera(props: { host: string }) {
     const onAcquire = useCallback(() => {
         // Clear the image display
         setImage(undefined);
+        setDisabled(true);
         (async () => {
-            setDisabled(true);
             const response = await fetch(`http://${props.host}/cam/acquire/${camera}`);
             setImage(URL.createObjectURL(await response.blob()));
-            setDisabled(false);
-        })();
+        })().finally(() => setDisabled(false));
     }, [camera, props.host]);
 
     return (

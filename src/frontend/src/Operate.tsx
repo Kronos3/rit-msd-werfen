@@ -275,16 +275,12 @@ function OperateUncalibrated(props: { host: string, schema: any }) {
 
     const onAlign = useCallback(() => {
         setDisabled(true);
-        (async () => {
-            const query = generateQuery(settings);
-            await fetch(`http://${props.host}/system/align?${query}`, {
-                method: "POST",
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                headers: { "Content-Type": "application/json" },
-            });
-
-            setDisabled(false);
-        })();
+        const query = generateQuery(settings);
+        fetch(`http://${props.host}/system/align?${query}`, {
+            method: "POST",
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            headers: { "Content-Type": "application/json" },
+        }).finally(() => setDisabled(false));
     }, [settings]);
 
     return (

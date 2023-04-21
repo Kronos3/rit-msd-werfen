@@ -61,8 +61,7 @@ export default function Usb(props: { host: string, usb?: string, setUsb: (usb?: 
             }
 
             setUsbDrives(response);
-            setDisabled(false);
-        })();
+        })().finally(() => setDisabled(false));
     }, [props.host, props.usb, isDisabled, props.setUsb, mountPointFilter, filesystemTypeFilter]);
 
     const unmount = useCallback(() => {
