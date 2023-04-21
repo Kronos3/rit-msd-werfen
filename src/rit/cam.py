@@ -37,7 +37,8 @@ class Camera(abc.ABC):
 
     def start_preview(self):
         self.camera.configure(self.camera.create_preview_configuration())
-        self.camera.start(show_preview=True)
+        self.camera.start_preview(Preview.QTGL)
+        self.camera.start()
 
     def stop_preview(self):
         self.camera.stop_preview()
