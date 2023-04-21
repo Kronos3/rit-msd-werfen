@@ -29,7 +29,7 @@ def compute_error(img: np.ndarray, vx: float, vy: float, cx: float, cy: float):
     theta = np.arccos(np.dot(v, [0, 1]) / np.linalg.norm(v))
 
     # Construct a rotation matrix
-    r = cv2.getRotationMatrix2D(p, -180 / np.pi * theta, 1.0)
+    r = cv2.getRotationMatrix2D((cx, cy), -180 / np.pi * theta, 1.0)
     rot_img = cv2.warpAffine(img, r, img.shape[0:2], flags=cv2.INTER_LINEAR)
 
     # Compute the error using only the X coordinate
