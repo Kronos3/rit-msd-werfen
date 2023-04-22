@@ -28,6 +28,7 @@ function App() {
     const [usb, setUsb] = useState<string | undefined>();
 
     const [devMode, setDevMode] = useState<boolean>(false);
+    const [statusValid, setStatusValid] = useState<boolean>(false);
 
     const [status, setStatus] = useState<SystemStatus>({
         limit1: false,
@@ -37,7 +38,9 @@ function App() {
         led: false,
         calibrated: false,
         position: 0,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         hq_preview: false,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         aux_preview: false
     });
 
@@ -88,9 +91,9 @@ function App() {
                     </Flex>
                     <InputGroup size='sm'>
                         <InputLeftAddon children='http://' />
-                        <Input value={host} onChange={(e) => setHost(e.target.value)} />
+                        <Input isInvalid={!statusValid} value={host} onChange={(e) => setHost(e.target.value)} />
                     </InputGroup>
-                    <Status status={status} setStatus={setStatus} host={host} />
+                    <Status status={status} setStatusValid={setStatusValid} setStatus={setStatus} host={host} />
                 </div>
 
                 <Usb host={host} setUsb={setUsb} usb={usb} />

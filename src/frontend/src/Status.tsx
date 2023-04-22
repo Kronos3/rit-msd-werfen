@@ -16,16 +16,22 @@ function onGreen(state: boolean): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export default function Status(props: { host: string, status: SystemStatus, setStatus: (status: SystemStatus) => void }) {
+export default function Status(props: { host: string, setStatusValid: (valid: boolean) => void, status: SystemStatus, setStatus: (status: SystemStatus) => void }) {
     const [ping, setPing] = useState<boolean>(true);
 
-    const refresh = useCallback(async () => {
-        const responseRaw = await fetch(`http://${props.host}/status`);
-        const response: SystemStatus = await responseRaw.json();
+    const refresh = useCallback(() => {
+        fetch(`http://${props.host}/status`)
+            .then(r => r.json())
+            .then((r: SystemStatus) => {
+                if (JSON.stringify(r) !== JSON.stringify(props.status)) {
+                    props.setStatus(r);
+                }
 
-        if (JSON.stringify(response) !== JSON.stringify(props.status)) {
-            props.setStatus(response);
-        }
+                props.setStatusValid(true);
+            })
+            .catch(() => {
+                props.setStatusValid(false);
+            });
     }, [props.host, props.status]);
 
     useEffect(() => {
