@@ -47,9 +47,9 @@ class Camera(abc.ABC):
         self.preview = True
 
     def stop_preview(self):
-        self.camera.stop_preview()
         self.camera.stop()
         self.preview = False
+        self.camera.stop_preview()
 
     def stop(self):
         if self.is_hardware:
