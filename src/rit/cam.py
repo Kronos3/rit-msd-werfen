@@ -48,6 +48,7 @@ class Camera(abc.ABC):
 
     def stop_preview(self):
         self.camera.stop_preview()
+        self.camera.stop()
         self.preview = False
 
     def stop(self):

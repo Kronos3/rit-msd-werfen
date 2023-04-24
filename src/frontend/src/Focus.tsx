@@ -29,26 +29,42 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
         fetch(`http://${props.host}/stage/relative?${generateQuery({
             n: steps,
             size: size
-        })}`, { method: "POST" }).catch((err) => {
-            toast({
-                status: "error",
-                title: "Failed to move left",
-                description: `${err}`
+        })}`, { method: "POST" })
+            .then(async (r) => {
+                if (r.ok) {
+                    return await r.text();
+                } else {
+                    throw new Error(await r.text());
+                }
+            })
+            .catch((err) => {
+                toast({
+                    status: "error",
+                    title: "Failed to move left",
+                    description: `${err}`
+                });
             });
-        });
     }, [props.host]);
 
     const onRight = useCallback(() => {
         fetch(`http://${props.host}/stage/relative?${generateQuery({
             n: -steps,
             size: size
-        })}`, { method: "POST" }).catch((err) => {
-            toast({
-                status: "error",
-                title: "Failed to move right",
-                description: `${err}`
+        })}`, { method: "POST" })
+            .then(async (r) => {
+                if (r.ok) {
+                    return await r.text();
+                } else {
+                    throw new Error(await r.text());
+                }
+            })
+            .catch((err) => {
+                toast({
+                    status: "error",
+                    title: "Failed to move right",
+                    description: `${err}`
+                });
             });
-        });
     }, [props.host]);
 
     const onLight = useCallback(() => {
@@ -109,6 +125,13 @@ export default function Focus(props: { status: SystemStatus, host: string }) {
         setDisabled(true);
 
         fetch(`http://${props.host}/cam/preview/start/${cam}`)
+            .then(async (r) => {
+                if (r.ok) {
+                    return await r.text();
+                } else {
+                    throw new Error(await r.text());
+                }
+            })
             .then(() => {
                 toast({
                     status: "success",
@@ -129,6 +152,13 @@ export default function Focus(props: { status: SystemStatus, host: string }) {
     const onStop = useCallback((cam: string) => {
         setDisabled(true);
         fetch(`http://${props.host}/cam/preview/stop/${cam}`)
+            .then(async (r) => {
+                if (r.ok) {
+                    return await r.text();
+                } else {
+                    throw new Error(await r.text());
+                }
+            })
             .then(() => {
                 toast({
                     status: "success",
