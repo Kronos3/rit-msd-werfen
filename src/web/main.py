@@ -210,6 +210,8 @@ class Status(BaseModel):
     led: bool
     position: int
     calibrated: bool
+    hq_preview: bool
+    aux_preview: bool
 
 
 @app.get("/status", response_model=Status)
