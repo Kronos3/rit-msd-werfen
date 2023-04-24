@@ -10,7 +10,8 @@ import {
     Checkbox,
     Container,
     VStack,
-    Button
+    Button,
+    useToast
 } from '@chakra-ui/react';
 
 import { SystemStatus } from './api';
@@ -27,8 +28,10 @@ function App() {
     const [schema, setSchema] = useState<any>();
     const [usb, setUsb] = useState<string | undefined>();
 
+    const toast = useToast();
+
     const [devMode, setDevMode] = useState<boolean>(false);
-    const [statusValid, setStatusValid] = useState<boolean>(false);
+    const [statusValid, setStatusValid] = useState<boolean>(true);
 
     const [status, setStatus] = useState<SystemStatus>({
         limit1: false,
@@ -50,6 +53,21 @@ function App() {
                 setSchema(await value.json());
             });
     }, [host]);
+
+    useEffect(() => {
+        if (!statusValid) {
+            toast({
+                status: "error",
+                title: "Failed to ping PCB",
+                description: "Press RESET or check middleware address"
+            });
+        } else {
+            toast({
+                status: "success",
+                title: "PCB connection established"
+            });
+        }
+    }, [statusValid]);
 
     useEffect(() => {
         cookies.set("host", host);
