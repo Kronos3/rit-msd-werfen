@@ -14,6 +14,7 @@ class Camera(abc.ABC):
     cam: int
     still_config: dict
     stream_config: dict
+    preview_config: dict
     _lock: threading.Lock
 
     preview: bool
@@ -40,7 +41,7 @@ class Camera(abc.ABC):
     def start_preview(self):
         from picamera2 import Preview
 
-        self.camera.configure(self.camera.create_preview_configuration())
+        self.camera.configure(self.preview_config)
         self.camera.start_preview(Preview.QTGL)
         self.camera.start()
         self.preview = True
@@ -78,9 +79,10 @@ class HqCamera(Camera):
             self.still_config = self.camera.create_still_configuration(
                 main={"size": (4056, 3040)},
             )
-            self.video_config = self.camera.create_video_configuration()
+            self.preview = self.camera.create_video_configuration()
 
             self.stream_config = self.camera.create_preview_configuration()
+            self.preview_config = self.camera.create_preview_configuration(main={"size": (2028, 1080)})
 
 
 class AuxCamera(Camera):
@@ -90,5 +92,5 @@ class AuxCamera(Camera):
             self.still_config = self.camera.create_still_configuration(
                 main={"size": (3280, 2464)},
             )
-            self.video_config = self.camera.create_video_configuration()
             self.stream_config = self.camera.create_preview_configuration()
+            self.preview_config = self.camera.create_preview_configuration(main={"size": (1640, 1232)})
