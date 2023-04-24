@@ -29,7 +29,7 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
         fetch(`http://${props.host}/stage/relative?${generateQuery({
             n: -steps,
             size: size
-        })}`).catch((err) => {
+        })}`, { method: "POST" }).catch((err) => {
             toast({
                 status: "error",
                 title: "Failed to move left",
@@ -42,7 +42,7 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
         fetch(`http://${props.host}/stage/relative?${generateQuery({
             n: steps,
             size: size
-        })}`).catch((err) => {
+        })}`, { method: "POST" }).catch((err) => {
             toast({
                 status: "error",
                 title: "Failed to move right",

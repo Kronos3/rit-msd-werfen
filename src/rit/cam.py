@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 import logging
 import coloredlogs as coloredlogs
-from picamera2 import Preview
 
 coloredlogs.install(fmt='%(asctime)s,%(msecs)03d %(levelname)s %(message)s')
 log = logging.getLogger(__name__)
@@ -39,6 +38,8 @@ class Camera(abc.ABC):
             self.camera.start()
 
     def start_preview(self):
+        from picamera2 import Preview
+
         self.camera.configure(self.camera.create_preview_configuration())
         self.camera.start_preview(Preview.QTGL)
         self.camera.start()
