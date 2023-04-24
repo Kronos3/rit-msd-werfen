@@ -42,6 +42,10 @@ class Camera(abc.ABC):
         from picamera2 import Preview
 
         self.camera.configure(self.preview_config)
+        if self.camera._preview:
+            self.camera.stop_preview()
+            self.camera.detach_preview()
+
         self.camera.start_preview(Preview.QTGL)
         self.camera.start()
         self.preview = True
