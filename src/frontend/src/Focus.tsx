@@ -27,7 +27,7 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
 
     const onLeft = useCallback(() => {
         fetch(`http://${props.host}/stage/relative?${generateQuery({
-            n: -steps,
+            n: steps,
             size: size
         })}`, { method: "POST" }).catch((err) => {
             toast({
@@ -40,7 +40,7 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
 
     const onRight = useCallback(() => {
         fetch(`http://${props.host}/stage/relative?${generateQuery({
-            n: steps,
+            n: -steps,
             size: size
         })}`, { method: "POST" }).catch((err) => {
             toast({
