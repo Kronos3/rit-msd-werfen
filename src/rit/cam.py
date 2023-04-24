@@ -82,7 +82,7 @@ class HqCamera(Camera):
             self.preview = self.camera.create_video_configuration()
 
             self.stream_config = self.camera.create_preview_configuration()
-            self.preview_config = self.camera.create_preview_configuration(main={"size": (1920, 1080)})
+            self.preview_config = self.camera.create_preview_configuration(main={"size": (2028, 1520)})
 
 
 class AuxCamera(Camera):
