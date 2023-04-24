@@ -44,7 +44,7 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
                     description: `${err}`
                 });
             });
-    }, [props.host]);
+    }, [props.host, steps, size]);
 
     const onRight = useCallback(() => {
         fetch(`http://${props.host}/stage/relative?${generateQuery({
@@ -65,7 +65,7 @@ function Relative(props: { host: string, status: SystemStatus, isDisabled: boole
                     description: `${err}`
                 });
             });
-    }, [props.host]);
+    }, [props.host, steps, size]);
 
     const onLight = useCallback(() => {
         if (props.status.led) {
