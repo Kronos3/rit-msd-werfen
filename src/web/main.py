@@ -165,7 +165,7 @@ def get_camera(cam_name: Cameras) -> Camera:
 
 
 @app.get("/cam/acquire/{cam_name}", response_class=ImageResponse)
-def cam_acquire(cam_name: Cameras, encoding: Encodings = "jpeg", start_stop: bool = True):
+def cam_acquire(cam_name: Cameras, scale: float = 0.2, encoding: Encodings = "jpeg", start_stop: bool = True):
     camera = get_camera(cam_name)
 
     if start_stop:
@@ -177,7 +177,7 @@ def cam_acquire(cam_name: Cameras, encoding: Encodings = "jpeg", start_stop: boo
         camera.stop()
 
     # Encode the image if requested
-    return ImageResponse(img, media_type=f"image/{encoding}")
+    return ImageResponse(img, scale=scale, media_type=f"image/{encoding}")
 
 
 @app.get("/cam/preview/start/{cam_name}")
