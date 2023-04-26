@@ -495,12 +495,12 @@ class SingleCardParameters(BaseModel):
 
 
 class CardIDParameters(BaseModel):
-    scale: float = 0.4
-    start_row: int = 260
-    start_col: int = 800
-    height: int = 170
-    width: int = 45
-    position: int = 7000
+    scale: float = 1,
+    start_row: int = 1150,
+    end_row: int = 1300,
+    start_col: int = 600,
+    end_col: int = 1250,
+    position: int = 8200,
     light_level: float = 0.015
     step_size: StageStepSizes = "QUARTER"
 
@@ -638,9 +638,9 @@ async def run(request: RunParams):
                 card_id_img,
                 request.card_id.scale,
                 request.card_id.start_row,
+                request.card_id.end_row,
                 request.card_id.start_col,
-                request.card_id.height,
-                request.card_id.width
+                request.card_id.end_col
             )
 
             # This encoding should be pretty fast since the image is tiny
