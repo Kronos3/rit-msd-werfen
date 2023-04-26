@@ -7,7 +7,8 @@ import {
     Center,
     NumberInput,
     Text,
-    NumberInputField
+    NumberInputField,
+    Input
 } from '@chakra-ui/react';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -34,14 +35,10 @@ export default function Camera(props: { host: string }) {
                 <option value='aux'>Auxiliary Camera</option>
             </Select>
             <Text>Scale</Text>
-            <NumberInput
-                min={0}
-                max={1}
+            <Input
                 value={scale}
-                step={0.1}
-                onChange={(_, v) => setScale(v)}>
-                <NumberInputField />
-            </NumberInput>
+                onChange={(v) => setScale(parseFloat(v.target.value))}>
+            </Input>
             <Center
                 marginTop={3}
                 marginBottom={3}>

@@ -136,18 +136,21 @@ def detect_card_edge(img: np.ndarray,
 def card_id(img: np.ndarray,
             scale: float,
             start_row: int,
+            end_row: int,
             start_col: int,
-            height: int,
-            width: int
+            end_col: int
             ) -> Tuple[str, np.ndarray]:
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Rescale image
-    img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
+    if scale != 1:
+        img = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
 
-    # Crop image
-    img = img[start_row:start_row + height, start_col:start_col + width]
+    # Rotate Image
     img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+    # Crop Image
+    img = img[start_row:end_row, start_col:end_col]
 
     # Clean up noise using OTSU thresholding
     # Text is left black, background made white
@@ -159,10 +162,27 @@ def card_id(img: np.ndarray,
         output = pytesseract.image_to_boxes(
             img, lang='osd', config=tess_config)
         boxes = output.strip().split('\n') if output.strip() else []
-        output = ""
+        
+        bs = []
+        areas = []
         for b in boxes:
             b = b.split(' ')
-            output += b[0]
+
+            x1, y1 = int(b[1]), int(b[2])
+            x2, y2 = int(b[3]), int(b[4])
+            a = abs(x2 - x1) * abs(y2 - y1)
+
+            bs.append(b)
+            areas.append(a)
+
+        sd = np.std(areas)
+        med = np.median(areas)
+
+        output = ""
+        for b, a in zip(bs, areas):
+            if abs(a - med) < sd:
+                output += b[0]
+
     except TesseractNotFoundError:
         output = "0000000"
         log.warning("Make sure tesseract-ocr is installed, continuing without")

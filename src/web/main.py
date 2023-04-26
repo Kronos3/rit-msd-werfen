@@ -408,11 +408,11 @@ async def system_debug_align(
 
 @app.post("/system/card_id")
 def system_card_id(
-        scale: float = 0.4,
-        start_row: int = 305,
-        start_col: int = 800,
-        height: int = 190,
-        width: int = 45,
+        scale: float = 1,
+        start_row: int = 1150,
+        end_row: int = 1300,
+        start_col: int = 600,
+        end_col: int = 1250,
         position: int = 8200,
         light_level: float = 0.02,
         step_size: StageStepSizes = "QUARTER",
@@ -423,7 +423,7 @@ def system_card_id(
 
     with system.aux_cam:
         img = system.aux_cam.acquire_array()
-        card_id, img = processing.card_id(img, scale, start_row, start_col, height, width)
+        card_id, img = processing.card_id(img, scale, start_row, end_row, start_col, end_col)
 
     if return_img:
         return ImageResponse(img, scale=1)
