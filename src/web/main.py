@@ -414,7 +414,7 @@ def system_card_id(
         start_col: int = 600,
         end_col: int = 1250,
         position: int = 8200,
-        light_level: float = 0.02,
+        light_level: float = 0,
         step_size: StageStepSizes = "QUARTER",
         return_img: bool = True
 ):
@@ -501,7 +501,7 @@ class CardIDParameters(BaseModel):
     start_col: int = 600,
     end_col: int = 1250,
     position: int = 8200,
-    light_level: float = 0.015
+    light_level: float = 0
     step_size: StageStepSizes = "QUARTER"
 
 
